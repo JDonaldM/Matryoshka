@@ -10,10 +10,13 @@ from halomod.concentration import Duffy08
 from hmf.halos.mass_definitions import SOMean
 from . import halo_model_funcs
 from scipy.interpolate import interp1d
+import os
+import pathlib
 
 # Path to directory containing the NN weights as well as scalers needed produce
 #  predictions with the NNs.
-cache_path = "/Users/jamie/Desktop/Matryoshka/matryoshka-data/"
+cache_path = os.fsdecode(pathlib.Path(os.path.dirname(__file__)
+                                      ).parent.absolute())+"/matryoshka-data/"
 models_path = cache_path+"class_aemulus/models-v3/"
 scalers_path = cache_path+"class_aemulus/scalers-v3/"
 boost_path = cache_path+"class_aemulus/boost_kwanspace_z0.57/"
