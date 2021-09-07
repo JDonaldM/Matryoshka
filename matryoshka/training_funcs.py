@@ -13,16 +13,34 @@ class UniformScaler:
     diff = 1
 
     def fit(self, X):
+        '''
+        Fit the parameters of the transformer based on the training data.
+
+        Args:
+            X (array) : The training data.
+        '''
         # Calculate min. value and largest diff. of all samples of X along the
         #  0th axis. Both min_val and diff can be vectors if required.
         self.min_val = np.min(X, axis=0)
         self.diff = np.max(X, axis=0) - np.min(X, axis=0)
 
     def transform(self, X):
+        '''
+        Transform the data.
+
+        Args:
+            X (array) : The data to be transformed.
+        '''
         x = np.subtract(X, self.min_val)
         return np.true_divide(x, self.diff)
 
     def inverse_transform(self, X):
+        '''
+        Inverse transform the data.
+
+        Args:
+            X (array) : The data to be transformed.
+        '''
         x = np.multiply(X, self.diff)
         return np.add(x, self.min_val)
 
@@ -36,6 +54,12 @@ class LogScaler:
     diff = 1
 
     def fit(self, X):
+        '''
+        Fit the parameters of the transformer based on the training data.
+
+        Args:
+            X (array) : The training data.
+        '''
         # Take the logarithm of X. This assumes that the log has not already
         #  been taken.
         X = np.log(X)
@@ -44,11 +68,23 @@ class LogScaler:
         self.diff = np.max(X, axis=0) - np.min(X, axis=0)
 
     def transform(self, X):
+        '''
+        Transform the data.
+
+        Args:
+            X (array) : The data to be transformed.
+        '''
         X = np.log(X)
         x = np.subtract(X, self.min_val)
         return np.true_divide(x, self.diff)
 
     def inverse_transform(self, X):
+        '''
+        Inverse transform the data.
+
+        Args:
+            X (array) : The data to be transformed.
+        '''
         x = np.multiply(X, self.diff)
         return np.exp(np.add(x, self.min_val))
 
@@ -62,15 +98,33 @@ class StandardScaler:
     scale = 1
 
     def fit(self, X):
+        '''
+        Fit the parameters of the transformer based on the training data.
+
+        Args:
+            X (array) : The training data.
+        '''
         # Calculate the mean and strandard deviation of X along the 0th axis.
         #  Can be vectors if needed.
         self.mean = np.mean(X, axis=0)
         self.scale = np.std(X, axis=0)
 
     def transform(self, X):
+        '''
+        Transform the data.
+
+        Args:
+            X (array) : The data to be transformed.
+        '''
         x = np.subtract(X, self.mean)
         return np.true_divide(x, self.scale)
 
     def inverse_transform(self, X):
+        '''
+        Inverse transform the data.
+
+        Args:
+            X (array) : The data to be transformed.
+        '''
         x = np.multiply(X, self.scale)
         return np.add(x, self.mean)

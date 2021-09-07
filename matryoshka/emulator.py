@@ -25,13 +25,13 @@ boost_path = cache_path+"class_aemulus/boost_kwanspace_z0.57/"
 class Transfer:
     '''
     Class for the transfer function componenet emulator.
+
+    On initalisation the weights for the NN ensmble will be loaded,
+     along with the scalers required to make predictions with the NNs.
     '''
 
     def __init__(self):
-        '''
-        On initalisation the weights for the NN ensmble will be loaded,
-         along with the scalers required to make predictions with the NNs.
-        '''
+
         self.kbins = np.logspace(-4, 1, 300)
 
         # Load the ensemble of NNs that makes up the T(k) emulator.
@@ -58,6 +58,18 @@ class Transfer:
         self.scalers = (xscaler, yscaler)
 
     def emu_predict(self, X, single_or_batch="batch", mean_or_full="full"):
+        '''
+        Make predictions with the component emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters.
+            single_or_batch (str) : Can be either 'single' or 'batch'.
+             Determines if a single prediction is being made or a batch of
+             predictions (default is 'batch').
+            mean_or_full : Can be either 'mean' or 'full'. Determines if the
+             ensemble mean prediction should be returned, or the predictions
+             from each ensemble member (default is 'batch').
+        '''
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
@@ -90,13 +102,13 @@ class Transfer:
 class Sigma:
     '''
     Class for the mass variance componenet emulator.
+
+    On initalisation the weights for the NN ensmble will be loaded,
+     along with the scalers required to make predictions with the NNs.
     '''
 
     def __init__(self):
-        '''
-        On initalisation the weights for the NN ensmble will be loaded,
-         along with the scalers required to make predictions with the NNs.
-        '''
+
         self.mbins = np.load(cache_path+"AEMULUS-class_ms-test.npy")
 
         # Load the ensemble of NNs that makes up the sigma(m) emulator.
@@ -123,6 +135,18 @@ class Sigma:
         self.scalers = (xscaler, yscaler)
 
     def emu_predict(self, X, single_or_batch="batch", mean_or_full="full"):
+        '''
+        Make predictions with the component emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters.
+            single_or_batch (str) : Can be either 'single' or 'batch'.
+             Determines if a single prediction is being made or a batch of
+             predictions (default is 'batch').
+            mean_or_full : Can be either 'mean' or 'full'. Determines if the
+             ensemble mean prediction should be returned, or the predictions
+             from each ensemble member (default is 'batch').
+        '''
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
@@ -155,13 +179,13 @@ class Sigma:
 class SigmaPrime:
     '''
     Class for the mass variance logarithmic derviative componenet emulator.
+
+    On initalisation the weights for the NN ensmble will be loaded,
+     along with the scalers required to make predictions with the NNs.
     '''
 
     def __init__(self):
-        '''
-        On initalisation the weights for the NN ensmble will be loaded,
-         along with the scalers required to make predictions with the NNs.
-        '''
+
         self.mbins = np.load(cache_path+"AEMULUS-class_ms-test.npy")
 
         # Load the ensemble of NNs that makes up the dlns(m) emulator.
@@ -189,6 +213,18 @@ class SigmaPrime:
         self.scalers = (xscaler, yscaler)
 
     def emu_predict(self, X, single_or_batch="batch", mean_or_full="full"):
+        '''
+        Make predictions with the component emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters.
+            single_or_batch (str) : Can be either 'single' or 'batch'.
+             Determines if a single prediction is being made or a batch of
+             predictions (default is 'batch').
+            mean_or_full : Can be either 'mean' or 'full'. Determines if the
+             ensemble mean prediction should be returned, or the predictions
+             from each ensemble member (default is 'batch').
+        '''
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
@@ -221,13 +257,13 @@ class SigmaPrime:
 class Growth:
     '''
     Class for the growth function componenet emulator.
+
+    On initalisation the weights for the NN ensmble will be loaded,
+     along with the scalers required to make predictions with the NNs.
     '''
 
     def __init__(self):
-        '''
-        On initalisation the weights for the NN ensmble will be loaded,
-         along with the scalers required to make predictions with the NNs.
-        '''
+
         self.zbins = np.linspace(0, 2, 200)
 
         # Load the ensemble of NNs that makes up the D(z) emulator.
@@ -255,6 +291,18 @@ class Growth:
         self.scalers = (xscaler, yscaler)
 
     def emu_predict(self, X, single_or_batch="batch", mean_or_full="full"):
+        '''
+        Make predictions with the component emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters.
+            single_or_batch (str) : Can be either 'single' or 'batch'.
+             Determines if a single prediction is being made or a batch of
+             predictions (default is 'batch').
+            mean_or_full : Can be either 'mean' or 'full'. Determines if the
+             ensemble mean prediction should be returned, or the predictions
+             from each ensemble member (default is 'batch').
+        '''
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
@@ -290,13 +338,13 @@ class Growth:
 class Boost:
     '''
     Class for the nonlinear boost componenet emulator.
+
+    On initalisation the weights for the NN ensmble will be loaded,
+     along with the scalers required to make predictions with the NNs.
     '''
 
     def __init__(self):
-        '''
-        On initalisation the weights for the NN ensmble will be loaded,
-         along with the scalers required to make predictions with the NNs.
-        '''
+
         # The scales where the Boost component emulator produces predictions is
         #  dependent on the simulation suite used to generate the training data.
         #  Currently based on the Aemulus suite.
@@ -335,6 +383,18 @@ class Boost:
         self.scalers = (xscaler, yscaler)
 
     def emu_predict(self, X, single_or_batch="batch", mean_or_full="full"):
+        '''
+        Make predictions with the component emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters.
+            single_or_batch (str) : Can be either 'single' or 'batch'.
+             Determines if a single prediction is being made or a batch of
+             predictions (default is 'batch').
+            mean_or_full : Can be either 'mean' or 'full'. Determines if the
+             ensemble mean prediction should be returned, or the predictions
+             from each ensemble member (default is 'batch').
+        '''
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
@@ -366,11 +426,22 @@ class Boost:
 
 class HaloModel:
     '''
-    Class for the emulated halo model. Can be used to predictions from the base
-     model, or the full suite of suite of emulators.
+    Class for the emulated halo model.
+
+    Upon initalisation each of the component emulators will be initalised.
+
+    Args:
+        k (array) : The k-bins over which predictions will be made. Cannot be
+         outside the ranges used when training the component emulators.
+        redshift (float) : The redshift at which predictions will be made. If 
+         nonlinear=True, redshift must =0.57 as this is the only redhisft that
+         the nonliear boost emulator has been trained at in this version.
+        nonlinear (bool) : Determines if nonlinear predictions should be made.
+         If False, the nonlinear boost componenet emulator will not be
+         initalised.
     '''
 
-    def __init__(self, k, redshift, nonlinear=True):
+    def __init__(self, k, redshift=0.57, nonlinear=True):
 
         # Initalise the base model components.
         self.Transfer = Transfer()
@@ -401,6 +472,20 @@ class HaloModel:
         self.cm = conc_duffy
 
     def emu_predict(self, X_COSMO, X_HOD, single_or_batch="batch"):
+        '''
+        Make predictions for the halo model power spectrum with the
+         pre-initalised component emulators.
+
+        Args:
+            X_COSMO (array) : Input cosmological parameters. If
+             single_or_batch='single' must have shape (7,), else must have shape
+             (7,n).
+            X_HOD (array) : Input HOD parameters. If single_or_batch='single'
+             must have shape (5,), else must have shape (5,n).
+            single_or_batch (str) : Can be either 'single' or 'batch'.
+             Determines if a single prediction is being made or a batch of
+             predictions (default is 'batch').
+        '''
 
         # Input must be reshaped if producing sinlge prediction.
         if single_or_batch == "single":
