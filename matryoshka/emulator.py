@@ -27,7 +27,7 @@ class Transfer:
     Class for the transfer function componenet emulator.
 
     On initalisation the weights for the NN ensmble will be loaded,
-     along with the scalers required to make predictions with the NNs.
+    along with the scalers required to make predictions with the NNs.
     '''
 
     def __init__(self):
@@ -66,9 +66,15 @@ class Transfer:
             single_or_batch (str) : Can be either 'single' or 'batch'.
              Determines if a single prediction is being made or a batch of
              predictions (default is 'batch').
-            mean_or_full : Can be either 'mean' or 'full'. Determines if the
+            mean_or_full (str) : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'batch').
+
+        Returns:
+            Array containing the predictions from the component emulator. Array
+            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
+            If mean_or_full='mean' and single_or_batch='single' will have shape 
+            (1,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -104,7 +110,7 @@ class Sigma:
     Class for the mass variance componenet emulator.
 
     On initalisation the weights for the NN ensmble will be loaded,
-     along with the scalers required to make predictions with the NNs.
+    along with the scalers required to make predictions with the NNs.
     '''
 
     def __init__(self):
@@ -146,6 +152,12 @@ class Sigma:
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'batch').
+
+        Returns:
+            Array containing the predictions from the component emulator. Array
+            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
+            If mean_or_full='mean' and single_or_batch='single' will have shape 
+            (1,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -181,7 +193,7 @@ class SigmaPrime:
     Class for the mass variance logarithmic derviative componenet emulator.
 
     On initalisation the weights for the NN ensmble will be loaded,
-     along with the scalers required to make predictions with the NNs.
+    along with the scalers required to make predictions with the NNs.
     '''
 
     def __init__(self):
@@ -224,6 +236,12 @@ class SigmaPrime:
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'batch').
+
+        Returns:
+            Array containing the predictions from the component emulator. Array
+            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
+            If mean_or_full='mean' and single_or_batch='single' will have shape 
+            (1,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -259,7 +277,7 @@ class Growth:
     Class for the growth function componenet emulator.
 
     On initalisation the weights for the NN ensmble will be loaded,
-     along with the scalers required to make predictions with the NNs.
+    along with the scalers required to make predictions with the NNs.
     '''
 
     def __init__(self):
@@ -302,6 +320,12 @@ class Growth:
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'batch').
+
+        Returns:
+            Array containing the predictions from the component emulator. Array
+            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
+            If mean_or_full='mean' and single_or_batch='single' will have shape 
+            (1,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -340,7 +364,7 @@ class Boost:
     Class for the nonlinear boost componenet emulator.
 
     On initalisation the weights for the NN ensmble will be loaded,
-     along with the scalers required to make predictions with the NNs.
+    along with the scalers required to make predictions with the NNs.
     '''
 
     def __init__(self):
@@ -394,6 +418,12 @@ class Boost:
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'batch').
+
+        Returns:
+            Array containing the predictions from the component emulator. Array
+            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
+            If mean_or_full='mean' and single_or_batch='single' will have shape 
+            (1,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -474,17 +504,22 @@ class HaloModel:
     def emu_predict(self, X_COSMO, X_HOD, single_or_batch="batch"):
         '''
         Make predictions for the halo model power spectrum with the
-         pre-initalised component emulators.
+        pre-initalised component emulators.
 
         Args:
             X_COSMO (array) : Input cosmological parameters. If
              single_or_batch='single' must have shape (7,), else must have shape
-             (7,n).
+             (n,7).
             X_HOD (array) : Input HOD parameters. If single_or_batch='single'
-             must have shape (5,), else must have shape (5,n).
+             must have shape (5,), else must have shape (n,5).
             single_or_batch (str) : Can be either 'single' or 'batch'.
              Determines if a single prediction is being made or a batch of
              predictions (default is 'batch').
+
+        Returns:
+            Array containing the predictions from the halo model power spectrum.
+            Array will have shape (n,k). If single_or_batch="single" shape will
+            be (1,k).
         '''
 
         # Input must be reshaped if producing sinlge prediction.

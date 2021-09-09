@@ -12,6 +12,8 @@ pip install .
 
 ## Basic usage
 
+The example below shows how to generate a prediction for a Planck18 $\Lambda$CDM transfer function using `matryoshka`. Setting `single_or_batch="single"` tells the emulator to expect a single set of input parameters, and setting `mean_or_full="mean"` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
+
 ```python
 import numpy as np
 import matryoshka.emulator as Matry

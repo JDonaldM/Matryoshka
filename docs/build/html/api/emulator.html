@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>matryoshka.emulator &#8212; matryoshka 0.0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="matryoshka.halo_model_funcs" href="halomodel.html" />
+    <link rel="prev" title="API Reference" href="../api.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="matryoshka-emulator">
+<h1>matryoshka.emulator<a class="headerlink" href="#matryoshka-emulator" title="Permalink to this headline">¶</a></h1>
+<p>Module for producing predictions with the component emulaotrs of <strong>matryoshka</strong>.</p>
+<section id="transfer-function">
+<h2>Transfer Function<a class="headerlink" href="#transfer-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="matryoshka.emulator.Transfer">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">Transfer</span></span><a class="headerlink" href="#matryoshka.emulator.Transfer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for the transfer function componenet emulator.</p>
+<p>On initalisation the weights for the NN ensmble will be loaded,
+along with the scalers required to make predictions with the NNs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="matryoshka.emulator.Transfer.emu_predict">
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Transfer.emu_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make predictions with the component emulator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters.</p></li>
+<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
+Determines if a single prediction is being made or a batch of
+predictions (default is ‘batch’).</p></li>
+<li><p><strong>mean_or_full</strong> (<em>str</em>) – Can be either ‘mean’ or ‘full’. Determines if the
+ensemble mean prediction should be returned, or the predictions
+from each ensemble member (default is ‘batch’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing the predictions from the component emulator. Array
+will have shape (n,m,k). if mean_or_full=’mean’ will have shape (m,k).
+If mean_or_full=’mean’ and single_or_batch=’single’ will have shape
+(1,k).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="mass-variance">
+<h2>Mass Variance<a class="headerlink" href="#mass-variance" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="matryoshka.emulator.Sigma">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">Sigma</span></span><a class="headerlink" href="#matryoshka.emulator.Sigma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for the mass variance componenet emulator.</p>
+<p>On initalisation the weights for the NN ensmble will be loaded,
+along with the scalers required to make predictions with the NNs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="matryoshka.emulator.Sigma.emu_predict">
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Sigma.emu_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make predictions with the component emulator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters.</p></li>
+<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
+Determines if a single prediction is being made or a batch of
+predictions (default is ‘batch’).</p></li>
+<li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
+ensemble mean prediction should be returned, or the predictions
+from each ensemble member (default is ‘batch’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing the predictions from the component emulator. Array
+will have shape (n,m,k). if mean_or_full=’mean’ will have shape (m,k).
+If mean_or_full=’mean’ and single_or_batch=’single’ will have shape
+(1,k).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="mass-variance-logarithmic-derivative">
+<h2>Mass Variance Logarithmic Derivative<a class="headerlink" href="#mass-variance-logarithmic-derivative" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="matryoshka.emulator.SigmaPrime">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">SigmaPrime</span></span><a class="headerlink" href="#matryoshka.emulator.SigmaPrime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for the mass variance logarithmic derviative componenet emulator.</p>
+<p>On initalisation the weights for the NN ensmble will be loaded,
+along with the scalers required to make predictions with the NNs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="matryoshka.emulator.SigmaPrime.emu_predict">
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.SigmaPrime.emu_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make predictions with the component emulator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters.</p></li>
+<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
+Determines if a single prediction is being made or a batch of
+predictions (default is ‘batch’).</p></li>
+<li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
+ensemble mean prediction should be returned, or the predictions
+from each ensemble member (default is ‘batch’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing the predictions from the component emulator. Array
+will have shape (n,m,k). if mean_or_full=’mean’ will have shape (m,k).
+If mean_or_full=’mean’ and single_or_batch=’single’ will have shape
+(1,k).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="growth-function">
+<h2>Growth Function<a class="headerlink" href="#growth-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="matryoshka.emulator.Growth">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">Growth</span></span><a class="headerlink" href="#matryoshka.emulator.Growth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for the growth function componenet emulator.</p>
+<p>On initalisation the weights for the NN ensmble will be loaded,
+along with the scalers required to make predictions with the NNs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="matryoshka.emulator.Growth.emu_predict">
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Growth.emu_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make predictions with the component emulator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters.</p></li>
+<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
+Determines if a single prediction is being made or a batch of
+predictions (default is ‘batch’).</p></li>
+<li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
+ensemble mean prediction should be returned, or the predictions
+from each ensemble member (default is ‘batch’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing the predictions from the component emulator. Array
+will have shape (n,m,k). if mean_or_full=’mean’ will have shape (m,k).
+If mean_or_full=’mean’ and single_or_batch=’single’ will have shape
+(1,k).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="nonlinear-boost">
+<h2>Nonlinear Boost<a class="headerlink" href="#nonlinear-boost" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="matryoshka.emulator.Boost">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">Boost</span></span><a class="headerlink" href="#matryoshka.emulator.Boost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for the nonlinear boost componenet emulator.</p>
+<p>On initalisation the weights for the NN ensmble will be loaded,
+along with the scalers required to make predictions with the NNs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="matryoshka.emulator.Boost.emu_predict">
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Boost.emu_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make predictions with the component emulator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters.</p></li>
+<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
+Determines if a single prediction is being made or a batch of
+predictions (default is ‘batch’).</p></li>
+<li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
+ensemble mean prediction should be returned, or the predictions
+from each ensemble member (default is ‘batch’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing the predictions from the component emulator. Array
+will have shape (n,m,k). if mean_or_full=’mean’ will have shape (m,k).
+If mean_or_full=’mean’ and single_or_batch=’single’ will have shape
+(1,k).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="galaxy-power-spectrum">
+<h2>Galaxy Power Spectrum<a class="headerlink" href="#galaxy-power-spectrum" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="matryoshka.emulator.HaloModel">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">HaloModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.57</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonlinear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.HaloModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for the emulated halo model.</p>
+<p>Upon initalisation each of the component emulators will be initalised.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>array</em>) – The k-bins over which predictions will be made. Cannot be
+outside the ranges used when training the component emulators.</p></li>
+<li><p><strong>redshift</strong> (<em>float</em>) – The redshift at which predictions will be made. If
+nonlinear=True, redshift must =0.57 as this is the only redhisft that
+the nonliear boost emulator has been trained at in this version.</p></li>
+<li><p><strong>nonlinear</strong> (<em>bool</em>) – Determines if nonlinear predictions should be made.
+If False, the nonlinear boost componenet emulator will not be
+initalised.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matryoshka.emulator.HaloModel.emu_predict">
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_COSMO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_HOD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.HaloModel.emu_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make predictions for the halo model power spectrum with the
+pre-initalised component emulators.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_COSMO</strong> (<em>array</em>) – Input cosmological parameters. If
+single_or_batch=’single’ must have shape (7,), else must have shape
+(n,7).</p></li>
+<li><p><strong>X_HOD</strong> (<em>array</em>) – Input HOD parameters. If single_or_batch=’single’
+must have shape (5,), else must have shape (n,5).</p></li>
+<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
+Determines if a single prediction is being made or a batch of
+predictions (default is ‘batch’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing the predictions from the halo model power spectrum.
+Array will have shape (n,k). If single_or_batch=”single” shape will
+be (1,k).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">matryoshka</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">matryoshka.emulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#transfer-function">Transfer Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mass-variance">Mass Variance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mass-variance-logarithmic-derivative">Mass Variance Logarithmic Derivative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#growth-function">Growth Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nonlinear-boost">Nonlinear Boost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#galaxy-power-spectrum">Galaxy Power Spectrum</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="halomodel.html">matryoshka.halo_model_funcs</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API Reference</a><ul>
+      <li>Previous: <a href="../api.html" title="previous chapter">API Reference</a></li>
+      <li>Next: <a href="halomodel.html" title="next chapter">matryoshka.halo_model_funcs</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Jamie Donald-McCann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/api/emulator.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
