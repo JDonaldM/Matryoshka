@@ -6,8 +6,9 @@ Flie contains Classes for the idividula component emulators. In addition to a
 from tensorflow import keras
 import numpy as np
 from .training_funcs import UniformScaler, LogScaler
-from halomod.concentration import Duffy08
-from hmf.halos.mass_definitions import SOMean
+#from halomod.concentration import Duffy08
+#from hmf.halos.mass_definitions import SOMean
+from .halo_model_funcs import Duffy08cmz
 from . import halo_model_funcs
 from scipy.interpolate import interp1d
 import os
@@ -496,9 +497,10 @@ class HaloModel:
 
         # Initalise halmod mass defenition and calculate the conentration mass
         #  realtion.
-        md_mean = SOMean(overdensity=200)
-        duffy = Duffy08(mdef=md_mean)
-        conc_duffy = duffy.cm(self.sigma.mbins, z=redshift)
+        #md_mean = SOMean(overdensity=200)
+        #duffy = Duffy08(mdef=md_mean)
+        #conc_duffy = duffy.cm(self.sigma.mbins, z=redshift)
+        conc_duffy = Duffy08cmz(self.sigma.mbins, self.redshift)
         self.cm = conc_duffy
 
     def emu_predict(self, X_COSMO, X_HOD, single_or_batch="batch"):

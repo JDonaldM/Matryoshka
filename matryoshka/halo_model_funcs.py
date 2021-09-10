@@ -1,10 +1,12 @@
 import numpy as np
 from numba import jit
-from hmf.density_field.filters import TopHat
+#from hmf.density_field.filters import TopHat
 import scipy.special as sp
 import astropy.units as units
 from scipy import constants as consts
-from hmf.density_field.halofit import halofit
+#from hmf.density_field.halofit import halofit
+from .halofit import halofit
+from scipy.integrate import simps
 
 
 def unnormed_P(k, T, ns):
@@ -36,7 +38,7 @@ def norm(k, unnormed_P, sigma8):
     Returns:
         Array of the normalisation for the power spectra.
     '''
-    filt = TopHat(k, unnormed_P)
+    filt = TopHatrep(k, unnormed_P)
     return (sigma8/filt.sigma(8)).reshape(-1, 1)
 
 
@@ -433,3 +435,47 @@ def Gcov(P_k, k, dk, n, V):
     N_k = (4*np.pi*k**2*dk)/((2*np.pi)/V**(1./3.))**3
     B = (P_k**2 + (2*P_k)/n + 1/n**2)
     return 2/N_k*B
+
+
+def Duffy08cmz(m, redshift):
+    '''
+    Concentration mass realtion from Duffy08
+    (hacked halomod)
+
+    Assumes a spherical overdensity mass defention.
+
+    Args:
+        m (array) : Array containing masses at whcih to calculate the
+         concentration.
+        redshift (float) : Redshift at which to calculate the concentration.
+
+    Returns:
+        An array containing the halo concentrations.
+    '''
+
+    a = 11.93
+    b = -0.09
+    c = 0.99
+    ms = 2e12
+
+    return a / (1 + redshift) ** c * (m / ms) ** b
+
+
+class TopHatrep:
+    def __init__(self, k, power):
+        self.k = k
+        self.power = power
+
+    def sigma(self, r):
+
+        dlnk = np.log(self.k[1] / self.k[0])
+        rk = np.outer(r, self.k)
+
+        # we multiply by k because our steps are in logk.
+        rest = self.power * self.k ** (3 * 2)
+        integ = rest * self.k_space(rk) ** 2
+        sigma = (0.5 / np.pi ** 2) * simps(integ, dx=dlnk, axis=-1)
+        return np.sqrt(sigma)
+
+    def k_space(self, kr):
+        return np.where(kr > 1.4e-6, (3 / kr ** 3) * (np.sin(kr) - kr * np.cos(kr)), 1)
