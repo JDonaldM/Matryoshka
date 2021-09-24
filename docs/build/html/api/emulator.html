@@ -46,15 +46,14 @@
 along with the scalers required to make predictions with the NNs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.Transfer.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Transfer.emu_predict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Transfer.emu_predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters.</p></li>
-<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
-Determines if a single prediction is being made or a batch of
-predictions (default is ‘batch’).</p></li>
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters. If making
+a single prediction should have shape (d,), if a batch prediction
+should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> (<em>str</em>) – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
 from each ensemble member (default is ‘batch’).</p></li>
@@ -82,15 +81,14 @@ If mean_or_full=’mean’ and single_or_batch=’single’ will have shape
 along with the scalers required to make predictions with the NNs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.Sigma.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Sigma.emu_predict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Sigma.emu_predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters.</p></li>
-<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
-Determines if a single prediction is being made or a batch of
-predictions (default is ‘batch’).</p></li>
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters. If making
+a single prediction should have shape (d,), if a batch prediction
+should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
 from each ensemble member (default is ‘batch’).</p></li>
@@ -118,15 +116,14 @@ If mean_or_full=’mean’ and single_or_batch=’single’ will have shape
 along with the scalers required to make predictions with the NNs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.SigmaPrime.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.SigmaPrime.emu_predict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.SigmaPrime.emu_predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters.</p></li>
-<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
-Determines if a single prediction is being made or a batch of
-predictions (default is ‘batch’).</p></li>
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters. If making
+a single prediction should have shape (d,), if a batch prediction
+should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
 from each ensemble member (default is ‘batch’).</p></li>
@@ -154,15 +151,14 @@ If mean_or_full=’mean’ and single_or_batch=’single’ will have shape
 along with the scalers required to make predictions with the NNs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.Growth.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Growth.emu_predict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Growth.emu_predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters.</p></li>
-<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
-Determines if a single prediction is being made or a batch of
-predictions (default is ‘batch’).</p></li>
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters. If making
+a single prediction should have shape (d,), if a batch prediction
+should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
 from each ensemble member (default is ‘batch’).</p></li>
@@ -190,15 +186,14 @@ If mean_or_full=’mean’ and single_or_batch=’single’ will have shape
 along with the scalers required to make predictions with the NNs.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.Boost.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Boost.emu_predict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Boost.emu_predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters.</p></li>
-<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
-Determines if a single prediction is being made or a batch of
-predictions (default is ‘batch’).</p></li>
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters. If making
+a single prediction should have shape (d,), if a batch prediction
+should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
 from each ensemble member (default is ‘batch’).</p></li>
@@ -239,7 +234,7 @@ initalised.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.HaloModel.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_COSMO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_HOD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_or_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'batch'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.HaloModel.emu_predict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_COSMO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_HOD</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.HaloModel.emu_predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make predictions for the halo model power spectrum with the
 pre-initalised component emulators.</p>
 <dl class="field-list simple">
@@ -250,9 +245,6 @@ single_or_batch=’single’ must have shape (7,), else must have shape
 (n,7).</p></li>
 <li><p><strong>X_HOD</strong> (<em>array</em>) – Input HOD parameters. If single_or_batch=’single’
 must have shape (5,), else must have shape (n,5).</p></li>
-<li><p><strong>single_or_batch</strong> (<em>str</em>) – Can be either ‘single’ or ‘batch’.
-Determines if a single prediction is being made or a batch of
-predictions (default is ‘batch’).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

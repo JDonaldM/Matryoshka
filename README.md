@@ -12,7 +12,7 @@ pip install .
 
 ## Basic usage
 
-The example below shows how to generate a prediction for a Planck18 $\Lambda$CDM transfer function using `matryoshka`. Setting `single_or_batch="single"` tells the emulator to expect a single set of input parameters, and setting `mean_or_full="mean"` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
+The example bellow shows how to generate a prediction for a Planck18 $\Lambda$CDM transfer function using `matryoshka`. Setting `mean_or_full="mean"` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
 
 ```python
 import numpy as np
@@ -24,5 +24,5 @@ COSMO = np.array([Planck18_arXiv_v2.Om0, Planck18_arXiv_v2.Ob0, Planck18_arXiv_v
 
 TransferEmu = Matry.Transfer()
 
-EmuPred = TransferEmu.emu_predict(COSMO, single_or_batch="single", mean_or_full="mean")
+EmuPred = TransferEmu.emu_predict(COSMO, mean_or_full="mean")
 ```

@@ -58,15 +58,14 @@ class Transfer:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, single_or_batch="batch", mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full="full"):
         '''
         Make predictions with the component emulator.
 
         Args:
-            X (array) : Array containing the relevant input parameters.
-            single_or_batch (str) : Can be either 'single' or 'batch'.
-             Determines if a single prediction is being made or a batch of
-             predictions (default is 'batch').
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape (d,), if a batch prediction
+             should have the shape (N,d).
             mean_or_full (str) : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'batch').
@@ -80,9 +79,7 @@ class Transfer:
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
-        if single_or_batch == "single":
-
-            X = X.reshape(1, -1)
+        X = np.atleast_2d(X)
 
         X_prime = self.scalers[0].transform(X)
 
@@ -141,15 +138,14 @@ class Sigma:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, single_or_batch="batch", mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full="full"):
         '''
         Make predictions with the component emulator.
 
         Args:
-            X (array) : Array containing the relevant input parameters.
-            single_or_batch (str) : Can be either 'single' or 'batch'.
-             Determines if a single prediction is being made or a batch of
-             predictions (default is 'batch').
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape (d,), if a batch prediction
+             should have the shape (N,d).
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'batch').
@@ -163,9 +159,7 @@ class Sigma:
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
-        if single_or_batch == "single":
-
-            X = X.reshape(1, -1)
+        X = np.atleast_2d(X)
 
         X_prime = self.scalers[0].transform(X)
 
@@ -225,15 +219,14 @@ class SigmaPrime:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, single_or_batch="batch", mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full="full"):
         '''
         Make predictions with the component emulator.
 
         Args:
-            X (array) : Array containing the relevant input parameters.
-            single_or_batch (str) : Can be either 'single' or 'batch'.
-             Determines if a single prediction is being made or a batch of
-             predictions (default is 'batch').
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape (d,), if a batch prediction
+             should have the shape (N,d).
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'batch').
@@ -247,9 +240,7 @@ class SigmaPrime:
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
-        if single_or_batch == "single":
-
-            X = X.reshape(1, -1)
+        X = np.atleast_2d(X)
 
         X_prime = self.scalers[0].transform(X)
 
@@ -309,15 +300,14 @@ class Growth:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, single_or_batch="batch", mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full="full"):
         '''
         Make predictions with the component emulator.
 
         Args:
-            X (array) : Array containing the relevant input parameters.
-            single_or_batch (str) : Can be either 'single' or 'batch'.
-             Determines if a single prediction is being made or a batch of
-             predictions (default is 'batch').
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape (d,), if a batch prediction
+             should have the shape (N,d).
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'batch').
@@ -331,9 +321,7 @@ class Growth:
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
-        if single_or_batch == "single":
-
-            X = X.reshape(1, -1)
+        X = np.atleast_2d(X)
 
         X_prime = self.scalers[0].transform(X)
 
@@ -407,15 +395,14 @@ class Boost:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, single_or_batch="batch", mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full="full"):
         '''
         Make predictions with the component emulator.
 
         Args:
-            X (array) : Array containing the relevant input parameters.
-            single_or_batch (str) : Can be either 'single' or 'batch'.
-             Determines if a single prediction is being made or a batch of
-             predictions (default is 'batch').
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape (d,), if a batch prediction
+             should have the shape (N,d).
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'batch').
@@ -429,9 +416,7 @@ class Boost:
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
-        if single_or_batch == "single":
-
-            X = X.reshape(1, -1)
+        X = np.atleast_2d(X)
 
         X_prime = self.scalers[0].transform(X)
 
@@ -503,7 +488,7 @@ class HaloModel:
         conc_duffy = Duffy08cmz(self.sigma.mbins, self.redshift)
         self.cm = conc_duffy
 
-    def emu_predict(self, X_COSMO, X_HOD, single_or_batch="batch"):
+    def emu_predict(self, X_COSMO, X_HOD):
         '''
         Make predictions for the halo model power spectrum with the
         pre-initalised component emulators.
@@ -514,9 +499,6 @@ class HaloModel:
              (n,7).
             X_HOD (array) : Input HOD parameters. If single_or_batch='single'
              must have shape (5,), else must have shape (n,5).
-            single_or_batch (str) : Can be either 'single' or 'batch'.
-             Determines if a single prediction is being made or a batch of
-             predictions (default is 'batch').
 
         Returns:
             Array containing the predictions from the halo model power spectrum.
@@ -525,21 +507,20 @@ class HaloModel:
         '''
 
         # Input must be reshaped if producing sinlge prediction.
-        if single_or_batch == "single":
-            X_COSMO = X_COSMO.reshape(1, -1)
-            X_HOD = X_HOD.reshape(1, -1)
+        X_COSMO = np.atleast_2d(X_COSMO)
+        X_HOD = np.atleast_2d(X_HOD)
 
         # Produce predictions from each of the components.
-        T_preds = self.Transfer.emu_predict(X_COSMO[:, [0, 1, 3, 5, 6]], single_or_batch="batch",
+        T_preds = self.Transfer.emu_predict(X_COSMO[:, [0, 1, 3, 5, 6]],
                                             mean_or_full="mean")
-        sigma_preds = self.sigma.emu_predict(X_COSMO, single_or_batch="batch",
+        sigma_preds = self.sigma.emu_predict(X_COSMO,
                                              mean_or_full="mean")
-        dlns_preds = self.dlns.emu_predict(X_COSMO, single_or_batch="batch",
+        dlns_preds = self.dlns.emu_predict(X_COSMO,
                                            mean_or_full="mean")
-        gf_preds = self.growth.emu_predict(X_COSMO[:, [0, 1, 3, 5, 6]], single_or_batch="batch",
+        gf_preds = self.growth.emu_predict(X_COSMO[:, [0, 1, 3, 5, 6]],
                                            mean_or_full="mean")
         if self.nonlinear:
-            boost_preds = self.boost.emu_predict(np.hstack([X_HOD, X_COSMO]), single_or_batch="batch",
+            boost_preds = self.boost.emu_predict(np.hstack([X_HOD, X_COSMO]),
                                                  mean_or_full="mean")
             # Force the nonlinear boost to unity outside the emulation range.
             boost_preds = interp1d(self.boost.kbins, boost_preds, bounds_error=False,

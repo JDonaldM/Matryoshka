@@ -42,9 +42,9 @@ The example below shows how to generate a prediction for a Planck18 LCDM transfe
 	
 	TransferEmu = Matry.Transfer()
 	
-	EmuPred = TransferEmu.emu_predict(COSMO, single_or_batch="single", mean_or_full="mean")
+	EmuPred = TransferEmu.emu_predict(COSMO, mean_or_full="mean")
 
-Setting ``single_or_batch="single"`` tells the emulator to expect a single set of input parameters, and setting ``mean_or_full="mean"`` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
+Setting ``mean_or_full="mean"`` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
 
 Indices and tables
 ==================

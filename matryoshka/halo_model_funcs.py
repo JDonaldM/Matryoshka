@@ -362,7 +362,8 @@ def nonlinear_power(k, power, sigma8, redshift, cosmo):
 
 
 def halomodel_power(k, m, transfer, sigma, dlns, cosmo, sigma8, ns,
-                    HOD, conc, growth, redshift, nonlinear=False):
+                    HOD, conc, growth, redshift, nonlinear=False,
+                    split_1h_2h=False):
     '''
     Covience function for calculating the galaxy power spectrum.
 
@@ -385,6 +386,8 @@ def halomodel_power(k, m, transfer, sigma, dlns, cosmo, sigma8, ns,
          redshift.
         redshift (float) : redshift.
         nonlinear (bool) : If True nonlinearities included via HALOFIT.
+        split_1h_2h (bool) : If True contributions from the 1-halo and 2-halo
+         terms are returned seperately.
 
     Returns:
         The galaxy power spectrum of shape (nk,).
@@ -415,7 +418,10 @@ def halomodel_power(k, m, transfer, sigma, dlns, cosmo, sigma8, ns,
     P1h_cs = power_1h_cs(u_m, hmf_matry[tm], m[tm], N_c, N_s, n_t)
     P2h = power_2h(u_m, hmf_matry[tm], m[tm],
                    N_tot, n_t, pm_matry, halo_bias[tm])
-    return P2h+P1h_cs+P1h_ss, n_t
+    if split_1h_2h:
+        return P1h_cs+P1h_ss, P2h, ns
+    else:
+        return P2h+P1h_cs+P1h_ss, n_t
 
 
 def Gcov(P_k, k, dk, n, V):
@@ -439,8 +445,7 @@ def Gcov(P_k, k, dk, n, V):
 
 def Duffy08cmz(m, redshift):
     '''
-    Concentration mass realtion from Duffy08
-    (hacked halomod)
+    Replacement Class for ``halomod.concentration.Duffy08`` (hacked halomod)
 
     Assumes a spherical overdensity mass defention.
 
@@ -462,20 +467,35 @@ def Duffy08cmz(m, redshift):
 
 
 class TopHatrep:
+    '''
+    Replacement Class for ``hmf.density_field.filters.TopHat`` (hacked halomod)
+
+    Args:
+        k (array) : Array containing wave-numbers associated to ``power``.
+        power (array) : Un-normalised power spectrum at redshift 0.
+    '''
+
     def __init__(self, k, power):
         self.k = k
         self.power = power
 
-    def sigma(self, r):
+    def sigma(self, r, order=0, rk=None):
+        '''
+        Mass variance.
+        '''
+        if rk is None:
+            rk = np.outer(r, self.k)
 
         dlnk = np.log(self.k[1] / self.k[0])
-        rk = np.outer(r, self.k)
 
         # we multiply by k because our steps are in logk.
-        rest = self.power * self.k ** (3 * 2)
+        rest = self.power * self.k ** (3 + order * 2)
         integ = rest * self.k_space(rk) ** 2
         sigma = (0.5 / np.pi ** 2) * simps(integ, dx=dlnk, axis=-1)
         return np.sqrt(sigma)
 
     def k_space(self, kr):
+        '''
+        Top-hat window function in Fourier space.
+        '''
         return np.where(kr > 1.4e-6, (3 / kr ** 3) * (np.sin(kr) - kr * np.cos(kr)), 1)
