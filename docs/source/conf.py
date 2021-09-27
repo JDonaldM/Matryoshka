@@ -31,8 +31,13 @@ release = '0.0.2'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.napoleon',
-              'sphinx.ext.autosummary'
-              ]
+              'sphinx.ext.autodoc',
+              'sphinx.ext.autosummary',
+              'sphinx.ext.intersphinx',
+              'sphinx.ext.mathjax',
+              'sphinx.ext.coverage',
+              'nbsphinx',
+              'IPython.sphinxext.ipython_console_highlighting']
 
 # Napoleon settings
 napoleon_google_docstring = True

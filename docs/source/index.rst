@@ -57,3 +57,4 @@ Indices and tables
     :hidden:
 
     api
+    examples
