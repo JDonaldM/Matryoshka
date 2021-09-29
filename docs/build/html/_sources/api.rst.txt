@@ -2,7 +2,7 @@
 API Reference
 =============
 
-**matryoshka** is made up of two key modules:
+``matryoshka`` is made up of two key modules:
 
 .. toctree::
    :maxdepth: 2

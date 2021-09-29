@@ -3,24 +3,19 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to matryoshka's documentation!
-======================================
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
+Welcome to the ``matryoshka`` documentation
+===========================================
 
 ``matryoshka`` is a Python package for predicting the galaxy power spectrum with a neural network (NN) based emulator.
 
 Installation
 ============
 
-The package can be installed by cloning the repository and using ``pip``.::
+The package can be installed by cloning the repository and using ``pip``::
 
 
-	git clone https://github.com/<your-username>/Matryoshka.git
-	cd path\to\Matryoshka
+	git clone https://github.com/JDonaldM/Matryoshka.git
+	cd Matryoshka
 	pip install .
 
 
@@ -53,13 +48,9 @@ Indices and tables
 * :ref:`search`
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 4
+    :caption: Contents:
     :hidden:
 
     examples
-
-.. toctree::
-    :maxdepth: 3
-    :hidden:
-
     api

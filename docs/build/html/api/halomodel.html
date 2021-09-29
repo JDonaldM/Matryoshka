@@ -1,45 +1,107 @@
-
 <!DOCTYPE html>
-
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>matryoshka.halo_model_funcs &#8212; matryoshka 0.0.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>matryoshka.halo_model_funcs &mdash; matryoshka 0.0.3 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Examples" href="../examples.html" />
-    <link rel="prev" title="matryoshka.emulator" href="emulator.html" />
-   
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="prev" title="matryoshka.emulator" href="emulator.html" /> 
+</head>
 
-  </head><body>
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> matryoshka
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="emulator.html">matryoshka.emulator</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">matryoshka.halo_model_funcs</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">matryoshka</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../api.html">API Reference</a> &raquo;</li>
+      <li>matryoshka.halo_model_funcs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/halomodel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   
+<style>
+/* CSS overrides for sphinx_rtd_theme */
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
 
-          <div class="body" role="main">
-            
-  <section id="matryoshka-halo-model-funcs">
-<h1>matryoshka.halo_model_funcs<a class="headerlink" href="#matryoshka-halo-model-funcs" title="Permalink to this headline">¶</a></h1>
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="matryoshka-halo-model-funcs">
+<h1>matryoshka.halo_model_funcs<a class="headerlink" href="#matryoshka-halo-model-funcs" title="Permalink to this headline"></a></h1>
 <p>Module containing functions for combining the predictions from the <strong>matryoshka</strong> componenet emulators to calculate the galaxy power spectrum.</p>
 <span class="target" id="module-matryoshka.halo_model_funcs"></span><dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.Duffy08cmz">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">Duffy08cmz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.Duffy08cmz" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">Duffy08cmz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.Duffy08cmz" title="Permalink to this definition"></a></dt>
 <dd><p>Replacement Class for <code class="docutils literal notranslate"><span class="pre">halomod.concentration.Duffy08</span></code> (hacked halomod)</p>
 <p>Assumes a spherical overdensity mass defention.</p>
 <dl class="field-list simple">
@@ -58,7 +120,7 @@ concentration.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.Gcov">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">Gcov</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.Gcov" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">Gcov</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P_k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.Gcov" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate a Gaussian diagonal covariance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -78,7 +140,7 @@ concentration.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.TinkerBias">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">TinkerBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_halo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.686</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.TinkerBias" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">TinkerBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_halo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.686</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.TinkerBias" title="Permalink to this definition"></a></dt>
 <dd><p>(halomod hack)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -97,11 +159,9 @@ is 200.0).</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.Tinkerfsigma">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">Tinkerfsigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.Tinkerfsigma" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Tinker10 fitting function used to calculate the halo mass function from the</dt><dd><p>mass variance (halomod hack).</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">Tinkerfsigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.Tinkerfsigma" title="Permalink to this definition"></a></dt>
+<dd><p>Tinker10 fitting function used to calculate the halo mass function from the
+mass variance (halomod hack).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -117,7 +177,7 @@ is 200.0).</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.TopHatrep">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">TopHatrep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.TopHatrep" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">TopHatrep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.TopHatrep" title="Permalink to this definition"></a></dt>
 <dd><p>Replacement Class for <code class="docutils literal notranslate"><span class="pre">hmf.density_field.filters.TopHat</span></code> (hacked halomod)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -129,13 +189,13 @@ is 200.0).</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.TopHatrep.k_space">
-<span class="sig-name descname"><span class="pre">k_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.TopHatrep.k_space" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">k_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.TopHatrep.k_space" title="Permalink to this definition"></a></dt>
 <dd><p>Top-hat window function in Fourier space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.TopHatrep.sigma">
-<span class="sig-name descname"><span class="pre">sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.TopHatrep.sigma" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.TopHatrep.sigma" title="Permalink to this definition"></a></dt>
 <dd><p>Mass variance.</p>
 </dd></dl>
 
@@ -143,7 +203,7 @@ is 200.0).</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.cen_Z09">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">cen_Z09</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logM_cut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.cen_Z09" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">cen_Z09</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logM_cut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.cen_Z09" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -160,7 +220,7 @@ is 200.0).</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.delta_k">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">delta_k</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.delta_k" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">delta_k</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.delta_k" title="Permalink to this definition"></a></dt>
 <dd><p>From halomod.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -178,7 +238,7 @@ of shape (n,).</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.halomodel_power">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">halomodel_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HOD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">growth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonlinear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_1h_2h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.halomodel_power" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">halomodel_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HOD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">growth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonlinear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_1h_2h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.halomodel_power" title="Permalink to this definition"></a></dt>
 <dd><p>Covience function for calculating the galaxy power spectrum.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -213,7 +273,7 @@ terms are returned seperately.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.hmf">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">hmf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlnsdlnm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">growth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.hmf" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">hmf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlnsdlnm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">growth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.hmf" title="Permalink to this definition"></a></dt>
 <dd><p>Tinker08 halo mass function (halomod hack).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -234,7 +294,7 @@ mass varaince of shape (n,).</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.mass_int">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">mass_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.mass_int" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">mass_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.mass_int" title="Permalink to this definition"></a></dt>
 <dd><p>Approximates the mass integral for various quanties used in the halomodel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -253,7 +313,7 @@ axis.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.mean_density0_v2">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">mean_density0_v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Om0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.mean_density0_v2" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">mean_density0_v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Om0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.mean_density0_v2" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the mean density at redshift 0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -270,7 +330,7 @@ axis.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.ngal">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">ngal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dndm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tot_occ</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.ngal" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">ngal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dndm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tot_occ</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.ngal" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates the mean number density of galaxies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -290,7 +350,7 @@ masses.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.nonlinear_power">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">nonlinear_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.nonlinear_power" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">nonlinear_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.nonlinear_power" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -310,11 +370,9 @@ of shape (n,).</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.norm">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unnormed_P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.norm" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Calculates the normalisation for the primordial power spectrum based on a</dt><dd><p>given value of sigma_8 (hacked halomod).</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unnormed_P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.norm" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the normalisation for the primordial power spectrum based on a
+given value of sigma_8 (hacked halomod).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -331,11 +389,9 @@ of shape (n,).</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.power0_v2">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">power0_v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.power0_v2" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Calculate the normalised linear power spectrum at redshift 0.</dt><dd><p>(hacked halomod)</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">power0_v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.power0_v2" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the normalised linear power spectrum at redshift 0.
+(hacked halomod)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -353,12 +409,9 @@ of shape (n,).</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.power_1h_cs">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">power_1h_cs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ukm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dndm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_occ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat_occ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_tracer_den</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.power_1h_cs" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Returns the cen-sat contribution to the 1halo term of the galaxy power spectrum</dt><dd><p>(hacked halomod)
-Imposes central condition</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">power_1h_cs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ukm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dndm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_occ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat_occ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_tracer_den</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.power_1h_cs" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the cen-sat contribution to the 1halo term of the galaxy power spectrum.
+(hacked halomod). Imposes central condition</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -379,12 +432,9 @@ profile.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.power_1h_ss">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">power_1h_ss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ukm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dndm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_occ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat_occ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_tracer_den</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.power_1h_ss" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Returns the sat-sat contribution to the 1halo term of the galaxy power spectrum</dt><dd><p>(hacked halomod)
-Imposes central condition</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">power_1h_ss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ukm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dndm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cen_occ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat_occ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_tracer_den</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.power_1h_ss" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the sat-sat contribution to the 1halo term of the galaxy power spectrum.
+(hacked halomod). Imposes central condition</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -405,7 +455,7 @@ profile.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.power_2h">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">power_2h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ukm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dndm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_occ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_tracer_den</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Plin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">halo_bias</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.power_2h" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">power_2h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ukm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dndm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_occ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_tracer_den</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Plin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">halo_bias</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.power_2h" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the 2halo term of the galaxy power spectrum</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -428,7 +478,7 @@ profile.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.sat_Z09">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">sat_Z09</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logM1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logM_cut</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.sat_Z09" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">sat_Z09</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logM1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logM_cut</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.sat_Z09" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -449,20 +499,16 @@ halo to host a sattelite.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.u">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">u</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_halo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.u" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>NFW in fourier space</dt><dd><p>(hacked halomod)</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">u</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_halo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.u" title="Permalink to this definition"></a></dt>
+<dd><p>NFW in fourier space
+(hacked halomod)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.halo_model_funcs.unnormed_P">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">unnormed_P</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.unnormed_P" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Function to calculate the un-normalised primordial power spectrum.</dt><dd><p>(hacked halomod).</p>
-</dd>
-</dl>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">unnormed_P</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.unnormed_P" title="Permalink to this definition"></a></dt>
+<dd><p>Function to calculate the un-normalised primordial power spectrum.
+(hacked halomod).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -477,81 +523,36 @@ halo to host a sattelite.</p></li>
 </dl>
 </dd></dl>
 
-</section>
+</div>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="emulator.html" class="btn btn-neutral float-left" title="matryoshka.emulator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Jamie Donald-McCann.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">matryoshka</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="emulator.html">matryoshka.emulator</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">matryoshka.halo_model_funcs</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api.html">API Reference</a><ul>
-      <li>Previous: <a href="emulator.html" title="previous chapter">matryoshka.emulator</a></li>
-      <li>Next: <a href="../examples.html" title="next chapter">Examples</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2021, Jamie Donald-McCann.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/api/halomodel.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

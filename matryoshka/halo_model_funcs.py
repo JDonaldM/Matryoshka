@@ -12,7 +12,7 @@ from scipy.integrate import simps
 def unnormed_P(k, T, ns):
     '''
     Function to calculate the un-normalised primordial power spectrum.
-     (hacked halomod).
+    (hacked halomod).
 
     Args:
         k (array) : k-bins of the transfer function(s).
@@ -28,7 +28,7 @@ def unnormed_P(k, T, ns):
 def norm(k, unnormed_P, sigma8):
     '''
     Calculates the normalisation for the primordial power spectrum based on a
-     given value of sigma_8 (hacked halomod).
+    given value of sigma_8 (hacked halomod).
 
     Args:
         k (array) : k-bins of the un-normalised power spectrum/spectra.
@@ -45,7 +45,7 @@ def norm(k, unnormed_P, sigma8):
 def power0_v2(k, T, sigma8, ns):
     '''
     Calculate the normalised linear power spectrum at redshift 0.
-     (hacked halomod)
+    (hacked halomod)
 
     Args:
         k (array) : k-bins of the transfer function(s).
@@ -72,7 +72,7 @@ def _p(K, bs, bc, asi, ac, c):
 def _r_s(m, mean_dens, c, delta_halo=200.0):
     '''
     Calculates the scale radius from the halo mass.
-     (hacked halomod)
+    (hacked halomod)
     '''
     return ((3 * m / (4 * np.pi * delta_halo * mean_dens)) ** (1.0 / 3.0))/c
 
@@ -80,7 +80,7 @@ def _r_s(m, mean_dens, c, delta_halo=200.0):
 def u(k, m, c, mean_dens, delta_halo=200.0):
     '''
     NFW in fourier space
-     (hacked halomod)
+    (hacked halomod)
     '''
     r_s = _r_s(m, mean_dens, c, delta_halo)
     K = np.outer(k, r_s)
@@ -194,9 +194,8 @@ def sat_Z09(M, logM1, alpha, kappa, logM_cut):
 
 def power_1h_ss(ukm, dndm, m, cen_occ, sat_occ, mean_tracer_den):
     '''
-    Returns the sat-sat contribution to the 1halo term of the galaxy power spectrum
-     (hacked halomod)
-     Imposes central condition
+    Returns the sat-sat contribution to the 1halo term of the galaxy power spectrum.
+    (hacked halomod). Imposes central condition
 
     Args:
         ukm (array) : The halo profile in Fourier space.
@@ -216,9 +215,8 @@ def power_1h_ss(ukm, dndm, m, cen_occ, sat_occ, mean_tracer_den):
 
 def power_1h_cs(ukm, dndm, m, cen_occ, sat_occ, mean_tracer_den):
     '''
-    Returns the cen-sat contribution to the 1halo term of the galaxy power spectrum
-     (hacked halomod)
-     Imposes central condition
+    Returns the cen-sat contribution to the 1halo term of the galaxy power spectrum.
+    (hacked halomod). Imposes central condition
 
     Args:
         ukm (array) : The halo profile in Fourier space.
@@ -283,7 +281,7 @@ def mean_density0_v2(h, Om0):
 def Tinkerfsigma(sigma, redshift):
     '''
     Tinker10 fitting function used to calculate the halo mass function from the
-     mass variance (halomod hack).
+    mass variance (halomod hack).
 
     Args:
         sigma (array) : Array containing the mass variance of shape (n,).
