@@ -1,0 +1,662 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>MCMC with matryoshka and zeus &#8212; matryoshka 0.0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="MCMC-with-matryoshka-and-zeus">
+<h1>MCMC with <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> and <code class="docutils literal notranslate"><span class="pre">zeus</span></code><a class="headerlink" href="#MCMC-with-matryoshka-and-zeus" title="Permalink to this headline">¶</a></h1>
+<p>In this example we demonstrate how to exploit the batch preidctions of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> when runnig an MCMC with <a class="reference external" href="https://zeus-mcmc.readthedocs.io/en/latest/">zeus</a>.</p>
+<p>We start by import all the packages required for this example.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matryoshka.emulator</span> <span class="k">as</span> <span class="nn">Matry</span>
+<span class="kn">import</span> <span class="nn">matryoshka.halo_model_funcs</span> <span class="k">as</span> <span class="nn">MatryHM</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">multivariate_normal</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">import</span> <span class="nn">zeus</span>
+<span class="kn">import</span> <span class="nn">time</span>
+</pre></div>
+</div>
+</div>
+<p>Next we initalise the <span class="math notranslate nohighlight">\(T(k)\)</span> component emulator. This is very simple and can be done with the <code class="docutils literal notranslate"><span class="pre">.Transfer()</span></code> emulator class. Upon initalisation all weights for the neual networks (NNs) are loaded meaning that no re-training is required before making predictions.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">TransferEmu</span> <span class="o">=</span> <span class="n">Matry</span><span class="o">.</span><span class="n">Transfer</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>We next select a cosmology at random from the <code class="docutils literal notranslate"><span class="pre">Matryoshka</span></code> test set. This randomly selected cosmology will be our “truth”.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">cache_dir</span> <span class="o">=</span> <span class="s2">&quot;/Users/jamie/Desktop/Matryoshka/matryoshka-data/&quot;</span>
+<span class="c1"># We load X_sigma instead of X_transfer here simply because it conatins all 7 cosmological parameters.</span>
+<span class="c1"># X_transfer excludes sigma8 and ns.</span>
+<span class="n">valX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cache_dir</span><span class="o">+</span><span class="s2">&quot;class_aemulus/test/X_sigma-v3.npy&quot;</span><span class="p">)</span>
+<span class="n">valY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cache_dir</span><span class="o">+</span><span class="s2">&quot;class_aemulus/test/Y_transfer-v3.npy&quot;</span><span class="p">)</span>
+
+<span class="n">truth_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">valX</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">truth_id</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+767
+</pre></div></div>
+</div>
+<p>This random selection will of course be different each time the notbook is run, if you wish to use the same value that was used when this notbook was generated simply uncomment the line in the cell bellow.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#truth_id = 1872</span>
+<span class="n">COSMO_true</span> <span class="o">=</span> <span class="n">valX</span><span class="p">[</span><span class="n">truth_id</span><span class="p">]</span>
+<span class="n">Tk_true</span> <span class="o">=</span> <span class="n">valY</span><span class="p">[</span><span class="n">truth_id</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;True cosmology:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Om:</span><span class="si">{a}</span><span class="s2">, Ob:</span><span class="si">{b}</span><span class="s2">, sigma8:</span><span class="si">{c}</span><span class="s2">, h:</span><span class="si">{d}</span><span class="s2">, ns:</span><span class="si">{e}</span><span class="s2">, Neff:</span><span class="si">{f}</span><span class="s2">, w0:</span><span class="si">{g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                                           <span class="n">c</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                                                                           <span class="n">e</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">f</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                                                                           <span class="n">g</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">6</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+True cosmology:
+Om:0.3286275715044408, Ob:0.06028250214135623, sigma8:0.6559619292762228, h:0.6215872760252105, ns:0.9715340357189762, Neff:3.150848344384581, w0:-0.5677807767931059
+</pre></div></div>
+</div>
+<p>As a quick test we can see how the prediction from the <span class="math notranslate nohighlight">\(T(k)\)</span> componenet emulator compares to the truth when the true cosmological parameters are used as input.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">Tk_pred</span> <span class="o">=</span> <span class="n">TransferEmu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">COSMO_true</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]],</span> <span class="n">mean_or_full</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span><span class="n">TransferEmu</span><span class="o">.</span><span class="n">kbins</span><span class="p">,</span> <span class="n">Tk_true</span><span class="o">/</span><span class="n">Tk_pred</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Truth&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$k \ [h \ \mathrm</span><span class="si">{Mpc}</span><span class="s2">^{-1}]$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$T_\mathrm</span><span class="si">{true}</span><span class="s2">(k) \ / \ T_\mathrm{emu.}(k)$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/example_notebooks_toy_example_mcmc_10_0.png" src="../_images/example_notebooks_toy_example_mcmc_10_0.png" />
+</div>
+</div>
+<p>To generate a mock signal we can use in our MCMC, we calculate the linear matter power spectrum <span class="math notranslate nohighlight">\(P_L(k) = A_s k^{n_s}T^2(k)\)</span>. This is clearly an unrealistic example, the linear matter power spectrum is not something we will observe, it serves as a simple example that will convergence quickly whilst using all the cosmological parameters of our model.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Impose a range that would be more realistic if we were considering galaxy clustering.</span>
+<span class="n">k_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.005</span><span class="p">)</span>
+
+<span class="n">power_true</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">TransferEmu</span><span class="o">.</span><span class="n">kbins</span><span class="p">,</span>
+                      <span class="n">MatryHM</span><span class="o">.</span><span class="n">power0_v2</span><span class="p">(</span><span class="n">TransferEmu</span><span class="o">.</span><span class="n">kbins</span><span class="p">,</span> <span class="n">Tk_true</span><span class="p">,</span> <span class="n">sigma8</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">ns</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">4</span><span class="p">])[</span><span class="mi">0</span><span class="p">])(</span><span class="n">k_obs</span><span class="p">)</span>
+
+<span class="c1"># Define a very simple scale dependent measurement noise.</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">k_obs</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">k_obs</span><span class="p">,</span> <span class="n">power_true</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">noise</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$k \ [h \ \mathrm</span><span class="si">{Mpc}</span><span class="s2">^{-1}]$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$P(k) \ [\mathrm</span><span class="si">{Mpc}</span><span class="s2"> \ h^{-1}]^3$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/example_notebooks_toy_example_mcmc_12_0.png" src="../_images/example_notebooks_toy_example_mcmc_12_0.png" />
+</div>
+</div>
+<p>Now we can think about defining our prior and likelihood to be used in the MCMC.</p>
+<p>For the prior we use a multivariate Gaussian prior that is defined by the <code class="docutils literal notranslate"><span class="pre">Matryoshka</span></code> training samples. This prior associates low probability to regions of the parameter space that are not covered by training data.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">trainX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cache_dir</span><span class="o">+</span><span class="s2">&quot;class_aemulus/train/X_sigma-v3.npy&quot;</span><span class="p">)</span>
+<span class="n">mvn</span> <span class="o">=</span> <span class="n">multivariate_normal</span><span class="p">(</span><span class="n">trainX</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">trainX</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">mvn</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">theta</span><span class="p">[:,:])</span>
+</pre></div>
+</div>
+</div>
+<p>Next we define a Gaussian likelihood with the form</p>
+<div class="math notranslate nohighlight">
+\[\ln{\mathcal{L}(d|\theta)}=-\frac{1}{2}\frac{(P-P'(\theta))^2}{\sigma^2}.\]</div>
+<p>Where <span class="math notranslate nohighlight">\(P\)</span> is our <code class="docutils literal notranslate"><span class="pre">power_true</span></code>, <span class="math notranslate nohighlight">\(P'(\theta)\)</span> is the emulator prediction for the parameters <span class="math notranslate nohighlight">\(\theta\)</span>, and <span class="math notranslate nohighlight">\(\sigma\)</span> is our <code class="docutils literal notranslate"><span class="pre">noise</span></code>. We construct this function such that it expects multiple parameter sets to evaluate, exploiting the batch prediction speed from <code class="docutils literal notranslate"><span class="pre">Matryoshka</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">log_like</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs_pow</span><span class="p">,</span> <span class="n">noise</span><span class="p">):</span>
+    <span class="n">preds_T</span> <span class="o">=</span> <span class="n">TransferEmu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">theta</span><span class="p">[:,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]],</span> <span class="n">mean_or_full</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+
+    <span class="n">preds_power</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">TransferEmu</span><span class="o">.</span><span class="n">kbins</span><span class="p">,</span> <span class="n">MatryHM</span><span class="o">.</span><span class="n">power0_v2</span><span class="p">(</span><span class="n">TransferEmu</span><span class="o">.</span><span class="n">kbins</span><span class="p">,</span> <span class="n">preds_T</span><span class="p">,</span> <span class="n">sigma8</span><span class="o">=</span><span class="n">theta</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span>
+                                                                <span class="n">ns</span><span class="o">=</span><span class="n">theta</span><span class="p">[:,</span><span class="mi">4</span><span class="p">]))(</span><span class="n">k_obs</span><span class="p">)</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">obs_pow</span> <span class="o">-</span> <span class="n">preds_power</span>
+
+    <span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">res</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">noise</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The final function we need before runnig our MCMC combines the log-likelihood and the log-prior to calculate the log-probability.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">log_prob</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs_pow</span><span class="p">,</span> <span class="n">noise</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">lp</span> <span class="o">=</span> <span class="n">log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">ll</span> <span class="o">=</span> <span class="n">log_like</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs_pow</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ll</span><span class="o">+</span><span class="n">lp</span>
+
+<span class="c1"># We also define a function for the negative log_prob, this will be used with the minimize function from scipy so</span>
+<span class="c1"># does not exploit batch predictions.</span>
+<span class="k">def</span> <span class="nf">neg_log_prob</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs_pow</span><span class="p">,</span> <span class="n">icov</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">log_prob</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs_pow</span><span class="p">,</span> <span class="n">icov</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>As the title of this notebook suggests, we will be using <code class="docutils literal notranslate"><span class="pre">zeus</span></code> to do our MCMC. <code class="docutils literal notranslate"><span class="pre">zeus</span></code> is an ensemble sampler, as such requires us to generate inital positions for ensemble of walkers. For this example we generate the walker positions as small perturbations from the maximum likelihood position.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">results</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">neg_log_prob</span><span class="p">,</span> <span class="n">trainX</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">power_true</span><span class="p">,</span> <span class="n">noise</span><span class="p">),</span>
+                   <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="mi">100000</span><span class="p">},</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Maximum likelihood cosmology:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Om:</span><span class="si">{a}</span><span class="s2">, Ob:</span><span class="si">{b}</span><span class="s2">, sigma8:</span><span class="si">{c}</span><span class="s2">, h:</span><span class="si">{d}</span><span class="s2">, ns:</span><span class="si">{e}</span><span class="s2">, Neff:</span><span class="si">{f}</span><span class="s2">, w0:</span><span class="si">{g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                                           <span class="n">c</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                                                                           <span class="n">e</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">f</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                                                                           <span class="n">g</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">6</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;===================&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;True cosmology:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Om:</span><span class="si">{a}</span><span class="s2">, Ob:</span><span class="si">{b}</span><span class="s2">, sigma8:</span><span class="si">{c}</span><span class="s2">, h:</span><span class="si">{d}</span><span class="s2">, ns:</span><span class="si">{e}</span><span class="s2">, Neff:</span><span class="si">{f}</span><span class="s2">, w0:</span><span class="si">{g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                                           <span class="n">c</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                                                                           <span class="n">e</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">f</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                                                                           <span class="n">g</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">6</span><span class="p">]))</span>
+
+<span class="n">init_pos</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="o">+</span><span class="mf">1e-3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Optimization terminated successfully.
+         Current function value: -18.618662
+         Iterations: 566
+         Function evaluations: 867
+Maximum likelihood cosmology:
+Om:0.32491266043075234, Ob:0.05703549024778341, sigma8:0.6559245759710872, h:0.629905712630096, ns:0.9729993106848223, Neff:3.5676667082273625, w0:-0.6789214031852342
+===================
+True cosmology:
+Om:0.3286275715044408, Ob:0.06028250214135623, sigma8:0.6559619292762228, h:0.6215872760252105, ns:0.9715340357189762, Neff:3.150848344384581, w0:-0.5677807767931059
+</pre></div></div>
+</div>
+<p>We can now run our MCMC, we run for 1000 steps, this should be more that <span class="math notranslate nohighlight">\(10\times\)</span> the autocorrelation time for most examples.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sampler</span> <span class="o">=</span> <span class="n">zeus</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">log_prob</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">power_true</span><span class="p">,</span> <span class="n">noise</span><span class="p">),</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">init_pos</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{a}</span><span class="s2"> likelihood evaluations in </span><span class="si">{b}</span><span class="s2"> minutes.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">ncall</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Initialising ensemble of 20 walkers...
+Sampling progress : 100%|██████████| 1000/1000 [02:07&lt;00:00,  7.84it/s]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+97766 likelihood evaluations in 2.1 minutes.
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+
+</pre></div></div>
+</div>
+<p>Once the MCMC has finished we can examine our chains are resulting posterior distributions.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># For this example we say that the chain is burnt-in once we have reached more than 5X the autocorrelation time.</span>
+<span class="c1"># We only keep the samples after we have burnt-in.</span>
+<span class="n">chain</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">act</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="mi">5</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;width_ratios&#39;</span><span class="p">:[</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">]},</span> <span class="n">sharex</span><span class="o">=</span><span class="s1">&#39;col&#39;</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="s1">&#39;row&#39;</span><span class="p">)</span>
+
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$\Omega_m$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\Omega_b$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\sigma_8$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$h$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$n_s$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$N_\mathrm{eff.}$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$w_0$&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">chain</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">chain</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_frame_on</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">COSMO_true</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.975</span><span class="p">]:</span>
+            <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">chain</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">q</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Steps after burn-in&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/example_notebooks_toy_example_mcmc_24_0.png" src="../_images/example_notebooks_toy_example_mcmc_24_0.png" />
+</div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">matryoshka</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Jamie Donald-McCann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/example_notebooks/toy_example_mcmc.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

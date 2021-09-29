@@ -53,8 +53,13 @@ Indices and tables
 * :ref:`search`
 
 .. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    examples
+
+.. toctree::
     :maxdepth: 3
     :hidden:
 
     api
-    examples
