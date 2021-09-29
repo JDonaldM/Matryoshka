@@ -19,7 +19,9 @@
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="MCMC with matryoshka and zeus" href="toy_example_mcmc.html" />
+    <link rel="prev" title="Examples" href="../examples.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -37,10 +39,14 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Example of tranfer function emulator usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="toy_example_mcmc.html">MCMC with <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> and <code class="docutils literal notranslate"><span class="pre">zeus</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="resample_example.html">Generating training samples for the base model componenets</a></li>
 </ul>
-<ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
@@ -58,6 +64,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../examples.html">Examples</a> &raquo;</li>
       <li>Example of tranfer function emulator usage</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/example_notebooks/transfer_basic.ipynb.txt" rel="nofollow"> View page source</a>
@@ -340,8 +347,8 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Example-of-tranfer-function-emulator-usage">
 <h1>Example of tranfer function emulator usage<a class="headerlink" href="#Example-of-tranfer-function-emulator-usage" title="Permalink to this headline"></a></h1>
-<p>The purpose of this notebook is to demonstrate how to initalise and make predictions with the transfer funtion <span class="math notranslate nohighlight">\(T(k)\)</span> base model componenet emulator of <code class="docutils literal notranslate"><span class="pre">Matryoshka</span></code>.</p>
-<p>We will start by loading the <code class="docutils literal notranslate"><span class="pre">emulator</span></code> module of <code class="docutils literal notranslate"><span class="pre">Matryoshka</span></code> along with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> for plotting and <code class="docutils literal notranslate"><span class="pre">time</span></code> for timing predictions. We will also load <code class="docutils literal notranslate"><span class="pre">numpy</span></code> and the base model validation set.</p>
+<p>The purpose of this notebook is to demonstrate how to initalise and make predictions with the transfer funtion <span class="math notranslate nohighlight">\(T(k)\)</span> base model componenet emulator of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code>.</p>
+<p>We will start by loading the <code class="docutils literal notranslate"><span class="pre">emulator</span></code> module of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> along with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> for plotting and <code class="docutils literal notranslate"><span class="pre">time</span></code> for timing predictions. We will also load <code class="docutils literal notranslate"><span class="pre">numpy</span></code> and the base model validation set.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -449,7 +456,10 @@ div.rendered_html tbody tr:hover {
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="toy_example_mcmc.html" class="btn btn-neutral float-right" title="MCMC with matryoshka and zeus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

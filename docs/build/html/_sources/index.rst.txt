@@ -11,7 +11,7 @@ Welcome to the ``matryoshka`` documentation
 Installation
 ============
 
-The package can be installed by cloning the repository and using ``pip``.::
+The package can be installed by cloning the repository and using ``pip``::
 
 
 	git clone https://github.com/JDonaldM/Matryoshka.git
@@ -40,12 +40,13 @@ The example below shows how to generate a prediction for a Planck18 LCDM transfe
 	EmuPred = TransferEmu.emu_predict(COSMO, mean_or_full="mean")
 
 Setting ``mean_or_full="mean"`` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
+See the :doc:`examples` page for further example usage of ``matryoshka``, and see :doc:`api` for a comprehensive user manual.
 
-Indices and tables
-==================
+License & Attribution
+=====================
 
-* :ref:`genindex`
-* :ref:`search`
+Copyright 2021 Jamie Donald-McCann.
+``matryoshka`` is free to use under the MIT license, if you find it useful for your research please cite Donald-McCann et al. (in prep).
 
 .. toctree::
     :maxdepth: 4

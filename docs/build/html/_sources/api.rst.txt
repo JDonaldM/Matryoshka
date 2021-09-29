@@ -9,3 +9,13 @@ API Reference
 
    api/emulator
    api/halomodel
+
+
+``matryoshka`` also includes some convenience functions for training and plotting.
+
+.. toctree::
+   :maxdepth: 2
+
+
+   api/training_funcs
+   api/plot

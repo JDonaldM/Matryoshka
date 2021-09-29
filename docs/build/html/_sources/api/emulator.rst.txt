@@ -2,7 +2,7 @@
 matryoshka.emulator
 ===================
 
-Module for producing predictions with the component emulaotrs of **matryoshka**.
+Module for producing predictions with the component emulators of ``matryoshka``.
 
 Transfer Function
 =================

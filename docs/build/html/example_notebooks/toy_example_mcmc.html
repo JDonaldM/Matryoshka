@@ -19,7 +19,9 @@
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Generating training samples for the base model componenets" href="resample_example.html" />
+    <link rel="prev" title="Example of tranfer function emulator usage" href="transfer_basic.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -37,10 +39,14 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="transfer_basic.html">Example of tranfer function emulator usage</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">MCMC with <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> and <code class="docutils literal notranslate"><span class="pre">zeus</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="resample_example.html">Generating training samples for the base model componenets</a></li>
 </ul>
-<ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
@@ -58,6 +64,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../examples.html">Examples</a> &raquo;</li>
       <li>MCMC with <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> and <code class="docutils literal notranslate"><span class="pre">zeus</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/example_notebooks/toy_example_mcmc.ipynb.txt" rel="nofollow"> View page source</a>
@@ -359,7 +366,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<p>Next we initalise the <span class="math notranslate nohighlight">\(T(k)\)</span> component emulator. This is very simple and can be done with the <code class="docutils literal notranslate"><span class="pre">.Transfer()</span></code> emulator class. Upon initalisation all weights for the neual networks (NNs) are loaded meaning that no re-training is required before making predictions.</p>
+<p>Next we initalise the <span class="math notranslate nohighlight">\(T(k)\)</span> component emulator. This is very simple and can be done with the <code class="docutils literal notranslate"><span class="pre">.Transfer()</span></code> emulator class. Upon initalisation all weights for the neural networks (NNs) are loaded meaning that no re-training is required before making predictions.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -369,7 +376,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<p>We next select a cosmology at random from the <code class="docutils literal notranslate"><span class="pre">Matryoshka</span></code> test set. This randomly selected cosmology will be our “truth”.</p>
+<p>We next select a cosmology at random from the <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> test set. This randomly selected cosmology will be our “truth”.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -392,16 +399,16 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-767
+111
 </pre></div></div>
 </div>
-<p>This random selection will of course be different each time the notbook is run, if you wish to use the same value that was used when this notbook was generated simply uncomment the line in the cell bellow.</p>
+<p>This random selection will of course be different each time the notbook is run, if you wish to use the same value that was used when this notebook was generated simply uncomment the line in the cell bellow.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#truth_id = 1872</span>
+<span></span><span class="c1">#truth_id = 111</span>
 <span class="n">COSMO_true</span> <span class="o">=</span> <span class="n">valX</span><span class="p">[</span><span class="n">truth_id</span><span class="p">]</span>
 <span class="n">Tk_true</span> <span class="o">=</span> <span class="n">valY</span><span class="p">[</span><span class="n">truth_id</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;True cosmology:&quot;</span><span class="p">)</span>
@@ -418,7 +425,7 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 True cosmology:
-Om:0.3286275715044408, Ob:0.06028250214135623, sigma8:0.6559619292762228, h:0.6215872760252105, ns:0.9715340357189762, Neff:3.150848344384581, w0:-0.5677807767931059
+Om:0.3211487413168327, Ob:0.05202673249965726, sigma8:0.7014181037514434, h:0.640406455460841, ns:0.9619645342556248, Neff:3.253688898055066, w0:-0.7867060147616014
 </pre></div></div>
 </div>
 <p>As a quick test we can see how the prediction from the <span class="math notranslate nohighlight">\(T(k)\)</span> componenet emulator compares to the truth when the true cosmological parameters are used as input.</p>
@@ -475,7 +482,7 @@ Om:0.3286275715044408, Ob:0.06028250214135623, sigma8:0.6559619292762228, h:0.62
 </div>
 </div>
 <p>Now we can think about defining our prior and likelihood to be used in the MCMC.</p>
-<p>For the prior we use a multivariate Gaussian prior that is defined by the <code class="docutils literal notranslate"><span class="pre">Matryoshka</span></code> training samples. This prior associates low probability to regions of the parameter space that are not covered by training data.</p>
+<p>For the prior we use a multivariate Gaussian prior that is defined by the <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> training samples. This prior associates low probability to regions of the parameter space that are not covered by training data.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -492,7 +499,7 @@ Om:0.3286275715044408, Ob:0.06028250214135623, sigma8:0.6559619292762228, h:0.62
 <p>Next we define a Gaussian likelihood with the form</p>
 <div class="math notranslate nohighlight">
 \[\ln{\mathcal{L}(d|\theta)}=-\frac{1}{2}\frac{(P-P'(\theta))^2}{\sigma^2}.\]</div>
-<p>Where <span class="math notranslate nohighlight">\(P\)</span> is our <code class="docutils literal notranslate"><span class="pre">power_true</span></code>, <span class="math notranslate nohighlight">\(P'(\theta)\)</span> is the emulator prediction for the parameters <span class="math notranslate nohighlight">\(\theta\)</span>, and <span class="math notranslate nohighlight">\(\sigma\)</span> is our <code class="docutils literal notranslate"><span class="pre">noise</span></code>. We construct this function such that it expects multiple parameter sets to evaluate, exploiting the batch prediction speed from <code class="docutils literal notranslate"><span class="pre">Matryoshka</span></code>.</p>
+<p>Where <span class="math notranslate nohighlight">\(P\)</span> is our <code class="docutils literal notranslate"><span class="pre">power_true</span></code>, <span class="math notranslate nohighlight">\(P'(\theta)\)</span> is the emulator prediction for the parameters <span class="math notranslate nohighlight">\(\theta\)</span>, and <span class="math notranslate nohighlight">\(\sigma\)</span> is our <code class="docutils literal notranslate"><span class="pre">noise</span></code>. We construct this function such that it expects multiple parameter sets to evaluate, exploiting the batch prediction speed from <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
@@ -550,7 +557,14 @@ Om:0.3286275715044408, Ob:0.06028250214135623, sigma8:0.6559619292762228, h:0.62
                                                                            <span class="n">e</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">f</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
                                                                            <span class="n">g</span><span class="o">=</span><span class="n">COSMO_true</span><span class="p">[</span><span class="mi">6</span><span class="p">]))</span>
 
-<span class="n">init_pos</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="o">+</span><span class="mf">1e-3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="c1"># Specify a number of walkers</span>
+<span class="n">nwalk</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="c1">#Define the number of dimensions</span>
+<span class="n">ndim</span> <span class="o">=</span> <span class="mi">7</span>
+
+
+<span class="n">init_pos</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="o">+</span><span class="mf">1e-3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nwalk</span><span class="p">,</span> <span class="n">ndim</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -560,14 +574,14 @@ Om:0.3286275715044408, Ob:0.06028250214135623, sigma8:0.6559619292762228, h:0.62
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Optimization terminated successfully.
-         Current function value: -18.618662
-         Iterations: 566
-         Function evaluations: 867
+         Current function value: -18.665328
+         Iterations: 497
+         Function evaluations: 775
 Maximum likelihood cosmology:
-Om:0.32491266043075234, Ob:0.05703549024778341, sigma8:0.6559245759710872, h:0.629905712630096, ns:0.9729993106848223, Neff:3.5676667082273625, w0:-0.6789214031852342
+Om:0.319354713165944, Ob:0.054220723565457846, sigma8:0.7016837008707382, h:0.6430288403278874, ns:0.9679183206248632, Neff:3.1753889568089018, w0:-0.7761686655939373
 ===================
 True cosmology:
-Om:0.3286275715044408, Ob:0.06028250214135623, sigma8:0.6559619292762228, h:0.6215872760252105, ns:0.9715340357189762, Neff:3.150848344384581, w0:-0.5677807767931059
+Om:0.3211487413168327, Ob:0.05202673249965726, sigma8:0.7014181037514434, h:0.640406455460841, ns:0.9619645342556248, Neff:3.253688898055066, w0:-0.7867060147616014
 </pre></div></div>
 </div>
 <p>We can now run our MCMC, we run for 1000 steps, this should be more that <span class="math notranslate nohighlight">\(10\times\)</span> the autocorrelation time for most examples.</p>
@@ -576,7 +590,7 @@ Om:0.3286275715044408, Ob:0.06028250214135623, sigma8:0.6559619292762228, h:0.62
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">sampler</span> <span class="o">=</span> <span class="n">zeus</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">log_prob</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">power_true</span><span class="p">,</span> <span class="n">noise</span><span class="p">),</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span></span><span class="n">sampler</span> <span class="o">=</span> <span class="n">zeus</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalk</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">log_prob</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">power_true</span><span class="p">,</span> <span class="n">noise</span><span class="p">),</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">init_pos</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -590,7 +604,7 @@ Om:0.3286275715044408, Ob:0.06028250214135623, sigma8:0.6559619292762228, h:0.62
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
 Initialising ensemble of 20 walkers...
-Sampling progress : 100%|██████████| 1000/1000 [02:07&lt;00:00,  7.84it/s]
+Sampling progress : 100%|██████████| 1000/1000 [02:12&lt;00:00,  7.55it/s]
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -598,7 +612,7 @@ Sampling progress : 100%|██████████| 1000/1000 [02:07&lt;00:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-97766 likelihood evaluations in 2.1 minutes.
+99253 likelihood evaluations in 2.2 minutes.
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -651,7 +665,10 @@ Sampling progress : 100%|██████████| 1000/1000 [02:07&lt;00:
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="transfer_basic.html" class="btn btn-neutral float-left" title="Example of tranfer function emulator usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="resample_example.html" class="btn btn-neutral float-right" title="Generating training samples for the base model componenets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
