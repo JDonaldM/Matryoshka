@@ -6,7 +6,8 @@ A Python package for predicting the galaxy power spectrum with a neural network 
 The package can be installed by cloning this repository and using pip.
 
 ```
-cd path\to\Matryoshka
+git clone https://github.com/JDonaldM/Matryoshka
+cd Matryoshka
 pip install .
 ```
 
