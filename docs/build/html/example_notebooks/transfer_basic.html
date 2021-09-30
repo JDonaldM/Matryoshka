@@ -371,7 +371,11 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">TransferEmu</span> <span class="o">=</span> <span class="n">Matry</span><span class="o">.</span><span class="n">Transfer</span><span class="p">()</span>
+<span></span><span class="c1"># For environments with tensorflow&gt;=2.5 this cell triggers a set of</span>
+<span class="c1"># of warnings as the provided weights were produced with tensorflow==2.4.0</span>
+<span class="c1"># Predictions can still be made using these weight, however new weights</span>
+<span class="c1"># files will be provided in future versions that wont trigger these warnings.</span>
+<span class="n">TransferEmu</span> <span class="o">=</span> <span class="n">Matry</span><span class="o">.</span><span class="n">Transfer</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -396,7 +400,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1600 predictions made in 0.121 seconds.
+1600 predictions made in 0.117 seconds.
 </pre></div></div>
 </div>
 <p>We can compare these predictions to those in the validation set by calculating the absolute percentage error for each sample in the validation set. Taking the mean to calculate the mean absolute percentage error gives a scalar quantity we can use to asses the performance of the emulator.</p>

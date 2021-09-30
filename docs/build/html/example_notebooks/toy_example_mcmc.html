@@ -372,7 +372,11 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">TransferEmu</span> <span class="o">=</span> <span class="n">Matry</span><span class="o">.</span><span class="n">Transfer</span><span class="p">()</span>
+<span></span><span class="c1"># For environments with tensorflow&gt;=2.5 this cell triggers a set of</span>
+<span class="c1"># of warnings as the provided weights were produced with tensorflow==2.4.0</span>
+<span class="c1"># Predictions can still be made using these weight, however new weights</span>
+<span class="c1"># files will be provided in future versions that wont trigger these warnings.</span>
+<span class="n">TransferEmu</span> <span class="o">=</span> <span class="n">Matry</span><span class="o">.</span><span class="n">Transfer</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -399,7 +403,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-111
+1677
 </pre></div></div>
 </div>
 <p>This random selection will of course be different each time the notbook is run, if you wish to use the same value that was used when this notebook was generated simply uncomment the line in the cell bellow.</p>
@@ -408,7 +412,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#truth_id = 111</span>
+<span></span><span class="c1">#truth_id = 1677</span>
 <span class="n">COSMO_true</span> <span class="o">=</span> <span class="n">valX</span><span class="p">[</span><span class="n">truth_id</span><span class="p">]</span>
 <span class="n">Tk_true</span> <span class="o">=</span> <span class="n">valY</span><span class="p">[</span><span class="n">truth_id</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;True cosmology:&quot;</span><span class="p">)</span>
@@ -425,7 +429,7 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 True cosmology:
-Om:0.3211487413168327, Ob:0.05202673249965726, sigma8:0.7014181037514434, h:0.640406455460841, ns:0.9619645342556248, Neff:3.253688898055066, w0:-0.7867060147616014
+Om:0.337861947330401, Ob:0.05026885532935269, sigma8:0.8129972130235417, h:0.6604728298496412, ns:0.9283208178662207, Neff:3.8264293885969427, w0:-1.0346738757509557
 </pre></div></div>
 </div>
 <p>As a quick test we can see how the prediction from the <span class="math notranslate nohighlight">\(T(k)\)</span> componenet emulator compares to the truth when the true cosmological parameters are used as input.</p>
@@ -574,14 +578,14 @@ Om:0.3211487413168327, Ob:0.05202673249965726, sigma8:0.7014181037514434, h:0.64
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Optimization terminated successfully.
-         Current function value: -18.665328
-         Iterations: 497
-         Function evaluations: 775
+         Current function value: -17.789733
+         Iterations: 469
+         Function evaluations: 716
 Maximum likelihood cosmology:
-Om:0.319354713165944, Ob:0.054220723565457846, sigma8:0.7016837008707382, h:0.6430288403278874, ns:0.9679183206248632, Neff:3.1753889568089018, w0:-0.7761686655939373
+Om:0.330405193042723, Ob:0.05058732689148845, sigma8:0.813696108272292, h:0.6590470680042275, ns:0.9497478850320111, Neff:3.838243607062375, w0:-0.9966676273108884
 ===================
 True cosmology:
-Om:0.3211487413168327, Ob:0.05202673249965726, sigma8:0.7014181037514434, h:0.640406455460841, ns:0.9619645342556248, Neff:3.253688898055066, w0:-0.7867060147616014
+Om:0.337861947330401, Ob:0.05026885532935269, sigma8:0.8129972130235417, h:0.6604728298496412, ns:0.9283208178662207, Neff:3.8264293885969427, w0:-1.0346738757509557
 </pre></div></div>
 </div>
 <p>We can now run our MCMC, we run for 1000 steps, this should be more that <span class="math notranslate nohighlight">\(10\times\)</span> the autocorrelation time for most examples.</p>
@@ -604,7 +608,7 @@ Om:0.3211487413168327, Ob:0.05202673249965726, sigma8:0.7014181037514434, h:0.64
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
 Initialising ensemble of 20 walkers...
-Sampling progress : 100%|██████████| 1000/1000 [02:12&lt;00:00,  7.55it/s]
+Sampling progress : 100%|██████████| 1000/1000 [02:11&lt;00:00,  7.58it/s]
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -612,7 +616,7 @@ Sampling progress : 100%|██████████| 1000/1000 [02:12&lt;00:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-99253 likelihood evaluations in 2.2 minutes.
+97741 likelihood evaluations in 2.2 minutes.
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">

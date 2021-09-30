@@ -4,32 +4,25 @@ matryoshka.emulator
 
 Module for producing predictions with the component emulators of ``matryoshka``.
 
-Transfer Function
-=================
+Base Model
+==========
 
 .. autoclass:: matryoshka.emulator.Transfer
     :members:
 
-Mass Variance
-=============
-
 .. autoclass:: matryoshka.emulator.Sigma
     :members:
 
-Mass Variance Logarithmic Derivative
-====================================
-
 .. autoclass:: matryoshka.emulator.SigmaPrime   
     :members:
-
-Growth Function
-===============
 
 .. autoclass:: matryoshka.emulator.Growth
     :members:
 
 Nonlinear Boost
 ===============
+
+In the current version of ``matryoshka`` the nonlinear boost component emulator has only been trained with training data generated with and serves to demonstrate the use of ``matryoshka``. Future versions will include a nonlinear boost component emulator trained with data produced with high resolution N-body simulatios.
 
 .. autoclass:: matryoshka.emulator.Boost
     :members:
