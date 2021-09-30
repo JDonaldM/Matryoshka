@@ -27,3 +27,5 @@ TransferEmu = Matry.Transfer()
 
 EmuPred = TransferEmu.emu_predict(COSMO, mean_or_full="mean")
 ```
+
+For more examples and full documentation see https://matryoshka-emu.readthedocs.io/en/latest/
