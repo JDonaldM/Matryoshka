@@ -13,7 +13,7 @@ pip install .
 
 ## Basic usage
 
-The example bellow shows how to generate a prediction for a Planck18 $\Lambda$CDM transfer function using `matryoshka`. Setting `mean_or_full="mean"` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
+The example bellow shows how to generate a prediction for a Planck18 LCDM transfer function using `matryoshka`. Setting `mean_or_full="mean"` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
 
 ```python
 import numpy as np
