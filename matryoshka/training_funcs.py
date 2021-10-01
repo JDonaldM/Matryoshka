@@ -5,6 +5,8 @@ import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, InputLayer
 from tensorflow. keras.optimizers import Adam
+import os
+import pathlib
 
 
 class UniformScaler:
@@ -260,3 +262,20 @@ def trainNN(trainX, trainY, validation_data, nodes, learning_rate, batch_size, e
               batch_size=batch_size, callbacks = callbacks, verbose=verbose)
 
     return model
+
+def dataset(target, split, X_or_Y):
+    '''
+    Convenience function for loading datasets for the base model component emulators.
+
+    Args:
+        target (str) : The target function of interest.
+        split (str) : Can be "train", "test", or "val" (when a validation set is available).
+        X_or_Y (str) : Do you want the features ("X") or the function ("Y").
+
+    Returns:
+        Array containing the dataset.
+    '''
+    cache_path = os.fsdecode(pathlib.Path(os.path.dirname(__file__)
+                                          ).parent.absolute())+"/matryoshka-data/"
+    cache_path += "class_aemulus/"
+    return np.load(cache_path+split+"/"+X_or_Y+"_"+target+"-v3.npy")
