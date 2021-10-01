@@ -263,6 +263,55 @@ samples in X are in the range [0,1].</p>
 
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="matryoshka.training_funcs.dataset">
+<span class="sig-prename descclassname"><span class="pre">matryoshka.training_funcs.</span></span><span class="sig-name descname"><span class="pre">dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_or_Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.training_funcs.dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Convenience function for loading datasets for the base model component emulators.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>str</em>) – The target function of interest.</p></li>
+<li><p><strong>split</strong> (<em>str</em>) – Can be “train”, “test”, or “val” (when a validation set is available).</p></li>
+<li><p><strong>X_or_Y</strong> (<em>str</em>) – Do you want the features (“X”) or the function (“Y”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing the dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="matryoshka.training_funcs.trainNN">
+<span class="sig-prename descclassname"><span class="pre">matryoshka.training_funcs.</span></span><span class="sig-name descname"><span class="pre">trainNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callbacks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.training_funcs.trainNN" title="Permalink to this definition"></a></dt>
+<dd><p>A high-level function for quickly training a simple NN based emulator. The user
+NN will be optimsed with an Adam optimser and mean squared error loss function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trainX</strong> (<em>array</em>) – Array containing the parameters/features of the training set.
+Should have shape (n, d).</p></li>
+<li><p><strong>trainY</strong> (<em>aray</em>) – Array containing the target function of the training set.
+Should have shape (n, k).</p></li>
+<li><p><strong>validation_data</strong> (<em>tuple</em>) – Tuple of arrays (valX, valY). Where <cite>valX</cite> and <cite>valY</cite>
+are the equivalent of <cite>trainX</cite> and <cite>trainY</cite> for the validation data. Can be
+None if there is not a validation set.</p></li>
+<li><p><strong>nodes</strong> (<em>array</em>) – Array containing the number of nodes in each hidden layer.
+Should have shape (N, ), with N being the desired number of hidden layers.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – The learning rate to be used during training.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – The batch size to be used during training.</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – The number of epochs to train the NN.</p></li>
+<li><p><strong>callbacks</strong> (<em>list</em>) – List of <cite>tensorflow</cite> callbacks e.g. EarlyStopping</p></li>
+<li><p><strong>verbose</strong> (<em>int</em>) – Defines how much information <cite>tensorflow</cite> prints during training.
+0 = silent, 1 = progress bar, 2 = one line per epoch.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Trained keras Sequential model.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
