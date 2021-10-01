@@ -2,6 +2,9 @@
 File contains functions used when training the NNs
 '''
 import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, InputLayer
+from tensorflow. keras.optimizers import Adam
 
 
 class UniformScaler:
@@ -207,3 +210,53 @@ class Resampler:
             return samples
         else:
             return np.matmul(self.L, samples.T).T+self.mean
+
+def trainNN(trainX, trainY, validation_data, nodes, learning_rate, batch_size, epochs, 
+            callbacks=None, verbose=0):
+
+    '''
+    A high-level function for quickly training a simple NN based emulator. The user
+    NN will be optimsed with an Adam optimser and mean squared error loss function.
+
+    Args:
+        trainX (array) : Array containing the parameters/features of the training set.
+         Should have shape (n, d).
+        trainY (aray) : Array containing the target function of the training set.
+         Should have shape (n, k).
+        validation_data (tuple) : Tuple of arrays (valX, valY). Where `valX` and `valY`
+         are the equivalent of `trainX` and `trainY` for the validation data. Can be 
+         None if there is not a validation set.
+        nodes (array) : Array containing the number of nodes in each hidden layer. 
+         Should have shape (N, ), with N being the desired number of hidden layers.
+        learning_rate (float) : The learning rate to be used during training.
+        batch_size (int) : The batch size to be used during training.
+        epochs (int) : The number of epochs to train the NN.
+        callbacks (list) : List of `tensorflow` callbacks e.g. EarlyStopping
+        verbose (int) : Defines how much information `tensorflow` prints during training.
+          0 = silent, 1 = progress bar, 2 = one line per epoch.
+
+    Returns:
+        Trained keras Sequential model.
+    '''
+
+    # Define the NN as a keras Sequential model    
+    model = Sequential()
+
+    # Add the input layer
+    model.add(InputLayer(input_shape=(trainX.shape[1], )))
+
+    # Add the user specified number of hidden layers.
+    for layer in range(nodes.shape[0]):
+        model.add(Dense(nodes[layer], activation='relu'))
+
+    # Add the output layer
+    model.add(Dense(trainY.shape[1], activation='linear'))
+
+    # Complile the model with the user specified learning rate.
+    model.compile(loss='mean_squared_error', optimizer=Adam(learning_rate=learning_rate))
+
+    # Train the model
+    model.fit(trainX, trainY, validation_data=validation_data, epochs=epochs, 
+              batch_size=batch_size, callbacks = callbacks, verbose=verbose)
+
+    return model
