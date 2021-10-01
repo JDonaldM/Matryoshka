@@ -30,7 +30,7 @@ EmuPred = TransferEmu.emu_predict(COSMO, mean_or_full="mean")
 
 For more examples and full documentation see https://matryoshka-emu.readthedocs.io/en/latest/
 
-## A note about the nonlinear boost component component emulator
+## A note about the nonlinear boost component emulator
 
 In the current version of `matryoshka` the nonlinear boost component emulator has only been trained with training data generated with [HALOFIT](https://iopscience.iop.org/article/10.1088/0004-637X/761/2/152) and serves to demonstrate the use of `matryoshka`. Future versions will include a nonlinear boost component emulator trained with data produced with high resolution N-body simulatios.
 
