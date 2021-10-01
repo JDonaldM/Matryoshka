@@ -7,19 +7,24 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.colors as mcolors
 
-def sample_space(samples_list, set_labels, param_labels, save=False, figsize=(15,15), filename=None):
+def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filename=None,
+                 set_labels=None, colour_variable=None):
     '''
     Function for producing a corner plot of the sample space.
     Adapted from corner by Daniel Foreman-Mackey.
 
     Args:
         samples_list (list) : List of arrays with shape (n, d).
-        set_labels (list) : Label for each element in `samples_list`.
         param_labels (list) : Labels for each dimension of the sample space. Should habe length d.
         save (bool) : If True, the plot will be saved. If True, `filename` must not be None.
          Default is False.
         figsize (tuple) : Tuple that defines the size of the plot. Default is (15, 15).
-        filename (str) : Filename
+        filename (str) : Filename. Default is None.
+        set_labels (list) : Label for each element in `samples_list`. Default is None. Only pass
+         when `samples_list` has more than one element.
+        colour_variable (array) : Array containing a varibale to determine the colour of each sample
+         , e.g. the prediction error for that sample. Should have shape n. Default is None. Cannot be
+         used is `samples_list` has more than one element.
     '''
     # How many sample sets to plot?
     N = len(samples_list)
@@ -46,9 +51,13 @@ def sample_space(samples_list, set_labels, param_labels, save=False, figsize=(15
                 ax[i,j].set_yticklabels([])
                 ax[i,j].set_title(param_labels[i])
             elif j < i:
-                for l in range(N):
-                    ax[i,j].scatter(samples_list[l][:,j], samples_list[l][:,i],s=2., 
-                                    zorder=sizes[::-1][l], color=colours[l])
+                if colour_variable is not None:
+                     ax[i,j].scatter(samples_list[l][:,j], samples_list[l][:,i],s=2., 
+                                    zorder=sizes[::-1][l], c=colour_variable)
+                else:                  
+                    for l in range(N):
+                        ax[i,j].scatter(samples_list[l][:,j], samples_list[l][:,i],s=2., 
+                                        zorder=sizes[::-1][l], color=colours[l])
             if j > i:
                 ax[i,j].set_frame_on(False)
                 ax[i,j].set_xticks([])
@@ -63,10 +72,11 @@ def sample_space(samples_list, set_labels, param_labels, save=False, figsize=(15
             elif i != j:
                 ax[i,j].set_ylabel(param_labels[i])
 
-    legend_patches = []
-    for l in range(N):
-        legend_patches.append(mpatches.Patch(label=set_labels[l], color=colours[l]))
-    ax[1,3].legend(handles=legend_patches, fontsize="x-large", frameon=False)
+    if set_labels is not None:
+        legend_patches = []
+        for l in range(N):
+            legend_patches.append(mpatches.Patch(label=set_labels[l], color=colours[l]))
+        ax[1,3].legend(handles=legend_patches, fontsize="x-large", frameon=False)
     plt.subplots_adjust(hspace=0.1,wspace=0.1)
     plt.locator_params(axis='y', nbins=3)
     plt.locator_params(axis='x', nbins=3)
@@ -76,7 +86,7 @@ def sample_space(samples_list, set_labels, param_labels, save=False, figsize=(15
     else:
         plt.show()
 
-def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None, save=False, filename=None):
+def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None, xscale='linear', save=False, filename=None):
     '''
     Function for plotting the scale dependent percentage error from
     emulator predictions.
@@ -86,8 +96,9 @@ def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None, save=False, 
         predictions (array) : Array containing the emulator predictions.
          Shouls have shape (n, k).
         xvalues (array) : Array containing the x-values. Should have shape (k,).
-        xlabel (str) : X-axis label.
-        ylabel (str) : Y-axis label.
+        xlabel (str) : X-axis label. Default is None.
+        ylabel (str) : Y-axis label. Default is None.
+        xscale (str) : Scaling for the x-axis. Default is None.
         save (bool) : If True, the plot will be saved. If True, `filename`
          must not be None. Default is False.
         filename (str) : Filename
@@ -104,9 +115,10 @@ def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None, save=False, 
     plt.fill_between(xvalues,
                        np.percentile(per_err,16,axis=0),np.percentile(per_err,100-16,axis=0),
                        label=r'$68\%$',alpha=0.3,color='tab:green')
+    plt.xscale(xscale)
 
-    plt.set_xlabel(xlabel)
-    plt.set_ylabel(ylabel)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.grid(True,color='k',linestyle=':')
     plt.tight_layout()
 
