@@ -46,7 +46,7 @@ License & Attribution
 =====================
 
 Copyright 2021 Jamie Donald-McCann.
-``matryoshka`` is free to use under the MIT license, if you find it useful for your research please cite Donald-McCann et al. (in prep).
+``matryoshka`` is free to use under the MIT license, if you find it useful for your research please cite `Donald-McCann et al. (2021) <https://arxiv.org/abs/2109.15236>`_.
 
 .. toctree::
     :maxdepth: 4

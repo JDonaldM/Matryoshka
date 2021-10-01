@@ -33,3 +33,7 @@ For more examples and full documentation see https://matryoshka-emu.readthedocs.
 ## A note about the nonlinear boost component component emulator
 
 In the current version of `matryoshka` the nonlinear boost component emulator has only been trained with training data generated with [HALOFIT](https://iopscience.iop.org/article/10.1088/0004-637X/761/2/152) and serves to demonstrate the use of `matryoshka`. Future versions will include a nonlinear boost component emulator trained with data produced with high resolution N-body simulatios.
+
+## License & Attribution
+
+Copyright 2021 Jamie Donald-McCann. `matryoshka` is free to use under the MIT license, if you find it useful for your research please cite [Donald-McCann et al. (2021)](https://arxiv.org/abs/2109.15236).
