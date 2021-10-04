@@ -4,7 +4,7 @@ File contains functions used when training the NNs
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, InputLayer
-from tensorflow. keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam
 import os
 import pathlib
 
