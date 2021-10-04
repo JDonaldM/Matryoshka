@@ -3,7 +3,7 @@ Flie contains Classes for the idividula component emulators. In addition to a
  Class that combines all the component preictions to predict the galaxy power
  spectrum.
 '''
-from tensorflow import keras
+from tensorflow.keras.models import load_model
 import numpy as np
 from .training_funcs import UniformScaler, LogScaler
 #from halomod.concentration import Duffy08
@@ -38,7 +38,7 @@ class Transfer:
         # Load the ensemble of NNs that makes up the T(k) emulator.
         models = list()
         for i in range(11):
-            model = keras.models.load_model(models_path+"transfer/member_"+str(i),
+            model = load_model(models_path+"transfer/member_"+str(i),
                                             compile=False)
             models.append(model)
         self.models = models
@@ -118,7 +118,7 @@ class Sigma:
         # Load the ensemble of NNs that makes up the sigma(m) emulator.
         models = list()
         for i in range(15):
-            model = keras.models.load_model(models_path+"sigma/member_"+str(i),
+            model = load_model(models_path+"sigma/member_"+str(i),
                                             compile=False)
             models.append(model)
         self.models = models
@@ -198,7 +198,7 @@ class SigmaPrime:
         # Load the ensemble of NNs that makes up the dlns(m) emulator.
         models = list()
         for i in range(8):
-            model = keras.models.load_model(models_path+"dlnsdlnm/member_"+str(i),
+            model = load_model(models_path+"dlnsdlnm/member_"+str(i),
                                             compile=False)
 
             models.append(model)
@@ -279,7 +279,7 @@ class Growth:
         # Load the ensemble of NNs that makes up the D(z) emulator.
         models = list()
         for i in range(19):
-            model = keras.models.load_model(models_path+"growth/member_"+str(i),
+            model = load_model(models_path+"growth/member_"+str(i),
                                             compile=False)
 
             models.append(model)
@@ -374,7 +374,7 @@ class Boost:
         # Load the ensemble of NNs that makes up the B(k) emulator.
         models = list()
         for i in range(10):
-            model = keras.models.load_model(boost_path+"model/member_"+str(i),
+            model = load_model(boost_path+"model/member_"+str(i),
                                             compile=False)
 
             models.append(model)
