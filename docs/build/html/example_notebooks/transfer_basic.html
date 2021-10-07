@@ -348,7 +348,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <section id="Example-of-tranfer-function-emulator-usage">
 <h1>Example of tranfer function emulator usage<a class="headerlink" href="#Example-of-tranfer-function-emulator-usage" title="Permalink to this headline"></a></h1>
-<p>The purpose of this notebook is to demonstrate how to initalise and make predictions with the transfer funtion <span class="math notranslate nohighlight">\(T(k)\)</span> base model componenet emulator of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code>.</p>
+<p>The purpose of this notebook is to demonstrate how to initalise and make predictions with the transfer funtion <span class="math notranslate nohighlight">\(T(k)\)</span> base model component emulator of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code>.</p>
 <p>We will start by loading the <code class="docutils literal notranslate"><span class="pre">emulator</span></code> module of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> along with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> for plotting and <code class="docutils literal notranslate"><span class="pre">time</span></code> for timing predictions. We will also load <code class="docutils literal notranslate"><span class="pre">numpy</span></code> and the base model validation set.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -366,7 +366,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<p>To initalise the <span class="math notranslate nohighlight">\(T(k)\)</span> emulator is very simple, we use the <code class="docutils literal notranslate"><span class="pre">Transfer()</span></code> class. Upon initalisation all the neural network weighs are loaded, along with the predefined scalers needed to make predictions with the emulator and the <span class="math notranslate nohighlight">\(k\)</span> values corresponding to the predictions.</p>
+<p>To initalise the <span class="math notranslate nohighlight">\(T(k)\)</span> emulator is very simple, we use the <code class="docutils literal notranslate"><span class="pre">Transfer()</span></code> class. Upon initalisation all the neural network weighs are loaded, along with the pre-defined scalers needed to make predictions with the emulator and the <span class="math notranslate nohighlight">\(k\)</span> values corresponding to the predictions.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -401,7 +401,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1600 predictions made in 0.109 seconds.
+1600 predictions made in 0.131 seconds.
 </pre></div></div>
 </div>
 <p>We can compare these predictions to those in the validation set by calculating the absolute percentage error for each sample in the validation set. Taking the mean to calculate the mean absolute percentage error gives a scalar quantity we can use to asses the performance of the emulator.</p>

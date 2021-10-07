@@ -348,7 +348,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <section id="MCMC-with-matryoshka-and-zeus">
 <h1>MCMC with <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> and <code class="docutils literal notranslate"><span class="pre">zeus</span></code><a class="headerlink" href="#MCMC-with-matryoshka-and-zeus" title="Permalink to this headline"></a></h1>
-<p>In this example we demonstrate how to exploit the batch preidctions of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> when runnig an MCMC with <a class="reference external" href="https://zeus-mcmc.readthedocs.io/en/latest/">zeus</a>.</p>
+<p>In this example we demonstrate how to exploit the batch preidctions of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> when running an MCMC with <a class="reference external" href="https://zeus-mcmc.readthedocs.io/en/latest/">zeus</a>.</p>
 <p>We start by import all the packages required for this example.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -407,7 +407,7 @@ div.rendered_html tbody tr:hover {
 404
 </pre></div></div>
 </div>
-<p>This random selection will of course be different each time the notbook is run, if you wish to use the same value that was used when this notebook was generated simply uncomment the line in the cell bellow.</p>
+<p>This random selection will of course be different each time the notebook is run, if you wish to use the same value that was used when this notebook was generated simply uncomment the line in the cell bellow.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
@@ -433,7 +433,7 @@ True cosmology:
 Om:0.31370024134636476, Ob:0.05125115699530476, sigma8:0.7043386090265943, h:0.6554805956058928, ns:0.9477054993712001, Neff:4.280550976310288, w0:-0.8754527515480993
 </pre></div></div>
 </div>
-<p>As a quick test we can see how the prediction from the <span class="math notranslate nohighlight">\(T(k)\)</span> componenet emulator compares to the truth when the true cosmological parameters are used as input.</p>
+<p>As a quick test we can see how the prediction from the <span class="math notranslate nohighlight">\(T(k)\)</span> component emulator compares to the truth when the true cosmological parameters are used as input.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -542,7 +542,7 @@ Om:0.31370024134636476, Ob:0.05125115699530476, sigma8:0.7043386090265943, h:0.6
 </pre></div>
 </div>
 </div>
-<p>As the title of this notebook suggests, we will be using <code class="docutils literal notranslate"><span class="pre">zeus</span></code> to do our MCMC. <code class="docutils literal notranslate"><span class="pre">zeus</span></code> is an ensemble sampler, as such requires us to generate inital positions for ensemble of walkers. For this example we generate the walker positions as small perturbations from the maximum likelihood position.</p>
+<p>As the title of this notebook suggests, we will be using <code class="docutils literal notranslate"><span class="pre">zeus</span></code> to do our MCMC. <code class="docutils literal notranslate"><span class="pre">zeus</span></code> is an ensemble sampler, as such requires us to generate inital positions for an ensemble of walkers. For this example we generate the walker positions as small perturbations from the maximum likelihood position.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
@@ -628,7 +628,7 @@ Sampling progress : 100%|██████████| 1000/1000 [02:05&lt;00:
 
 </pre></div></div>
 </div>
-<p>Once the MCMC has finished we can examine our chains are resulting posterior distributions.</p>
+<p>Once the MCMC has finished we can examine our chains and resulting posterior distributions.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
