@@ -1,5 +1,6 @@
 import numpy as np
 from numba import jit
+from numpy.lib.function_base import trapz
 #from hmf.density_field.filters import TopHat
 import scipy.special as sp
 import astropy.units as units
@@ -497,3 +498,21 @@ class TopHatrep:
         Top-hat window function in Fourier space.
         '''
         return np.where(kr > 1.4e-6, (3 / kr ** 3) * (np.sin(kr) - kr * np.cos(kr)), 1)
+
+def beff(m, dndm, b_h, N):
+    '''
+    Function for calculating the galaxy bias.
+
+    Args:
+        m (array) : Array containing masses.
+        dndm (array) : Array containing the halo mass function.
+        b_h (array) : Array containing the halo bias.
+        N (array) : Array containing the mean halo occupation.
+
+    Returns:
+        The galaxy bias.
+    '''
+
+    n_t = ngal(m, dndm, N)
+
+    return trapz(dndm*b_h*N, x=m)/n_t
