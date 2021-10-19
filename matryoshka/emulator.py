@@ -37,8 +37,8 @@ class Transfer:
 
         # Load the ensemble of NNs that makes up the T(k) emulator.
         models = list()
-        for i in range(11):
-            model = load_model(models_path+"transfer/member_"+str(i),
+        for member in os.listdir(models_path+"transfer"):
+            model = load_model(models_path+"transfer/"+member,
                                             compile=False)
             models.append(model)
         self.models = models
@@ -117,8 +117,8 @@ class Sigma:
 
         # Load the ensemble of NNs that makes up the sigma(m) emulator.
         models = list()
-        for i in range(15):
-            model = load_model(models_path+"sigma/member_"+str(i),
+        for member in os.listdir(models_path+"sigma"):
+            model = load_model(models_path+"sigma/"+member,
                                             compile=False)
             models.append(model)
         self.models = models
@@ -197,10 +197,9 @@ class SigmaPrime:
 
         # Load the ensemble of NNs that makes up the dlns(m) emulator.
         models = list()
-        for i in range(8):
-            model = load_model(models_path+"dlnsdlnm/member_"+str(i),
+        for member in os.listdir(models_path+"dlnsdlnm"):
+            model = load_model(models_path+"dlnsdlnm/"+member,
                                             compile=False)
-
             models.append(model)
         self.models = models
 
@@ -278,8 +277,8 @@ class Growth:
 
         # Load the ensemble of NNs that makes up the D(z) emulator.
         models = list()
-        for i in range(19):
-            model = load_model(models_path+"growth/member_"+str(i),
+        for member in os.listdir(models_path+"growth"):
+            model = load_model(models_path+"growth/"+member,
                                             compile=False)
 
             models.append(model)
@@ -373,8 +372,8 @@ class Boost:
 
         # Load the ensemble of NNs that makes up the B(k) emulator.
         models = list()
-        for i in range(10):
-            model = load_model(boost_path+"model/member_"+str(i),
+        for member in os.listdir(boost_path+"model"):
+            model = load_model(boost_path+"model/"+member,
                                             compile=False)
 
             models.append(model)
