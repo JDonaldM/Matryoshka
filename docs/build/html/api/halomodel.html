@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>matryoshka.halo_model_funcs &mdash; matryoshka 0.0.3 documentation</title>
+  <title>matryoshka.halo_model_funcs &mdash; matryoshka 0.0.4 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -202,6 +202,25 @@ mass variance (halomod hack).</p>
 <dd><p>Mass variance.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="matryoshka.halo_model_funcs.beff">
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">beff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dndm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.beff" title="Permalink to this definition"></a></dt>
+<dd><p>Function for calculating the galaxy bias.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m</strong> (<em>array</em>) – Array containing masses.</p></li>
+<li><p><strong>dndm</strong> (<em>array</em>) – Array containing the halo mass function.</p></li>
+<li><p><strong>b_h</strong> (<em>array</em>) – Array containing the halo bias.</p></li>
+<li><p><strong>N</strong> (<em>array</em>) – Array containing the mean halo occupation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The galaxy bias.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
