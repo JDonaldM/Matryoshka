@@ -86,7 +86,8 @@ def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filena
     else:
         plt.show()
 
-def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None, xscale='linear', save=False, filename=None):
+def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None,
+            xscale='linear', ylim=None, save=False, filename=None):
     '''
     Function for plotting the scale dependent percentage error from
     emulator predictions.
@@ -99,6 +100,7 @@ def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None, xscale='line
         xlabel (str) : X-axis label. Default is None.
         ylabel (str) : Y-axis label. Default is None.
         xscale (str) : Scaling for the x-axis. Default is None.
+        ylim (tuple) : Tuple containing limits for the y-axis. Default is None.
         save (bool) : If True, the plot will be saved. If True, `filename`
          must not be None. Default is False.
         filename (str) : Filename
@@ -116,6 +118,7 @@ def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None, xscale='line
                        np.percentile(per_err,16,axis=0),np.percentile(per_err,100-16,axis=0),
                        label=r'$68\%$',alpha=0.3,color='tab:green')
     plt.xscale(xscale)
+    plt.ylim(ylim)
 
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
