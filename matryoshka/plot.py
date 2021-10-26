@@ -62,7 +62,7 @@ def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filena
                 ax[i,j].set_frame_on(False)
                 ax[i,j].set_xticks([])
                 ax[i,j].set_yticks([])
-            if i < 7 - 1:
+            if i < d - 1:
                 ax[i,j].set_xticklabels([])
             else:
                 ax[i,j].set_xlabel(param_labels[j])
