@@ -279,3 +279,24 @@ def dataset(target, split, X_or_Y):
                                           ).parent.absolute())+"/matryoshka-data/"
     cache_path += "class_aemulus/"
     return np.load(cache_path+split+"/"+X_or_Y+"_"+target+"-v3.npy")
+
+def train_test_indices(N, split=0.2):
+    '''
+    Return indicies that can be used to split a dataset into train and test sets.
+
+    Args:
+        N (int) : The size of the original dataset
+        split (float) : The proportion of the data to be used for the test set.
+         Should be a float between 0 and 1. Default is 0.2
+
+    Returns:
+        The train and test indicies arrays.
+    '''
+
+    all = np.arange(N)
+    np.random.shuffle(all)
+
+    # How many samples in the test set
+    N_test = int(split*N)
+
+    return all[:N_test], all[N_test:]

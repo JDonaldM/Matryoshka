@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>matryoshka.training_funcs &mdash; matryoshka 0.0.4 documentation</title>
+  <title>matryoshka.training_funcs &mdash; matryoshka 0.0.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -309,6 +309,24 @@ Should have shape (N, ), with N being the desired number of hidden layers.</p></
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Trained keras Sequential model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="matryoshka.training_funcs.train_test_indices">
+<span class="sig-prename descclassname"><span class="pre">matryoshka.training_funcs.</span></span><span class="sig-name descname"><span class="pre">train_test_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.training_funcs.train_test_indices" title="Permalink to this definition"></a></dt>
+<dd><p>Return indicies that can be used to split a dataset into train and test sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> (<em>int</em>) – The size of the original dataset</p></li>
+<li><p><strong>split</strong> (<em>float</em>) – The proportion of the data to be used for the test set.
+Should be a float between 0 and 1. Default is 0.2</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The train and test indicies arrays.</p>
 </dd>
 </dl>
 </dd></dl>

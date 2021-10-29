@@ -8,7 +8,7 @@ import matplotlib.patches as mpatches
 import matplotlib.colors as mcolors
 
 def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filename=None,
-                 set_labels=None, colour_variable=None):
+                 set_labels=None, colour_variable=None, bounds=None):
     '''
     Function for producing a corner plot of the sample space.
     Adapted from corner by Daniel Foreman-Mackey.
@@ -25,6 +25,8 @@ def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filena
         colour_variable (array) : Array containing a varibale to determine the colour of each sample
          , e.g. the prediction error for that sample. Should have shape n. Default is None. Cannot be
          used is `samples_list` has more than one element.
+        bounds (array) : Array containing bounds to be plotted. Should have shape (d,2). Default is 
+         None.
     '''
     # How many sample sets to plot?
     N = len(samples_list)
@@ -50,6 +52,9 @@ def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filena
                                  color=colours[l])
                 ax[i,j].set_yticklabels([])
                 ax[i,j].set_title(param_labels[i])
+                if bounds is not None:
+                    ax[i,j].axvline(bounds[i,0], color='r', linestyle='--')
+                    ax[i,j].axvline(bounds[i,1], color='r', linestyle='--')
             elif j < i:
                 if colour_variable is not None:
                      ax[i,j].scatter(samples_list[l][:,j], samples_list[l][:,i],s=2., 
@@ -58,6 +63,11 @@ def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filena
                     for l in range(N):
                         ax[i,j].scatter(samples_list[l][:,j], samples_list[l][:,i],s=2., 
                                         zorder=sizes[::-1][l], color=colours[l])
+                if bounds is not None:
+                    ax[i,j].axvline(bounds[j,0], color='r', linestyle='--')
+                    ax[i,j].axvline(bounds[j,1], color='r', linestyle='--')
+                    ax[i,j].axhline(bounds[i,0], color='r', linestyle='--')
+                    ax[i,j].axhline(bounds[i,1], color='r', linestyle='--')
             if j > i:
                 ax[i,j].set_frame_on(False)
                 ax[i,j].set_xticks([])
@@ -87,7 +97,8 @@ def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filena
         plt.show()
 
 def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None,
-            xscale='linear', ylim=None, save=False, filename=None):
+            xscale='linear', ylim=None, save=False, filename=None, 
+            title=None):
     '''
     Function for plotting the scale dependent percentage error from
     emulator predictions.
@@ -104,6 +115,7 @@ def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None,
         save (bool) : If True, the plot will be saved. If True, `filename`
          must not be None. Default is False.
         filename (str) : Filename
+        title (str) : Title of the plot, Default is None.
     '''
 
     # Calculate the scale dependant percentage error.
@@ -122,10 +134,12 @@ def per_err(truths, predictions, xvalues, xlabel=None, ylabel=None,
 
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
+    plt.title(title)
+
     plt.grid(True,color='k',linestyle=':')
     plt.tight_layout()
 
     if save is True:
-        plt.savefig(filename)
+        plt.savefig(filename, dpi=300, facecolor='white')
     else:
         plt.show()

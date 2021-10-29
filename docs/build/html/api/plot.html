@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>matryoshka.plot &mdash; matryoshka 0.0.4 documentation</title>
+  <title>matryoshka.plot &mdash; matryoshka 0.0.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -104,7 +104,7 @@
 <span class="target" id="module-matryoshka.plot"></span><p>File containing some simple plotting functions.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.plot.per_err">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.plot.</span></span><span class="sig-name descname"><span class="pre">per_err</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.plot.per_err" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.plot.</span></span><span class="sig-name descname"><span class="pre">per_err</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">truths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.plot.per_err" title="Permalink to this definition"></a></dt>
 <dd><p>Function for plotting the scale dependent percentage error from
 emulator predictions.</p>
 <dl class="field-list simple">
@@ -117,9 +117,11 @@ Shouls have shape (n, k).</p></li>
 <li><p><strong>xlabel</strong> (<em>str</em>) – X-axis label. Default is None.</p></li>
 <li><p><strong>ylabel</strong> (<em>str</em>) – Y-axis label. Default is None.</p></li>
 <li><p><strong>xscale</strong> (<em>str</em>) – Scaling for the x-axis. Default is None.</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em>) – Tuple containing limits for the y-axis. Default is None.</p></li>
 <li><p><strong>save</strong> (<em>bool</em>) – If True, the plot will be saved. If True, <cite>filename</cite>
 must not be None. Default is False.</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – Filename</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot, Default is None.</p></li>
 </ul>
 </dd>
 </dl>
@@ -127,7 +129,7 @@ must not be None. Default is False.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.plot.sample_space">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.plot.</span></span><span class="sig-name descname"><span class="pre">sample_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(15,</span> <span class="pre">15)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour_variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.plot.sample_space" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.plot.</span></span><span class="sig-name descname"><span class="pre">sample_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(15,</span> <span class="pre">15)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour_variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.plot.sample_space" title="Permalink to this definition"></a></dt>
 <dd><p>Function for producing a corner plot of the sample space.
 Adapted from corner by Daniel Foreman-Mackey.</p>
 <dl class="field-list simple">
@@ -144,6 +146,8 @@ when <cite>samples_list</cite> has more than one element.</p></li>
 <li><p><strong>colour_variable</strong> (<em>array</em>) – Array containing a varibale to determine the colour of each sample
 , e.g. the prediction error for that sample. Should have shape n. Default is None. Cannot be
 used is <cite>samples_list</cite> has more than one element.</p></li>
+<li><p><strong>bounds</strong> (<em>array</em>) – Array containing bounds to be plotted. Should have shape (d,2). Default is
+None.</p></li>
 </ul>
 </dd>
 </dl>

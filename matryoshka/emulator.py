@@ -1,5 +1,5 @@
 '''
-Flie contains Classes for the idividula component emulators. In addition to a
+Flie contains Classes for the idividual component emulators. In addition to a
  Class that combines all the component preictions to predict the galaxy power
  spectrum.
 '''
