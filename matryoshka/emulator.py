@@ -18,9 +18,6 @@ import pathlib
 #  predictions with the NNs.
 cache_path = os.fsdecode(pathlib.Path(os.path.dirname(__file__)
                                       ).parent.absolute())+"/matryoshka-data/"
-models_path = cache_path+"class_aemulus/models-v3/"
-scalers_path = cache_path+"class_aemulus/scalers-v3/"
-boost_path = cache_path+"class_aemulus/boost_kwanspace_z0.57/"
 
 
 class Transfer:
@@ -29,26 +26,34 @@ class Transfer:
 
     On initalisation the weights for the NN ensmble will be loaded,
     along with the scalers required to make predictions with the NNs.
+
+    Args:
+        version (str) : String to specify what version of the emulator to
+         load. Default is 'class_aemulus'.
     '''
 
-    def __init__(self):
+    def __init__(self, version='class_aemulus'):
 
         self.kbins = np.logspace(-4, 1, 300)
 
+        models_path = cache_path+version+"/"+"models/transfer/"
+
         # Load the ensemble of NNs that makes up the T(k) emulator.
         models = list()
-        for member in os.listdir(models_path+"transfer"):
-            model = load_model(models_path+"transfer/"+member,
+        for member in os.listdir(models_path):
+            model = load_model(models_path+member,
                                             compile=False)
             models.append(model)
         self.models = models
+
+        scalers_path = cache_path+version+"/"+"scalers/transfer/"
 
         xscaler = UniformScaler()
         yscaler = LogScaler()
 
         # Load the variables that define the scalers.
-        xmin_diff = np.load(scalers_path+"transfer/xscaler_min_diff.npy")
-        ymin_diff = np.load(scalers_path+"transfer/yscaler_min_diff.npy")
+        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
 
         xscaler.min_val = xmin_diff[0, :]
         xscaler.diff = xmin_diff[1, :]
@@ -109,26 +114,36 @@ class Sigma:
 
     On initalisation the weights for the NN ensmble will be loaded,
     along with the scalers required to make predictions with the NNs.
+
+    Args:
+        version (str) : String to specify what version of the emulator to
+         load. Default is 'class_aemulus'.
     '''
 
-    def __init__(self):
+    def __init__(self, version='class_aemulus'):
 
+        # Assume that all versions use the same mass bins.
+        # TODO: Make this more general.
         self.mbins = np.load(cache_path+"AEMULUS-class_ms-test.npy")
+
+        models_path = cache_path+version+"/"+"models/sigma/"
 
         # Load the ensemble of NNs that makes up the sigma(m) emulator.
         models = list()
-        for member in os.listdir(models_path+"sigma"):
-            model = load_model(models_path+"sigma/"+member,
+        for member in os.listdir(models_path):
+            model = load_model(models_path+member,
                                             compile=False)
             models.append(model)
         self.models = models
+
+        scalers_path = cache_path+version+"/"+"scalers/sigma/"
 
         xscaler = UniformScaler()
         yscaler = LogScaler()
 
         # Load the variables that define the scalers.
-        xmin_diff = np.load(scalers_path+"sigma/xscaler_min_diff.npy")
-        ymin_diff = np.load(scalers_path+"sigma/yscaler_min_diff.npy")
+        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
 
         xscaler.min_val = xmin_diff[0, :]
         xscaler.diff = xmin_diff[1, :]
@@ -189,26 +204,36 @@ class SigmaPrime:
 
     On initalisation the weights for the NN ensmble will be loaded,
     along with the scalers required to make predictions with the NNs.
+
+    Args:
+        version (str) : String to specify what version of the emulator to
+         load. Default is 'class_aemulus'.
     '''
 
-    def __init__(self):
+    def __init__(self, version='class_aemulus'):
 
+        # Assume that all versions use the same mass bins.
+        # TODO: Make this more general.
         self.mbins = np.load(cache_path+"AEMULUS-class_ms-test.npy")
+
+        models_path = cache_path+version+"/"+"models/dlnsdlnm/"
 
         # Load the ensemble of NNs that makes up the dlns(m) emulator.
         models = list()
-        for member in os.listdir(models_path+"dlnsdlnm"):
-            model = load_model(models_path+"dlnsdlnm/"+member,
+        for member in os.listdir(models_path):
+            model = load_model(models_path+member,
                                             compile=False)
             models.append(model)
         self.models = models
+
+        scalers_path = cache_path+version+"/"+"scalers/dlnsdlnm/"
 
         xscaler = UniformScaler()
         yscaler = UniformScaler()
 
         # Load the variables that define the scalers.
-        xmin_diff = np.load(scalers_path+"dlnsdlnm/xscaler_min_diff.npy")
-        ymin_diff = np.load(scalers_path+"dlnsdlnm/yscaler_min_diff.npy")
+        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
 
         xscaler.min_val = xmin_diff[0, :]
         xscaler.diff = xmin_diff[1, :]
@@ -269,27 +294,37 @@ class Growth:
 
     On initalisation the weights for the NN ensmble will be loaded,
     along with the scalers required to make predictions with the NNs.
+
+    Args:
+        version (str) : String to specify what version of the emulator to
+         load. Default is 'class_aemulus'.
     '''
 
-    def __init__(self):
+    def __init__(self, version='class_aemulus'):
 
+        # Assume that all versions use the same redshift bins.
+        # TODO: Make this more general.
         self.zbins = np.linspace(0, 2, 200)
+
+        models_path = cache_path+version+"/"+"models/growth/"
 
         # Load the ensemble of NNs that makes up the D(z) emulator.
         models = list()
-        for member in os.listdir(models_path+"growth"):
-            model = load_model(models_path+"growth/"+member,
+        for member in os.listdir(models_path):
+            model = load_model(models_path+member,
                                             compile=False)
 
             models.append(model)
         self.models = models
 
+        scalers_path = cache_path+version+"/"+"scalers/growth/"
+
         xscaler = UniformScaler()
         yscaler = LogScaler()
 
         # Load the variables that define the scalers.
-        xmin_diff = np.load(scalers_path+"growth/xscaler_min_diff.npy")
-        ymin_diff = np.load(scalers_path+"growth/yscaler_min_diff.npy")
+        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
 
         xscaler.min_val = xmin_diff[0, :]
         xscaler.diff = xmin_diff[1, :]
@@ -369,6 +404,8 @@ class Boost:
         ksim = (ksim[:-1]+ksim[1:])/2.
 
         self.kbins = ksim
+
+        boost_path = cache_path+"class_aemulus/boost_kwanspace_z0.57/"
 
         # Load the ensemble of NNs that makes up the B(k) emulator.
         models = list()
