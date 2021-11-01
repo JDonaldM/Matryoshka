@@ -86,9 +86,7 @@ class Transfer:
 
         Returns:
             Array containing the predictions from the component emulator. Array
-            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
-            If mean_or_full='mean' and single_or_batch='single' will have shape 
-            (1,k).
+            will have shape (m,n,k). If mean_or_full='mean' will have shape (n,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -176,9 +174,7 @@ class Sigma:
 
         Returns:
             Array containing the predictions from the component emulator. Array
-            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
-            If mean_or_full='mean' and single_or_batch='single' will have shape 
-            (1,k).
+            will have shape (m,n,k). If mean_or_full='mean' will have shape (n,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -266,9 +262,7 @@ class SigmaPrime:
 
         Returns:
             Array containing the predictions from the component emulator. Array
-            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
-            If mean_or_full='mean' and single_or_batch='single' will have shape 
-            (1,k).
+            will have shape (m,n,k). If mean_or_full='mean' will have shape (n,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -359,9 +353,7 @@ class Growth:
 
         Returns:
             Array containing the predictions from the component emulator. Array
-            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
-            If mean_or_full='mean' and single_or_batch='single' will have shape 
-            (1,k).
+            will have shape (m,n,k). If mean_or_full='mean' will have shape (n,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -399,6 +391,10 @@ class Boost:
 
     On initalisation the weights for the NN ensmble will be loaded,
     along with the scalers required to make predictions with the NNs.
+
+    Args: 
+        redshift_id (int) : Index in matter_boost_zlist or galaxy_boost_zlist
+         that corespons to the desired redshift.
     '''
 
     def __init__(self, redshift_id):
@@ -416,7 +412,7 @@ class Boost:
 
         self.kbins = ksim
 
-        boost_path = cache_path+"class_aemulus/boost_kwanspace_z0.57/"
+        boost_path = cache_path+"class_aemulus/boost_kwanspace_z{a}/".format(galaxy_boost_zlist[redshift_id])
 
         # Load the ensemble of NNs that makes up the B(k) emulator.
         models = list()
@@ -456,9 +452,7 @@ class Boost:
 
         Returns:
             Array containing the predictions from the component emulator. Array
-            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
-            If mean_or_full='mean' and single_or_batch='single' will have shape 
-            (1,k).
+            will have shape (m,n,k). If mean_or_full='mean' will have shape (n,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -490,6 +484,10 @@ class MatterBoost:
     '''
     Class for emulator that predicts a nonlinear boost
     for the matter power spectrum.
+
+    Args:
+        redshift_id (int) : Index in matter_boost_zlist or galaxy_boost_zlist
+         that corespons to the desired redshift. 
     '''
 
     def __init__(self, redshift_id):
@@ -544,9 +542,7 @@ class MatterBoost:
 
         Returns:
             Array containing the predictions from the component emulator. Array
-            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
-            If mean_or_full='mean' and single_or_batch='single' will have shape 
-            (1,k).
+            will have shape (m,n,k). If mean_or_full='mean' will have shape (n,k).
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -584,18 +580,18 @@ class HaloModel:
     Args:
         k (array) : The k-bins over which predictions will be made. Cannot be
          outside the ranges used when training the component emulators.
-        redshift (float) : The redshift at which predictions will be made. If 
-         nonlinear=True, redshift must =0.57 as this is the only redhisft that
-         the nonliear boost emulator has been trained at in this version.
+        redshift_id (int) : Index in matter_boost_zlist or galaxy_boost_zlist
+         that corespons to the desired redshift.
         nonlinear (bool) : Determines if nonlinear predictions should be made.
          If False, the nonlinear boost componenet emulator will not be
          initalised.
         matter (bool) : If nonlinear=True setting matter=True will use emulated
          nonlinear matter power. If matter=False the nonlinear boost will be
          applied to the galaxy power spectrum.
+        version (str) : Version of the emulators to be loaded.
     '''
 
-    def __init__(self, k, redshift_id=0, nonlinear=True, matter=True, 
+    def __init__(self, k, redshift_id, nonlinear=True, matter=True, 
                  version='class_aemulus'):
 
         # Initalise the base model components.
@@ -603,6 +599,7 @@ class HaloModel:
         self.sigma = Sigma(version=version)
         self.dlns = SigmaPrime(version=version)
 
+        # Load the growth function emulator for non LCDM models.
         if version=='class_aemulus':
             self.growth = Growth()
 
@@ -642,16 +639,13 @@ class HaloModel:
         pre-initalised component emulators.
 
         Args:
-            X_COSMO (array) : Input cosmological parameters. If
-             single_or_batch='single' must have shape (7,), else must have shape
-             (n,7).
-            X_HOD (array) : Input HOD parameters. If single_or_batch='single'
-             must have shape (5,), else must have shape (n,5).
+            X_COSMO (array) : Input cosmological parameters.
+            X_HOD (array) : Input HOD parameters.
 
         Returns:
             Array containing the predictions from the halo model power spectrum.
-            Array will have shape (n,k). If single_or_batch="single" shape will
-            be (1,k).
+            Array will have shape (n,k). If making a prediction for a single set 
+            of input parameters will have shape (1,k).
         '''
 
         # Input must be reshaped if producing sinlge prediction.
