@@ -7,7 +7,7 @@ import astropy.units as units
 from scipy import constants as consts
 #from hmf.density_field.halofit import halofit
 from .halofit import halofit
-from scipy.integrate import simps
+from scipy.integrate import simps, quad
 
 
 def unnormed_P(k, T, ns):
@@ -516,3 +516,13 @@ def beff(m, dndm, b_h, N):
     n_t = ngal(m, dndm, N)
 
     return trapz(dndm*b_h*N, x=m)/n_t
+
+def cH(Om, a):
+    """ LCDM growth rate auxiliary function """
+    return np.sqrt(Om / a + a**2 * (1 - Om))
+
+
+def DgN(Om, z):
+    """ LCDM growth rate auxiliary function """
+    a = 1. / (1. + z)
+    return 5. / 2 * Om * cH(Om, a) / a * quad(lambda x: cH(Om, x)**-3, 0, a)[0]

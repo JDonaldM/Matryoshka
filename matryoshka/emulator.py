@@ -19,6 +19,13 @@ import pathlib
 cache_path = os.fsdecode(pathlib.Path(os.path.dirname(__file__)
                                       ).parent.absolute())+"/matryoshka-data/"
 
+# Define list of redshifts where there are trained NNs
+matter_boost_zlist  = ['0', '0.5', '1']
+galaxy_boost_zlist  = ['0.57']
+
+# Define lists of relevant parameters for T(k) for each of the emulator versions.
+relevant_transfer = {'class_aemulus':[0, 1, 3, 5, 6], 
+                     'QUIP':[0, 1, 2]}
 
 class Transfer:
     '''
@@ -35,6 +42,8 @@ class Transfer:
     def __init__(self, version='class_aemulus'):
 
         self.kbins = np.logspace(-4, 1, 300)
+
+        self.relevant_params = relevant_transfer[version]
 
         models_path = cache_path+version+"/"+"models/transfer/"
 
@@ -84,7 +93,7 @@ class Transfer:
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
-        X = np.atleast_2d(X)
+        X = np.atleast_2d(X)[:,self.relevant_params]
 
         X_prime = self.scalers[0].transform(X)
 
@@ -306,6 +315,8 @@ class Growth:
         # TODO: Make this more general.
         self.zbins = np.linspace(0, 2, 200)
 
+        self.relevant_params = relevant_transfer[version]
+
         models_path = cache_path+version+"/"+"models/growth/"
 
         # Load the ensemble of NNs that makes up the D(z) emulator.
@@ -355,7 +366,7 @@ class Growth:
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
-        X = np.atleast_2d(X)
+        X = np.atleast_2d(X)[:,self.relevant_params]
 
         X_prime = self.scalers[0].transform(X)
 
@@ -390,7 +401,7 @@ class Boost:
     along with the scalers required to make predictions with the NNs.
     '''
 
-    def __init__(self):
+    def __init__(self, redshift_id):
 
         # The scales where the Boost component emulator produces predictions is
         #  dependent on the simulation suite used to generate the training data.
@@ -475,6 +486,94 @@ class Boost:
 
             return preds
 
+class MatterBoost:
+    '''
+    Class for emulator that predicts a nonlinear boost
+    for the matter power spectrum.
+    '''
+
+    def __init__(self, redshift_id):
+        # Currently only trained on Quijote sims so defining the
+        # kbins based on that.
+        # TODO: MAke more general.
+        k, _ = np.loadtxt('/Users/jamie/Quijote/0/Pk_m_z=0.txt',
+                          unpack=True)
+        ks_good = k < 1.0
+        self.kbins = k[ks_good]
+        self.redshift = float(matter_boost_zlist[redshift_id])
+
+        models_path = cache_path+"QUIP/"+"models/"
+
+        # Load the ensemble of NNs that makes up the B(k) emulator.
+        models = list()
+        for member in os.listdir(models_path+"boost_z{a}".format(a=matter_boost_zlist[redshift_id])):
+            model = load_model(models_path+"boost_z{a}/".format(a=matter_boost_zlist[redshift_id])+member,
+                                            compile=False)
+
+            models.append(model)
+        self.models = models
+
+        scalers_path = cache_path+"QUIP/"+"scalers/"
+
+        xscaler = UniformScaler()
+        yscaler = LogScaler()
+
+        # Load the variables that define the scalers.
+        xmin_diff = np.load(scalers_path+"boost_z{a}/xscaler_min_diff.npy".format(a=matter_boost_zlist[redshift_id]))
+        ymin_diff = np.load(scalers_path+"boost_z{a}/yscaler_min_diff.npy".format(a=matter_boost_zlist[redshift_id]))
+
+        xscaler.min_val = xmin_diff[0, :]
+        xscaler.diff = xmin_diff[1, :]
+
+        yscaler.min_val = ymin_diff[0, :]
+        yscaler.diff = ymin_diff[1, :]
+
+        self.scalers = (xscaler, yscaler)
+
+    def emu_predict(self, X, mean_or_full="full"):
+        '''
+        Make predictions with the component emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape (d,), if a batch prediction
+             should have the shape (N,d).
+            mean_or_full : Can be either 'mean' or 'full'. Determines if the
+             ensemble mean prediction should be returned, or the predictions
+             from each ensemble member (default is 'batch').
+
+        Returns:
+            Array containing the predictions from the component emulator. Array
+            will have shape (n,m,k). if mean_or_full='mean' will have shape (m,k).
+            If mean_or_full='mean' and single_or_batch='single' will have shape 
+            (1,k).
+        '''
+
+        # If making a prediction on single parameter set, input array needs to
+        # be reshaped.
+        X = np.atleast_2d(X)
+
+        X_prime = self.scalers[0].transform(X)
+
+        if mean_or_full == "mean":
+
+            preds = 0
+            for i in range(len(self.models)):
+                preds += self.scalers[1].inverse_transform(
+                    self.models[i](X_prime))
+
+            return preds/float(len(self.models))
+
+        elif mean_or_full == "full":
+
+            preds = np.zeros(
+                (len(self.models), X_prime.shape[0], self.kbins.shape[0]))
+            for i in range(len(self.models)):
+                preds[i, :, :] = self.scalers[1].inverse_transform(
+                    self.models[i](X_prime))
+
+            return preds
+
 
 class HaloModel:
     '''
@@ -491,21 +590,32 @@ class HaloModel:
         nonlinear (bool) : Determines if nonlinear predictions should be made.
          If False, the nonlinear boost componenet emulator will not be
          initalised.
+        matter (bool) : If nonlinear=True setting matter=True will use emulated
+         nonlinear matter power. If matter=False the nonlinear boost will be
+         applied to the galaxy power spectrum.
     '''
 
-    def __init__(self, k, redshift=0.57, nonlinear=True):
+    def __init__(self, k, redshift_id=0, nonlinear=True, matter=True, 
+                 version='class_aemulus'):
 
         # Initalise the base model components.
-        self.Transfer = Transfer()
-        self.sigma = Sigma()
-        self.growth = Growth()
-        self.dlns = SigmaPrime()
+        self.Transfer = Transfer(version=version)
+        self.sigma = Sigma(version=version)
+        self.dlns = SigmaPrime(version=version)
+
+        if version=='class_aemulus':
+            self.growth = Growth()
 
         # Only load the nonlinear boost component if nonlinear predictions are
         #  required.
         self.nonlinear = nonlinear
-        if nonlinear:
-            self.boost = Boost()
+        if nonlinear and matter:
+            self.boost = MatterBoost(redshift_id)
+            self.redshift = float(matter_boost_zlist[redshift_id])
+
+        elif nonlinear:
+            self.boost = Boost(redshift_id)
+            self.redshift = float(galaxy_boost_zlist[redshift_id])
 
         # Make sure desired prediction range is covered by the emulators.
         if k.min() < self.Transfer.kbins.min() or k.max() > self.Transfer.kbins.max():
@@ -514,7 +624,9 @@ class HaloModel:
             print("Input k outside emulator coverage! (NONLINEAR)")
 
         self.k = k
-        self.redshift = redshift
+        self.version = version
+        self.matter = matter
+        
 
         # Initalise halmod mass defenition and calculate the conentration mass
         #  realtion.
@@ -547,15 +659,24 @@ class HaloModel:
         X_HOD = np.atleast_2d(X_HOD)
 
         # Produce predictions from each of the components.
-        T_preds = self.Transfer.emu_predict(X_COSMO[:, [0, 1, 3, 5, 6]],
+        T_preds = self.Transfer.emu_predict(X_COSMO,
                                             mean_or_full="mean")
         sigma_preds = self.sigma.emu_predict(X_COSMO,
                                              mean_or_full="mean")
         dlns_preds = self.dlns.emu_predict(X_COSMO,
                                            mean_or_full="mean")
-        gf_preds = self.growth.emu_predict(X_COSMO[:, [0, 1, 3, 5, 6]],
-                                           mean_or_full="mean")
-        if self.nonlinear:
+        if self.version=='class_aemulus':
+            gf_preds = self.growth.emu_predict(X_COSMO,
+                                               mean_or_full="mean")
+
+        if self.nonlinear and self.matter:
+            boost_preds = self.boost.emu_predict(X_COSMO,
+                                                 mean_or_full="mean")
+            # Force the nonlinear boost to unity outside the emulation range.
+            boost_preds = interp1d(self.boost.kbins, boost_preds, bounds_error=False,
+                                   fill_value=1.0)(self.k)
+
+        elif self.nonlinear:
             boost_preds = self.boost.emu_predict(np.hstack([X_HOD, X_COSMO]),
                                                  mean_or_full="mean")
             # Force the nonlinear boost to unity outside the emulation range.
@@ -569,9 +690,19 @@ class HaloModel:
         # Interpolate the power spectrum to cover the desired k-range.
         p_ml = interp1d(self.Transfer.kbins, p_ml)(self.k)
 
-        # Interpolate the predicted growth function to return D(z) at the
-        #  desired redshift.
-        D_z = interp1d(self.growth.zbins, gf_preds)(self.redshift)
+        if self.nonlinear and self.matter:
+            p_ml = p_ml*boost_preds
+
+        if self.version=='class_aemulus':
+            # Interpolate the predicted growth function to return D(z) at the
+            #  desired redshift.
+            D_z = interp1d(self.growth.zbins, gf_preds)(self.redshift)
+
+        else:
+            D_z = np.zeros((p_ml.shape[0],))
+            for i in range(D_z.shape[0]):
+                # Assumes Om is in the first column of X_COSMO
+                D_z = halo_model_funcs.DgN(X_COSMO[i,0],self.redshift)/halo_model_funcs.DgN(X_COSMO[i,0],0.)
 
         # Produce HM galaxy power spectrum predictions using the component
         #  predictions.
@@ -610,7 +741,7 @@ class HaloModel:
                 u_m, hmf, self.sigma.mbins[tm], Nc, Ns, n_t)
             P2h = halo_model_funcs.power_2h(
                 u_m, hmf, self.sigma.mbins[tm], Ntot, n_t, p_ml[i]*D_z[i]**2, halo_bias)
-            if self.nonlinear:
+            if self.nonlinear and not self.matter:
                 # If making nonlinear predictions, combine the base model
                 #  prediction with the boost component prediction.
                 hm_preds[i, :] = (P2h+P1h_cs+P1h_ss)*boost_preds[i]
