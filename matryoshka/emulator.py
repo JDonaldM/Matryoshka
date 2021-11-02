@@ -27,6 +27,11 @@ galaxy_boost_zlist  = ['0.57']
 relevant_transfer = {'class_aemulus':[0, 1, 3, 5, 6], 
                      'QUIP':[0, 1, 2]}
 
+# Define some dictionaries that map which index of X_COSMO matches which parameter
+# for the different emulator versions.
+parameter_ids = {'class_aemulus':{'Om':0,'Ob':1,'sigma8':2,'h':3,'ns':4,'Neff':5,'w0':6},
+                 'QUIP':{'Om':0,'Ob':1,'h':2,'ns':3,'sigma8':4}}
+
 class Transfer:
     '''
     Class for the transfer function componenet emulator.
@@ -581,7 +586,10 @@ class HaloModel:
         k (array) : The k-bins over which predictions will be made. Cannot be
          outside the ranges used when training the component emulators.
         redshift_id (int) : Index in matter_boost_zlist or galaxy_boost_zlist
-         that corespons to the desired redshift.
+         that corespons to the desired redshift. Only needed if nonlinear is True.
+         Default is None.
+        redshift (float) : The redshift at which predictions should be made. Can
+         only be used if nonlinear is False. If nonlinear is True this will be ignored.
         nonlinear (bool) : Determines if nonlinear predictions should be made.
          If False, the nonlinear boost componenet emulator will not be
          initalised.
@@ -591,7 +599,7 @@ class HaloModel:
         version (str) : Version of the emulators to be loaded.
     '''
 
-    def __init__(self, k, redshift_id, nonlinear=True, matter=True, 
+    def __init__(self, k, redshift_id=None, redshift=None, nonlinear=True, matter=True, 
                  version='class_aemulus'):
 
         # Initalise the base model components.
@@ -613,6 +621,9 @@ class HaloModel:
         elif nonlinear:
             self.boost = Boost(redshift_id)
             self.redshift = float(galaxy_boost_zlist[redshift_id])
+
+        else:
+            self.redshift = redshift
 
         # Make sure desired prediction range is covered by the emulators.
         if k.min() < self.Transfer.kbins.min() or k.max() > self.Transfer.kbins.max():
@@ -679,8 +690,8 @@ class HaloModel:
 
         # Calculate the linear matter power spectrum at z=0 from the transfer
         #  function prediction.
-        p_ml = halo_model_funcs.power0_v2(
-            self.Transfer.kbins, T_preds, sigma8=X_COSMO[:, 2], ns=X_COSMO[:, 4])
+        p_ml = halo_model_funcs.power0_v2(self.Transfer.kbins, T_preds, sigma8=X_COSMO[:, parameter_ids[self.version]['sigma8']],
+                                          ns=X_COSMO[:, parameter_ids[self.version]['ns']])
         # Interpolate the power spectrum to cover the desired k-range.
         p_ml = interp1d(self.Transfer.kbins, p_ml)(self.k)
 
