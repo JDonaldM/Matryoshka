@@ -412,7 +412,7 @@ class Boost:
 
         self.kbins = ksim
 
-        boost_path = cache_path+"class_aemulus/boost_kwanspace_z{a}/".format(galaxy_boost_zlist[redshift_id])
+        boost_path = cache_path+"class_aemulus/boost_kwanspace_z{a}/".format(a=galaxy_boost_zlist[redshift_id])
 
         # Load the ensemble of NNs that makes up the B(k) emulator.
         models = list()
@@ -696,7 +696,7 @@ class HaloModel:
             D_z = np.zeros((p_ml.shape[0],))
             for i in range(D_z.shape[0]):
                 # Assumes Om is in the first column of X_COSMO
-                D_z = halo_model_funcs.DgN(X_COSMO[i,0],self.redshift)/halo_model_funcs.DgN(X_COSMO[i,0],0.)
+                D_z[i] = halo_model_funcs.DgN(X_COSMO[i,0],self.redshift)/halo_model_funcs.DgN(X_COSMO[i,0],0.)
 
         # Produce HM galaxy power spectrum predictions using the component
         #  predictions.
