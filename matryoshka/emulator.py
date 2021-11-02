@@ -221,7 +221,7 @@ class SigmaPrime:
         # TODO: Make this more general.
         self.mbins = np.load(cache_path+"AEMULUS-class_ms-test.npy")
 
-        models_path = cache_path+version+"/"+"models/dlnsdlnm/"
+        models_path = cache_path+version+"/"+"models/dlns/"
 
         # Load the ensemble of NNs that makes up the dlns(m) emulator.
         models = list()
@@ -231,7 +231,7 @@ class SigmaPrime:
             models.append(model)
         self.models = models
 
-        scalers_path = cache_path+version+"/"+"scalers/dlnsdlnm/"
+        scalers_path = cache_path+version+"/"+"scalers/dlns/"
 
         xscaler = UniformScaler()
         yscaler = UniformScaler()
