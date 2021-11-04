@@ -597,10 +597,12 @@ class HaloModel:
          nonlinear matter power. If matter=False the nonlinear boost will be
          applied to the galaxy power spectrum.
         version (str) : Version of the emulators to be loaded.
+        kspace_filt (bool) : If True reduces contribution from P2h on small scales.
+         Inspired by halomod. See section 2.9.1 of arXiv:2009.14066.
     '''
 
     def __init__(self, k, redshift_id=None, redshift=None, nonlinear=True, matter=True, 
-                 version='class_aemulus'):
+                 version='class_aemulus', kspace_filt=False):
 
         # Initalise the base model components.
         self.Transfer = Transfer(version=version)
@@ -631,6 +633,9 @@ class HaloModel:
         if nonlinear and k.max() > self.boost.kbins.max():
             print("Input k outside emulator coverage! (NONLINEAR)")
 
+        if kspace_filt:
+            self.filter = halo_model_funcs.TopHatrep(None, None)
+
         self.k = k
         self.version = version
         self.matter = matter
@@ -644,7 +649,7 @@ class HaloModel:
         conc_duffy = Duffy08cmz(self.sigma.mbins, self.redshift)
         self.cm = conc_duffy
 
-    def emu_predict(self, X_COSMO, X_HOD):
+    def emu_predict(self, X_COSMO, X_HOD, kspace_filt=False, RT=3.0):
         '''
         Make predictions for the halo model power spectrum with the
         pre-initalised component emulators.
@@ -697,6 +702,10 @@ class HaloModel:
 
         if self.nonlinear and self.matter:
             p_ml = p_ml*boost_preds
+
+        if kspace_filt:
+            # Inspired by halomod.
+            p_ml = p_ml*self.filter.k_space(self.k*RT)
 
         if self.version=='class_aemulus':
             # Interpolate the predicted growth function to return D(z) at the
