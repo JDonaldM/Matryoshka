@@ -64,7 +64,8 @@ def power0_v2(k, T, sigma8, ns):
 @jit(nopython=True)
 def _p(K, bs, bc, asi, ac, c):
     '''
-    Component of ukm see arXiv:astro-ph/0006319 eq. 11. (from halomod)
+    Component of ukm see arXiv:astro-ph/0006319 eq. 11.
+    (hacked halomod)
     '''
     return np.sin(K) * (asi - bs) - np.sin(c * K) / ((1 + c) * K) + np.cos(K) * (ac - bc)
 
