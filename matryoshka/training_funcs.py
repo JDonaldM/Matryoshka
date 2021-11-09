@@ -176,7 +176,7 @@ class Resampler:
             self.diff = self.max - self.min
             self.use_latent_space = use_latent_space
 
-    def new_samples(self, nsamps, LH=True):
+    def new_samples(self, nsamps, LH=True, buffer=None):
         '''
         Generate new samples from the region covered by the simulations.
 
@@ -188,6 +188,10 @@ class Resampler:
         Returns:
             Array containing the new samples. Has shape (nsamps, d).
         '''
+        if buffer is not None:
+            self.min = self.min*(1-buffer)
+            self.max = self.max*(1+buffer)
+            self.diff = self.max - self.min
 
         if (LH is False) and (self.use_latent_space is False):
             return np.random.uniform(self.min, self.max, size=(nsamps,self.min.shape[0]))
