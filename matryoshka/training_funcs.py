@@ -3,7 +3,7 @@ File contains functions used when training the NNs
 '''
 import numpy as np
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, InputLayer
+from tensorflow.keras.layers import Dense, InputLayer, Dropout
 from tensorflow.keras.optimizers import Adam
 import os
 import pathlib
@@ -218,7 +218,7 @@ class Resampler:
             return np.matmul(self.L, samples.T).T+self.mean
 
 def trainNN(trainX, trainY, validation_data, nodes, learning_rate, batch_size, epochs, 
-            callbacks=None, verbose=0):
+            callbacks=None, DR=None, verbose=0):
 
     '''
     A high-level function for quickly training a simple NN based emulator. The user
@@ -238,6 +238,8 @@ def trainNN(trainX, trainY, validation_data, nodes, learning_rate, batch_size, e
         batch_size (int) : The batch size to be used during training.
         epochs (int) : The number of epochs to train the NN.
         callbacks (list) : List of `tensorflow` callbacks e.g. EarlyStopping
+        DR (float) : Float between 0 and 1 that defines the dropout rate. If None
+         dropout will not be used.
         verbose (int) : Defines how much information `tensorflow` prints during training.
           0 = silent, 1 = progress bar, 2 = one line per epoch.
 
@@ -254,6 +256,8 @@ def trainNN(trainX, trainY, validation_data, nodes, learning_rate, batch_size, e
     # Add the user specified number of hidden layers.
     for layer in range(nodes.shape[0]):
         model.add(Dense(nodes[layer], activation='relu'))
+        if DR is not None:
+            model.add(Dropout(DR))
 
     # Add the output layer
     model.add(Dense(trainY.shape[1], activation='linear'))
