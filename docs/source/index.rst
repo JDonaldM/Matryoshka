@@ -16,7 +16,7 @@ The package can be installed by cloning the repository and using ``pip``::
 
 	git clone https://github.com/JDonaldM/Matryoshka.git
 	cd Matryoshka
-	pip install .
+	pip install -e .
 
 
 The repository contains the directory ``matryoshka-data`` which contains all the weights for the NNs along with the data used to train them.
