@@ -42,6 +42,11 @@ The example below shows how to generate a prediction for a Planck18 LCDM transfe
 Setting ``mean_or_full="mean"`` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
 See the :doc:`examples` page for further example usage of ``matryoshka``, and see :doc:`api` for a comprehensive user manual.
 
+New in v0.1.0
+=============
+
+In the most recent version of ``matryoshka`` we have included an emulator to predict the nonlinear boost for the **matter** power spectrum that has been trained on the `Quijote simulations <https://arxiv.org/abs/1909.05273>`_. We also include a version of the transfer function emulator that has been trained on the Quijote sample space.
+
 License & Attribution
 =====================
 
