@@ -499,7 +499,7 @@ class MatterBoost:
         # Currently only trained on Quijote sims so defining the
         # kbins based on that.
         # TODO: MAke more general.
-        k, _ = np.loadtxt('/Users/jamie/Quijote/0/Pk_m_z=0.txt',
+        k, _ = np.loadtxt(cache_path+'QUIP/Pk_m_z=0.txt',
                           unpack=True)
         ks_good = k < 1.0
         self.kbins = k[ks_good]
