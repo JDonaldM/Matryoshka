@@ -19,12 +19,18 @@ Base Model
 .. autoclass:: matryoshka.emulator.Growth
     :members:
 
-Nonlinear Boost
-===============
+Nonlinear Boost (Galaxy)
+========================
 
-In the current version of ``matryoshka`` the nonlinear boost component emulator has only been trained with training data generated with and serves to demonstrate the use of ``matryoshka``. Future versions will include a nonlinear boost component emulator trained with data produced with high resolution N-body simulatios.
+In the current version of ``matryoshka`` the nonlinear boost component emulator has only been trained with training data generated with HALOFIT and serves to demonstrate the use of ``matryoshka``. Future versions will include a nonlinear boost component emulator trained with data produced with high resolution N-body simulatios.
 
 .. autoclass:: matryoshka.emulator.Boost
+    :members:
+
+Nonlinear Boost (Matter)
+========================
+
+.. autoclass:: matryoshka.emulator.MatterBoost
     :members:
 
 Galaxy Power Spectrum
