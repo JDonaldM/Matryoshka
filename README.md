@@ -8,7 +8,7 @@ The package can be installed by cloning this repository and using pip.
 ```
 git clone https://github.com/JDonaldM/Matryoshka
 cd Matryoshka
-pip install .
+pip install -e .
 ```
 
 ## Basic usage
