@@ -30,6 +30,10 @@ EmuPred = TransferEmu.emu_predict(COSMO, mean_or_full="mean")
 
 For more examples and full documentation see https://matryoshka-emu.readthedocs.io/en/latest/
 
+## New in v0.1.0
+
+In the most recent version of `matryoshka` we have included an emulator to predict the nonlinear boost for the *matter* power spectrum that has been trained on the [Quijote simulations](https://arxiv.org/abs/1909.05273). We also include a version of the transfer function emulator that has been trained on the Quijote sample space.
+
 ## A note about the nonlinear boost component emulator
 
 In the current version of `matryoshka` the nonlinear boost component emulator has only been trained with training data generated with [HALOFIT](https://iopscience.iop.org/article/10.1088/0004-637X/761/2/152) and serves to demonstrate the use of `matryoshka`. Future versions will include a nonlinear boost component emulator trained with data produced with high resolution N-body simulatios.
