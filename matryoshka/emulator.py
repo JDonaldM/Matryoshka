@@ -51,6 +51,7 @@ class Transfer:
     def __init__(self, version='class_aemulus'):
 
         self.kbins = np.logspace(-4, 1, 300)
+        '''The k-bins at which predictions will be made.'''
 
         self.relevant_params = relevant_transfer[version]
 
@@ -62,7 +63,9 @@ class Transfer:
             model = load_model(models_path+member,
                                             compile=False)
             models.append(model)
+
         self.models = models
+        '''A list containing the individual ensemble members.'''
 
         scalers_path = cache_path+version+"/"+"scalers/transfer/"
 
@@ -141,6 +144,7 @@ class Sigma:
         # Assume that all versions use the same mass bins.
         # TODO: Make this more general.
         self.mbins = np.load(cache_path+"AEMULUS-class_ms-test.npy")
+        '''The m-bins at which predictions will be made.'''
 
         models_path = cache_path+version+"/"+"models/sigma/"
 
@@ -150,7 +154,9 @@ class Sigma:
             model = load_model(models_path+member,
                                             compile=False)
             models.append(model)
+
         self.models = models
+        '''A list containing the individual ensemble members.'''
 
         scalers_path = cache_path+version+"/"+"scalers/sigma/"
 
@@ -229,6 +235,7 @@ class SigmaPrime:
         # Assume that all versions use the same mass bins.
         # TODO: Make this more general.
         self.mbins = np.load(cache_path+"AEMULUS-class_ms-test.npy")
+        '''The m-bins at which predictions will be made.'''
 
         models_path = cache_path+version+"/"+"models/dlns/"
 
@@ -238,7 +245,9 @@ class SigmaPrime:
             model = load_model(models_path+member,
                                             compile=False)
             models.append(model)
+
         self.models = models
+        '''A list containing the individual ensemble members.'''
 
         scalers_path = cache_path+version+"/"+"scalers/dlns/"
 
@@ -317,6 +326,7 @@ class Growth:
         # Assume that all versions use the same redshift bins.
         # TODO: Make this more general.
         self.zbins = np.linspace(0, 2, 200)
+        '''The z-bins at which predictions will be made.'''
 
         self.relevant_params = relevant_transfer[version]
 
@@ -329,7 +339,9 @@ class Growth:
                                             compile=False)
 
             models.append(model)
+
         self.models = models
+        '''A list containing the individual ensemble members.'''
 
         scalers_path = cache_path+version+"/"+"scalers/growth/"
 
@@ -420,6 +432,7 @@ class Boost:
         ksim = (ksim[:-1]+ksim[1:])/2.
 
         self.kbins = ksim
+        '''The k-bins at which predictions will be made.'''
 
         boost_path = cache_path+"class_aemulus/boost_kwanspace_z{a}/".format(a=galaxy_boost_zlist[redshift_id])
 
@@ -430,7 +443,9 @@ class Boost:
                                             compile=False)
 
             models.append(model)
+
         self.models = models
+        '''A list containing the individual ensemble members.'''
 
         xscaler = UniformScaler()
         yscaler = LogScaler()
@@ -509,7 +524,10 @@ class MatterBoost:
         k, _ = np.loadtxt(cache_path+'QUIP/Pk_m_z=0.txt',
                           unpack=True)
         ks_good = k < 1.0
+
         self.kbins = k[ks_good]
+        '''The k-bins at which predictions will be made.'''
+
         self.redshift = float(matter_boost_zlist[redshift_id])
 
         models_path = cache_path+"QUIP/"+"models/"
@@ -521,7 +539,9 @@ class MatterBoost:
                                             compile=False)
 
             models.append(model)
+
         self.models = models
+        '''A list containing the individual ensemble members.'''
 
         scalers_path = cache_path+"QUIP/"+"scalers/"
 
