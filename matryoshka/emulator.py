@@ -81,7 +81,7 @@ class Transfer:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full='mean'):
         '''
         Make predictions with the component emulator.
 
@@ -91,7 +91,7 @@ class Transfer:
              should have the shape (N,d).
             mean_or_full (str) : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
-             from each ensemble member (default is 'batch').
+             from each ensemble member (default is 'mean').
 
         Returns:
             Array containing the predictions from the component emulator. Array
@@ -169,7 +169,7 @@ class Sigma:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full='mean'):
         '''
         Make predictions with the component emulator.
 
@@ -179,7 +179,7 @@ class Sigma:
              should have the shape (N,d).
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
-             from each ensemble member (default is 'batch').
+             from each ensemble member (default is 'mean').
 
         Returns:
             Array containing the predictions from the component emulator. Array
@@ -257,7 +257,7 @@ class SigmaPrime:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full='mean'):
         '''
         Make predictions with the component emulator.
 
@@ -267,7 +267,7 @@ class SigmaPrime:
              should have the shape (N,d).
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
-             from each ensemble member (default is 'batch').
+             from each ensemble member (default is 'mean').
 
         Returns:
             Array containing the predictions from the component emulator. Array
@@ -348,7 +348,7 @@ class Growth:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full='mean'):
         '''
         Make predictions with the component emulator.
 
@@ -358,7 +358,7 @@ class Growth:
              should have the shape (N,d).
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
-             from each ensemble member (default is 'batch').
+             from each ensemble member (default is 'mean').
 
         Returns:
             Array containing the predictions from the component emulator. Array
@@ -447,7 +447,7 @@ class Boost:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full='mean'):
         '''
         Make predictions with the component emulator.
 
@@ -457,7 +457,7 @@ class Boost:
              should have the shape (N,d).
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
-             from each ensemble member (default is 'batch').
+             from each ensemble member (default is 'mean').
 
         Returns:
             Array containing the predictions from the component emulator. Array
@@ -540,7 +540,7 @@ class MatterBoost:
 
         self.scalers = (xscaler, yscaler)
 
-    def emu_predict(self, X, mean_or_full="full"):
+    def emu_predict(self, X, mean_or_full='mean'):
         '''
         Make predictions with the component emulator.
 
@@ -550,7 +550,7 @@ class MatterBoost:
              should have the shape (N,d).
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
-             from each ensemble member (default is 'batch').
+             from each ensemble member (default is 'mean').
 
         Returns:
             Array containing the predictions from the component emulator. Array

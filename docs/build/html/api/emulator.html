@@ -129,7 +129,7 @@ load. Default is ‘class_aemulus’.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.Transfer.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Transfer.emu_predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Transfer.emu_predict" title="Permalink to this definition"></a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -139,7 +139,7 @@ a single prediction should have shape (d,), if a batch prediction
 should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> (<em>str</em>) – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
-from each ensemble member (default is ‘batch’).</p></li>
+from each ensemble member (default is ‘mean’).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -165,7 +165,7 @@ load. Default is ‘class_aemulus’.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.Sigma.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Sigma.emu_predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Sigma.emu_predict" title="Permalink to this definition"></a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -175,7 +175,7 @@ a single prediction should have shape (d,), if a batch prediction
 should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
-from each ensemble member (default is ‘batch’).</p></li>
+from each ensemble member (default is ‘mean’).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -201,7 +201,7 @@ load. Default is ‘class_aemulus’.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.SigmaPrime.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.SigmaPrime.emu_predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.SigmaPrime.emu_predict" title="Permalink to this definition"></a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -211,7 +211,7 @@ a single prediction should have shape (d,), if a batch prediction
 should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
-from each ensemble member (default is ‘batch’).</p></li>
+from each ensemble member (default is ‘mean’).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -237,7 +237,7 @@ load. Default is ‘class_aemulus’.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.Growth.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Growth.emu_predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Growth.emu_predict" title="Permalink to this definition"></a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -247,7 +247,7 @@ a single prediction should have shape (d,), if a batch prediction
 should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
-from each ensemble member (default is ‘batch’).</p></li>
+from each ensemble member (default is ‘mean’).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -277,7 +277,7 @@ that corespons to the desired redshift.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.Boost.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Boost.emu_predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Boost.emu_predict" title="Permalink to this definition"></a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -287,7 +287,7 @@ a single prediction should have shape (d,), if a batch prediction
 should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
-from each ensemble member (default is ‘batch’).</p></li>
+from each ensemble member (default is ‘mean’).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -319,7 +319,7 @@ that corespons to the desired redshift.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.MatterBoost.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.MatterBoost.emu_predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.MatterBoost.emu_predict" title="Permalink to this definition"></a></dt>
 <dd><p>Make predictions with the component emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -329,7 +329,7 @@ a single prediction should have shape (d,), if a batch prediction
 should have the shape (N,d).</p></li>
 <li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
-from each ensemble member (default is ‘batch’).</p></li>
+from each ensemble member (default is ‘mean’).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

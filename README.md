@@ -13,7 +13,7 @@ pip install -e .
 
 ## Basic usage
 
-The example bellow shows how to generate a prediction for a Planck18 LCDM transfer function using `matryoshka`. Setting `mean_or_full="mean"` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
+The example bellow shows how to generate a prediction for a Planck18 LCDM transfer function using `matryoshka`.
 
 ```python
 import numpy as np
@@ -25,7 +25,7 @@ COSMO = np.array([Planck18_arXiv_v2.Om0, Planck18_arXiv_v2.Ob0, Planck18_arXiv_v
 
 TransferEmu = Matry.Transfer()
 
-EmuPred = TransferEmu.emu_predict(COSMO, mean_or_full="mean")
+EmuPred = TransferEmu.emu_predict(COSMO)
 ```
 
 For more examples and full documentation see https://matryoshka-emu.readthedocs.io/en/latest/

@@ -37,9 +37,8 @@ The example below shows how to generate a prediction for a Planck18 LCDM transfe
 	
 	TransferEmu = Matry.Transfer()
 	
-	EmuPred = TransferEmu.emu_predict(COSMO, mean_or_full="mean")
+	EmuPred = TransferEmu.emu_predict(COSMO)
 
-Setting ``mean_or_full="mean"`` results in the ensemble mean prediction being returned rather than predictions from each ensemble member.
 See the :doc:`examples` page for further example usage of ``matryoshka``, and see :doc:`api` for a comprehensive user manual.
 
 New in v0.1.0
