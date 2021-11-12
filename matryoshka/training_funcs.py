@@ -140,6 +140,10 @@ class Resampler:
     The new samples can then be used to generate training data for the base model
     componenet emulators.
 
+    .. note::
+        See the `Generating training samples for the base model componenets
+        <../example_notebooks/resample_example.ipynb>`_ example.
+
     Args:
         simulation_samples (array) : The samples in the parameter space from the
          simulation suite. Default is None.

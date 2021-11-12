@@ -39,6 +39,10 @@ class Transfer:
     On initalisation the weights for the NN ensmble will be loaded,
     along with the scalers required to make predictions with the NNs.
 
+    .. note::
+        See the `Basic emulator usage <../example_notebooks/transfer_basic.ipynb>`_
+        example.
+
     Args:
         version (str) : String to specify what version of the emulator to
          load. Default is 'class_aemulus'.
@@ -489,6 +493,9 @@ class MatterBoost:
     '''
     Class for emulator that predicts a nonlinear boost
     for the matter power spectrum.
+
+    .. note::
+        See the `QUIP <../example_notebooks/QUIP.ipynb>`_ example.
 
     Args:
         redshift_id (int) : Index in matter_boost_zlist or galaxy_boost_zlist
