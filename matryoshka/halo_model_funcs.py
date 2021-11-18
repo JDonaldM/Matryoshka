@@ -519,11 +519,16 @@ def beff(m, dndm, b_h, N):
     return trapz(dndm*b_h*N, x=m)/n_t
 
 def cH(Om, a):
-    """ LCDM growth rate auxiliary function """
+    """ LCDM growth rate auxiliary function (from pybird) """
     return np.sqrt(Om / a + a**2 * (1 - Om))
 
 
 def DgN(Om, z):
-    """ LCDM growth rate auxiliary function """
+    """ LCDM growth rate auxiliary function (from pybird) """
     a = 1. / (1. + z)
     return 5. / 2 * Om * cH(Om, a) / a * quad(lambda x: cH(Om, x)**-3, 0, a)[0]
+
+def fN(Om, z):
+    """ LCDM growth rate (from pybird) """
+    a = 1. / (1. + z)
+    return (Om * (5 * a - 3 * DgN(Om, a))) / (2. * (a**3 * (1 - Om) + Om) * DgN(Om, a))

@@ -3,6 +3,7 @@ Flie contains Classes for the idividual component emulators. In addition to a
  Class that combines all the component preictions to predict the galaxy power
  spectrum.
 '''
+from operator import mul
 from tensorflow.keras.models import load_model
 import numpy as np
 from .training_funcs import UniformScaler, LogScaler
@@ -10,6 +11,7 @@ from .training_funcs import UniformScaler, LogScaler
 #from hmf.halos.mass_definitions import SOMean
 from .halo_model_funcs import Duffy08cmz
 from . import halo_model_funcs
+from . import eft_funcs
 from scipy.interpolate import interp1d
 import os
 import pathlib
@@ -31,6 +33,13 @@ relevant_transfer = {'class_aemulus':[0, 1, 3, 5, 6],
 # for the different emulator versions.
 parameter_ids = {'class_aemulus':{'Om':0,'Ob':1,'sigma8':2,'h':3,'ns':4,'Neff':5,'w0':6},
                  'QUIP':{'Om':0,'Ob':1,'h':2,'ns':3,'sigma8':4}}
+
+# Default k values where PyBird makes predictions. Needed by the EFT emulators.
+kbird = np.array([0.001, 0.005, 0.0075, 0.01, 0.0125, 0.015, 0.0175, 0.02, 0.025, 0.03,
+                  0.035, 0.04, 0.045, 0.05, 0.055, 0.06, 0.065, 0.07, 0.075, 0.08, 0.085,
+                  0.09, 0.095, 0.1, 0.105, 0.11, 0.115, 0.12, 0.125, 0.13, 0.135, 0.14,
+                  0.145, 0.15, 0.155, 0.16, 0.17, 0.18, 0.19, 0.2, 0.21, 0.22, 0.23, 0.24,
+                  0.25, 0.26, 0.27, 0.28, 0.29, 0.3])
 
 class Transfer:
     '''
@@ -602,6 +611,278 @@ class MatterBoost:
 
             return preds
 
+class P11l:
+    '''
+    Class for emulator that predicts the P11l contributions to the
+    P_n matrix.
+    '''
+
+    def __init__(self, multipole, version='EFT'):
+
+        self.kbins = kbird[:39]
+
+        self.relevant_params = relevant_transfer[version]
+
+        models_path = cache_path+version+"/"+"models/P11{a}/".format(a=multipole)
+
+        # Unlike many of the other matryoshka componenet emulators
+        # the EFT components consist of just one NN.
+        model = load_model(models_path+"member_0", compile=False)
+
+        self.model = model
+        '''The NN that forms this component emulator'''
+
+        scalers_path = cache_path+version+"/"+"scalers/P110/"
+
+        xscaler = UniformScaler()
+        yscaler = LogScaler()
+
+        # Load the variables that define the scalers.
+        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
+
+        xscaler.min_val = xmin_diff[0, :]
+        xscaler.diff = xmin_diff[1, :]
+
+        yscaler.min_val = ymin_diff[0, :]
+        yscaler.diff = ymin_diff[1, :]
+
+        self.scalers = (xscaler, yscaler)
+
+    def emu_predict(self, X):
+        '''
+        Make predictions with the component emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape (d,), if a batch prediction
+             should have the shape (N,d).
+
+        Returns:
+            Array containing the predictions from the component emulator 
+            will have shape (n,k).
+        '''
+
+        # If making a prediction on single parameter set, input array needs to
+        # be reshaped.
+        X = np.atleast_2d(X)[:,self.relevant_params]
+
+        X_prime = self.scalers[0].transform(X)
+
+        preds = self.scalers[1].inverse_transform(
+            self.model(X_prime))
+
+
+        return preds
+
+class P11l:
+    '''
+    Class for emulator that predicts the P11l contributions to the
+    P_n matrix.
+    '''
+
+    def __init__(self, multipole, version='EFT'):
+
+        self.kbins = kbird[:39]
+
+        models_path = cache_path+version+"/"+"models/P11{a}/".format(a=multipole)
+
+        # Unlike many of the other matryoshka componenet emulators
+        # the EFT components consist of just one NN.
+        model = load_model(models_path+"member_0", compile=False)
+
+        self.model = model
+        '''The NN that forms this component emulator'''
+
+        scalers_path = cache_path+version+"/"+"scalers/P11{a}/".format(a=multipole)
+
+        xscaler = UniformScaler()
+        yscaler = UniformScaler()
+
+        # Load the variables that define the scalers.
+        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
+
+        xscaler.min_val = xmin_diff[0, :]
+        xscaler.diff = xmin_diff[1, :]
+
+        yscaler.min_val = ymin_diff[0, :]
+        yscaler.diff = ymin_diff[1, :]
+
+        self.scalers = (xscaler, yscaler)
+
+    def emu_predict(self, X):
+        '''
+        Make predictions with the component emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape (d,), if a batch prediction
+             should have the shape (N,d).
+
+        Returns:
+            Array containing the predictions from the component emulator 
+            will have shape (n,k).
+        '''
+
+        # If making a prediction on single parameter set, input array needs to
+        # be reshaped.
+        X = np.atleast_2d(X)
+
+        X_prime = self.scalers[0].transform(X)
+
+        preds = self.scalers[1].inverse_transform(
+            self.model(X_prime))
+
+
+        return preds
+
+class Ploopl:
+    '''
+    Class for emulator that predicts the Ploopl contributions to the
+    P_n matrix.
+    '''
+
+    def __init__(self, multipole, version='EFT'):
+
+        self.kbins = kbird[:39]
+
+        models_path = cache_path+version+"/"+"models/Ploop{a}/".format(a=multipole)
+
+        # Unlike many of the other matryoshka componenet emulators
+        # the EFT components consist of just one NN.
+        model = load_model(models_path+"member_0", compile=False)
+
+        self.model = model
+        '''The NN that forms this component emulator'''
+
+        scalers_path = cache_path+version+"/"+"scalers/Ploop{a}/".format(a=multipole)
+
+        xscaler = UniformScaler()
+        yscaler = UniformScaler()
+
+        # Load the variables that define the scalers.
+        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
+
+        xscaler.min_val = xmin_diff[0, :]
+        xscaler.diff = xmin_diff[1, :]
+
+        yscaler.min_val = ymin_diff[0, :]
+        yscaler.diff = ymin_diff[1, :]
+
+        self.scalers = (xscaler, yscaler)
+
+    def emu_predict(self, X):
+        '''
+        Make predictions with the component emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape (d,), if a batch prediction
+             should have the shape (N,d).
+
+        Returns:
+            Array containing the predictions from the component emulator 
+            will have shape (n,k).
+        '''
+
+        # If making a prediction on single parameter set, input array needs to
+        # be reshaped.
+        X = np.atleast_2d(X)
+
+        X_prime = self.scalers[0].transform(X)
+
+        preds = self.scalers[1].inverse_transform(
+            self.model(X_prime))
+
+
+        return preds
+
+class Pctl:
+    '''
+    Class for emulator that predicts the Pctl contributions to the
+    P_n matrix.
+    '''
+
+    def __init__(self, multipole, version='EFT'):
+
+        self.kbins = kbird[:39]
+
+        models_path = cache_path+version+"/"+"models/Pct{a}/".format(a=multipole)
+
+        # Unlike many of the other matryoshka componenet emulators
+        # the EFT components consist of just one NN.
+        model = load_model(models_path+"member_0", compile=False)
+
+        self.model = model
+        '''The NN that forms this component emulator'''
+
+        scalers_path = cache_path+version+"/"+"scalers/Pct{a}/".format(a=multipole)
+
+        xscaler = UniformScaler()
+        yscaler = UniformScaler()
+
+        # Load the variables that define the scalers.
+        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
+
+        xscaler.min_val = xmin_diff[0, :]
+        xscaler.diff = xmin_diff[1, :]
+
+        yscaler.min_val = ymin_diff[0, :]
+        yscaler.diff = ymin_diff[1, :]
+
+        self.scalers = (xscaler, yscaler)
+
+    def emu_predict(self, X):
+        '''
+        Make predictions with the component emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape (d,), if a batch prediction
+             should have the shape (N,d).
+
+        Returns:
+            Array containing the predictions from the component emulator 
+            will have shape (n,k).
+        '''
+
+        # If making a prediction on single parameter set, input array needs to
+        # be reshaped.
+        X = np.atleast_2d(X)
+
+        X_prime = self.scalers[0].transform(X)
+
+        preds = self.scalers[1].inverse_transform(
+            self.model(X_prime))
+
+
+        return preds
+
+class EFT:
+
+    def __init__(self, multipole):
+        self.P11 = P11l(multipole)
+        self.Ploop = Ploopl(multipole)
+        self.Pct = Pctl(multipole)
+
+    def emu_predict(self, X, bias):
+        P11_preds = self.P11.emu_predict(X)
+        Ploop_preds = self.Ploop.emu_predict(X)
+        Pct_preds = self.Pct.emu_predict(X)
+
+        multipole_array = np.zeros((X.shape[0], self.P11.kbins.shape[0]))
+        for i in range(X.shape[0]):
+            f = halo_model_funcs.fN(X[i][0], 0.51)
+            multipole_array[i,:] = eft_funcs.multipole([P11_preds[i].reshape(3,self.P11.kbins.shape[0]), 
+                                                        np.hstack([np.zeros((12, 1)),Ploop_preds[i].reshape(12,self.P11.kbins.shape[0]-1)]),
+                                                        Pct_preds[i].reshape(6,self.P11.kbins.shape[0])], 
+                                                        bias[i], f)
+
+        return multipole_array
+        
 
 class HaloModel:
     '''
