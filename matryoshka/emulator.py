@@ -4,6 +4,7 @@ Flie contains Classes for the idividual component emulators. In addition to a
  spectrum.
 '''
 from operator import mul
+from numpy.core.fromnumeric import nonzero
 from tensorflow.keras.models import load_model
 import numpy as np
 from .training_funcs import UniformScaler, LogScaler
@@ -696,6 +697,14 @@ class P11l:
 
         scalers_path = cache_path+version+"/"+"scalers/P11{a}/".format(a=multipole)
 
+        if multipole==2:
+            self.nonzero_cols = np.load(scalers_path+"nonzero_cols.npy")
+            '''There can be zeros for all cosmologies at certain k-values.
+               The emulator does not make predictions here so we need to
+               know where to put zeros.'''
+        else:
+            self.nonzero_cols = np.ones((3*39, ), dtype='bool')
+
         xscaler = UniformScaler()
         yscaler = UniformScaler()
 
@@ -734,8 +743,9 @@ class P11l:
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
 
-
-        return preds
+        preds_incl_zeros = np.zeros((X.shape[0], 3*39))
+        preds_incl_zeros[:,self.nonzero_cols] = preds
+        return preds_incl_zeros
 
 class Ploopl:
     '''
@@ -757,6 +767,11 @@ class Ploopl:
         '''The NN that forms this component emulator'''
 
         scalers_path = cache_path+version+"/"+"scalers/Ploop{a}/".format(a=multipole)
+        
+        self.nonzero_cols = np.load(scalers_path+"nonzero_cols.npy")
+        '''There can be zeros for all cosmologies at certain k-values.
+           The emulator does not make predictions here so we need to
+           know where to put zeros.'''
 
         xscaler = UniformScaler()
         yscaler = UniformScaler()
@@ -796,8 +811,9 @@ class Ploopl:
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
 
-
-        return preds
+        preds_incl_zeros = np.zeros((X.shape[0], 12*39))
+        preds_incl_zeros[:,self.nonzero_cols] = preds
+        return preds_incl_zeros
 
 class Pctl:
     '''
@@ -820,6 +836,14 @@ class Pctl:
 
         scalers_path = cache_path+version+"/"+"scalers/Pct{a}/".format(a=multipole)
 
+        if multipole==2:
+            self.nonzero_cols = np.load(scalers_path+"nonzero_cols.npy")
+            '''There can be zeros for all cosmologies at certain k-values.
+               The emulator does not make predictions here so we need to
+               know where to put zeros.'''
+        else:
+            self.nonzero_cols = np.ones((6*39, ), dtype='bool')
+
         xscaler = UniformScaler()
         yscaler = UniformScaler()
 
@@ -858,8 +882,9 @@ class Pctl:
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
 
-
-        return preds
+        preds_incl_zeros = np.zeros((X.shape[0], 6*39))
+        preds_incl_zeros[:,self.nonzero_cols] = preds
+        return preds_incl_zeros
 
 class EFT:
 
@@ -877,7 +902,7 @@ class EFT:
         for i in range(X.shape[0]):
             f = halo_model_funcs.fN(X[i][0], 0.51)
             multipole_array[i,:] = eft_funcs.multipole([P11_preds[i].reshape(3,self.P11.kbins.shape[0]), 
-                                                        np.hstack([np.zeros((12, 1)),Ploop_preds[i].reshape(12,self.P11.kbins.shape[0]-1)]),
+                                                        Ploop_preds[i].reshape(12,self.P11.kbins.shape[0]),
                                                         Pct_preds[i].reshape(6,self.P11.kbins.shape[0])], 
                                                         bias[i], f)
 
