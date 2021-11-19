@@ -44,9 +44,10 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">matryoshka.emulator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#base-model">Base Model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#nonlinear-boost-galaxy">Nonlinear Boost (Galaxy)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#nonlinear-boost-matter">Nonlinear Boost (Matter)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nonlinear-boost-galaxy">Nonlinear Boost (Galaxy)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#galaxy-power-spectrum">Galaxy Power Spectrum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#eft">EFT</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="halomodel.html">matryoshka.halo_model_funcs</a></li>
@@ -308,58 +309,6 @@ will have shape (m,n,k). If mean_or_full=’mean’ will have shape (n,k).</p>
 </dd></dl>
 
 </section>
-<section id="nonlinear-boost-galaxy">
-<h2>Nonlinear Boost (Galaxy)<a class="headerlink" href="#nonlinear-boost-galaxy" title="Permalink to this headline"></a></h2>
-<p>In the current version of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> the nonlinear boost component emulator has only been trained with training data generated with HALOFIT and serves to demonstrate the use of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code>. Future versions will include a nonlinear boost component emulator trained with data produced with high resolution N-body simulatios.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="matryoshka.emulator.Boost">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">Boost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">redshift_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Boost" title="Permalink to this definition"></a></dt>
-<dd><p>Class for the nonlinear boost componenet emulator.</p>
-<p>On initalisation the weights for the NN ensmble will be loaded,
-along with the scalers required to make predictions with the NNs.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>redshift_id</strong> (<em>int</em>) – Index in matter_boost_zlist or galaxy_boost_zlist
-that corespons to the desired redshift.</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="matryoshka.emulator.Boost.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Boost.emu_predict" title="Permalink to this definition"></a></dt>
-<dd><p>Make predictions with the component emulator.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters. If making
-a single prediction should have shape (d,), if a batch prediction
-should have the shape (N,d).</p></li>
-<li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
-ensemble mean prediction should be returned, or the predictions
-from each ensemble member (default is ‘mean’).</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Array containing the predictions from the component emulator. Array
-will have shape (m,n,k). If mean_or_full=’mean’ will have shape (n,k).</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="matryoshka.emulator.Boost.kbins">
-<span class="sig-name descname"><span class="pre">kbins</span></span><a class="headerlink" href="#matryoshka.emulator.Boost.kbins" title="Permalink to this definition"></a></dt>
-<dd><p>The k-bins at which predictions will be made.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="matryoshka.emulator.Boost.models">
-<span class="sig-name descname"><span class="pre">models</span></span><a class="headerlink" href="#matryoshka.emulator.Boost.models" title="Permalink to this definition"></a></dt>
-<dd><p>A list containing the individual ensemble members.</p>
-</dd></dl>
-
-</dd></dl>
-
-</section>
 <section id="nonlinear-boost-matter">
 <h2>Nonlinear Boost (Matter)<a class="headerlink" href="#nonlinear-boost-matter" title="Permalink to this headline"></a></h2>
 <dl class="py class">
@@ -414,6 +363,58 @@ will have shape (m,n,k). If mean_or_full=’mean’ will have shape (n,k).</p>
 </dd></dl>
 
 </section>
+<section id="nonlinear-boost-galaxy">
+<h2>Nonlinear Boost (Galaxy)<a class="headerlink" href="#nonlinear-boost-galaxy" title="Permalink to this headline"></a></h2>
+<p>In the current version of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> the nonlinear boost component emulator has only been trained with training data generated with HALOFIT and serves to demonstrate the use of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code>. Future versions will include a nonlinear boost component emulator trained with data produced with high resolution N-body simulatios.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="matryoshka.emulator.Boost">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">Boost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">redshift_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Boost" title="Permalink to this definition"></a></dt>
+<dd><p>Class for the nonlinear boost componenet emulator.</p>
+<p>On initalisation the weights for the NN ensmble will be loaded,
+along with the scalers required to make predictions with the NNs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>redshift_id</strong> (<em>int</em>) – Index in matter_boost_zlist or galaxy_boost_zlist
+that corespons to the desired redshift.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matryoshka.emulator.Boost.emu_predict">
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Boost.emu_predict" title="Permalink to this definition"></a></dt>
+<dd><p>Make predictions with the component emulator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters. If making
+a single prediction should have shape (d,), if a batch prediction
+should have the shape (N,d).</p></li>
+<li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
+ensemble mean prediction should be returned, or the predictions
+from each ensemble member (default is ‘mean’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing the predictions from the component emulator. Array
+will have shape (m,n,k). If mean_or_full=’mean’ will have shape (n,k).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="matryoshka.emulator.Boost.kbins">
+<span class="sig-name descname"><span class="pre">kbins</span></span><a class="headerlink" href="#matryoshka.emulator.Boost.kbins" title="Permalink to this definition"></a></dt>
+<dd><p>The k-bins at which predictions will be made.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="matryoshka.emulator.Boost.models">
+<span class="sig-name descname"><span class="pre">models</span></span><a class="headerlink" href="#matryoshka.emulator.Boost.models" title="Permalink to this definition"></a></dt>
+<dd><p>A list containing the individual ensemble members.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="galaxy-power-spectrum">
 <h2>Galaxy Power Spectrum<a class="headerlink" href="#galaxy-power-spectrum" title="Permalink to this headline"></a></h2>
 <dl class="py class">
@@ -459,6 +460,39 @@ pre-initalised component emulators.</p>
 <dd class="field-even"><p>Array containing the predictions from the halo model power spectrum.
 Array will have shape (n,k). If making a prediction for a single set
 of input parameters will have shape (1,k).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="eft">
+<h2>EFT<a class="headerlink" href="#eft" title="Permalink to this headline"></a></h2>
+<p>This emulator apprxoimates the galaxy power spectrum multipoles that would be predicted by the EFTofLSS code <a class="reference external" href="https://github.com/pierrexyz/pybird">PyBird</a>.
+In the current version predictions can only be made at z=0.51.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="matryoshka.emulator.EFT">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">EFT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multipole</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.EFT" title="Permalink to this definition"></a></dt>
+<dd><p>Emulator for predicting power spectrum multipoles that would
+be predicted using EFTofLSS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>multipole</strong> (<em>int</em>) – Desired multipole. Can either be 0 or 2.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="matryoshka.emulator.EFT.emu_predict">
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.EFT.emu_predict" title="Permalink to this definition"></a></dt>
+<dd><p>Make predictions with the emulator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – Input cosmological parameters.
+Should have shape (n, 5).</p></li>
+<li><p><strong>bias</strong> (<em>array</em>) – Input bias parameters. Should
+have shape (n, 7)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

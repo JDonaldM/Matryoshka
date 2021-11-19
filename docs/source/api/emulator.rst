@@ -19,6 +19,12 @@ Base Model
 .. autoclass:: matryoshka.emulator.Growth
     :members:
 
+Nonlinear Boost (Matter)
+========================
+
+.. autoclass:: matryoshka.emulator.MatterBoost
+    :members:
+
 Nonlinear Boost (Galaxy)
 ========================
 
@@ -27,14 +33,17 @@ In the current version of ``matryoshka`` the nonlinear boost component emulator 
 .. autoclass:: matryoshka.emulator.Boost
     :members:
 
-Nonlinear Boost (Matter)
-========================
-
-.. autoclass:: matryoshka.emulator.MatterBoost
-    :members:
-
 Galaxy Power Spectrum
 =====================
 
 .. autoclass:: matryoshka.emulator.HaloModel     
+    :members:
+
+EFT
+===
+
+This emulator apprxoimates the galaxy power spectrum multipoles that would be predicted by the EFTofLSS code `PyBird <https://github.com/pierrexyz/pybird>`_.
+In the current version predictions can only be made at z=0.51.
+
+.. autoclass:: matryoshka.emulator.EFT
     :members:

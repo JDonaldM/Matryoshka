@@ -887,6 +887,13 @@ class Pctl:
         return preds_incl_zeros
 
 class EFT:
+    '''
+    Emulator for predicting power spectrum multipoles that would
+    be predicted using EFTofLSS.
+
+    Args:
+        multipole (int) : Desired multipole. Can either be 0 or 2.
+    '''
 
     def __init__(self, multipole):
         self.P11 = P11l(multipole)
@@ -894,6 +901,15 @@ class EFT:
         self.Pct = Pctl(multipole)
 
     def emu_predict(self, X, bias):
+        '''
+        Make predictions with the emulator.
+
+        Args:
+            X (array) : Input cosmological parameters.
+             Should have shape (n, 5).
+            bias (array) : Input bias parameters. Should
+             have shape (n, 7)
+        '''
         P11_preds = self.P11.emu_predict(X)
         Ploop_preds = self.Ploop.emu_predict(X)
         Pct_preds = self.Pct.emu_predict(X)
