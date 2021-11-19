@@ -30,6 +30,10 @@ EmuPred = TransferEmu.emu_predict(COSMO)
 
 For more examples and full documentation see https://matryoshka-emu.readthedocs.io/en/latest/
 
+## New in v0.2.0
+
+In this version of `matryoshka` we include an emulator for predicicting multipoles of the power spectrum that would be calculated using the EFTofLSS method. This EFT emulator provides a roughly 500X spped up compared to the EFTofLSS code [PyBird](https://github.com/pierrexyz/pybird), and prodcues predictions that are accurate withing 1% (at 68%CI).
+
 ## New in v0.1.0
 
 In the most recent version of `matryoshka` we have included an emulator to predict the nonlinear boost for the *matter* power spectrum that has been trained on the [Quijote simulations](https://arxiv.org/abs/1909.05273). We also include a version of the transfer function emulator that has been trained on the Quijote sample space.

@@ -41,6 +41,11 @@ The example below shows how to generate a prediction for a Planck18 LCDM transfe
 
 See the :doc:`examples` page for further example usage of ``matryoshka``, and see :doc:`api` for a comprehensive user manual.
 
+New in v0.2.0
+=============
+
+In this version of ``matryoshka`` we include an emulator for predicicting multipoles of the power spectrum that would be calculated using the EFTofLSS method. This EFT emulator provides a roughly 500X speed up compared to the EFTofLSS code `PyBird <https://github.com/pierrexyz/pybird>`_, and prodcues predictions that are accurate withing 1% (at 68%CI).
+
 New in v0.1.0
 =============
 
