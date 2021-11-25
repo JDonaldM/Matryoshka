@@ -532,3 +532,13 @@ def fN(Om, z):
     """ LCDM growth rate (from pybird) """
     a = 1. / (1. + z)
     return (Om * (5 * a - 3 * DgN(Om, a))) / (2. * (a**3 * (1 - Om) + Om) * DgN(Om, a))
+
+def DgN_vec(Om, z):
+    a = 1. / (1. + z)
+    a_eval = np.linspace(1e-8,a,200)
+    a_grid, Om_grid = np.meshgrid(a_eval, Om, indexing='ij')
+    return 5. / 2 * Om * cH(Om, a) / a * trapz(cH(Om_grid, a_grid)**-3, x=a_eval, axis=0)
+
+def fN_vec(Om, z):
+    a = 1. / (1. + z)
+    return (Om * (5 * a - 3 * DgN_vec(Om, a))) / (2. * (a**3 * (1 - Om) + Om) * DgN_vec(Om, a))

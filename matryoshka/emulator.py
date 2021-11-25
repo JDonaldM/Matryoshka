@@ -915,12 +915,12 @@ class EFT:
         Pct_preds = self.Pct.emu_predict(X)
 
         multipole_array = np.zeros((X.shape[0], self.P11.kbins.shape[0]))
+        f = halo_model_funcs.fN_vec(X[:,0]/X[:,2]**2, 0.51)
         for i in range(X.shape[0]):
-            f = halo_model_funcs.fN(X[i][0], 0.51)
             multipole_array[i,:] = eft_funcs.multipole([P11_preds[i].reshape(3,self.P11.kbins.shape[0]), 
                                                         Ploop_preds[i].reshape(12,self.P11.kbins.shape[0]),
                                                         Pct_preds[i].reshape(6,self.P11.kbins.shape[0])], 
-                                                        bias[i], f)
+                                                        bias[i], f[i])
 
         return multipole_array
         
