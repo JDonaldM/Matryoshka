@@ -8,7 +8,7 @@ with open("requirements.txt", 'r') as dependencies:
 
 setuptools.setup(
     name="matryoshka",
-    version="0.2.0",
+    version="0.2.1",
     author="Jamie Donald-McCann",
     author_email="jamie.donald-mccann@port.ac.uk",
     description="Emulated halo model",
