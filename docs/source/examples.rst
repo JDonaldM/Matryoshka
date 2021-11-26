@@ -18,6 +18,7 @@ Examples
 .. _MCMC with matryoshka and zeus: example_notebooks/toy_example_mcmc.ipynb
 .. _Generate training samples for the base model components: example_notebooks/resample_example.ipynb
 .. _QUIP: example_notebooks/QUIP.ipynb
+.. _EFTEMU: example_notebooks/EFTEMU_example.ipynb
 
 .. toctree::
     :maxdepth: 2
@@ -27,3 +28,4 @@ Examples
     example_notebooks/toy_example_mcmc.ipynb
     example_notebooks/resample_example.ipynb
     example_notebooks/QUIP.ipynb
+    example_notebooks/EFTEMU_example.ipynb
