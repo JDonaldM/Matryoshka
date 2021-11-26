@@ -891,6 +891,10 @@ class EFT:
     Emulator for predicting power spectrum multipoles that would
     be predicted using EFTofLSS.
 
+    .. note::
+        See the `EFTEMU <../example_notebooks/EFTEMU_example.ipynb>`_
+        example.
+
     Args:
         multipole (int) : Desired multipole. Can either be 0 or 2.
     '''
