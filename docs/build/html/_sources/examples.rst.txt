@@ -12,7 +12,10 @@ Examples
     Example showing how to use ``matryoshka`` to generate new samples given a set of simulation samples.
 
 - `QUIP`_
-    Intorduces the Quijote matter power specreum emulator. 
+    Intorduces the Quijote matter power specreum emulator.
+
+ - `EFTEMU`_
+    Intorduces the EFTofLSS emulator.
 
 .. _Basic emulator usage: example_notebooks/transfer_basic.ipynb
 .. _MCMC with matryoshka and zeus: example_notebooks/toy_example_mcmc.ipynb
