@@ -1,3 +1,4 @@
+from re import X
 import numpy as np
 from scipy.special import eval_legendre
 from scipy.integrate import trapz, quad
@@ -159,3 +160,9 @@ def DA(Om, z):
     (from pybird) """
     r = quad(lambda x: 1. / Hubble(Om, x), 0, z)[0]
     return r / (1 + z)
+
+def DA_vec(Om, z):
+    z_eval = np.linspace(0,z,200)
+    z_grid, Om_grid = np.meshgrid(z_eval, Om, indexing='ij')
+    r = trapz(1. / Hubble(Om_grid, z_grid), x=z_eval, axis=0)
+    return r/(1+z)
