@@ -49,13 +49,13 @@ class Transfer:
     On initalisation the weights for the NN ensmble will be loaded,
     along with the scalers required to make predictions with the NNs.
 
-    .. note::
-        See the `Basic emulator usage <../example_notebooks/transfer_basic.ipynb>`_
-        example.
-
     Args:
         version (str) : String to specify what version of the emulator to
          load. Default is 'class_aemulus'.
+
+    .. note::
+        See the `Basic emulator usage <../example_notebooks/transfer_basic.ipynb>`_
+        example.
     '''
 
     def __init__(self, version='class_aemulus'):
@@ -519,12 +519,12 @@ class MatterBoost:
     Class for emulator that predicts a nonlinear boost
     for the matter power spectrum.
 
-    .. note::
-        See the `QUIP <../example_notebooks/QUIP.ipynb>`_ example.
-
     Args:
         redshift_id (int) : Index in matter_boost_zlist or galaxy_boost_zlist
          that corespons to the desired redshift. 
+
+    .. note::
+        See the `QUIP <../example_notebooks/QUIP.ipynb>`_ example.
     '''
 
     def __init__(self, redshift_id):
@@ -891,12 +891,12 @@ class EFT:
     Emulator for predicting power spectrum multipoles that would
     be predicted using EFTofLSS.
 
+    Args:
+        multipole (int) : Desired multipole. Can either be 0 or 2.
+
     .. note::
         See the `EFTEMU <../example_notebooks/EFTEMU_example.ipynb>`_
         example.
-
-    Args:
-        multipole (int) : Desired multipole. Can either be 0 or 2.
     '''
 
     def __init__(self, multipole):
@@ -904,25 +904,46 @@ class EFT:
         self.Ploop = Ploopl(multipole)
         self.Pct = Pctl(multipole)
 
-    def emu_predict(self, X, bias):
+    def emu_predict(self, X, bias, stochastic=None, km=None, 
+                    ng=None):
         '''
         Make predictions with the emulator.
 
         Args:
             X (array) : Input cosmological parameters.
              Should have shape (n, 5).
-            bias (array) : Input bias parameters. Should
+            bias (array) : Input bias parameters and counterterms. Should
              have shape (n, 7)
+            stochastic (array) : Input stochastic counterterms. Should have
+             shape (n, 3). Default is ``None``, in which case no stochastic
+             terms are used.
+            km (float) : Controls the bias derivative expansion (see eq. 5
+             in arXiv:1909.05271). Default in ``None``, in which case all 
+             counterterm inputs are assumed to be a ratio with km i.e.
+             ``c_i/km**2``.
+            ng (float) : Mean galaxy number density. Default is ``None``.
+             Only required if ``stochastic`` is not ``None``.
         '''
         P11_preds = self.P11.emu_predict(X)
         Ploop_preds = self.Ploop.emu_predict(X)
         Pct_preds = self.Pct.emu_predict(X)
+
+        if km is not None:
+            bias[4:] = bias[4:]/km**2
+            if stochastic is not None:
+                stochastic[1:] = stochastic[1:]/km**2
+
 
         f = halo_model_funcs.fN_vec(X[:,0]/X[:,2]**2, 0.51)
         multipole_array = eft_funcs.multipole_vec([P11_preds.reshape(X.shape[0],3,self.P11.kbins.shape[0]),
                                                    Ploop_preds.reshape(X.shape[0],12,self.Ploop.kbins.shape[0]),
                                                    Pct_preds.reshape(X.shape[0],6,self.Pct.kbins.shape[0])],
                                                    bias, f.reshape(-1,1))
+
+        if stochastic is not None:
+            multipole_array += stochastic[:,0].reshape(-1,1)/ng
+            multipole_array += (stochastic[:,1].reshape(-1,1)*self.P11.kbins**2)/ng
+            multipole_array += (stochastic[:,2].reshape(-1,1)*f.reshape(-1,1)*self.P11.kbins**2)/ng
 
         return multipole_array
         

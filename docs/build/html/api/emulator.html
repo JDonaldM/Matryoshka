@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>matryoshka.emulator &mdash; matryoshka 0.2.1 documentation</title>
+  <title>matryoshka.emulator &mdash; matryoshka 0.2.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -117,17 +117,17 @@
 <dd><p>Class for the transfer function componenet emulator.</p>
 <p>On initalisation the weights for the NN ensmble will be loaded,
 along with the scalers required to make predictions with the NNs.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>See the <a class="reference internal" href="../example_notebooks/transfer_basic.html"><span class="doc">Basic emulator usage</span></a>
-example.</p>
-</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>version</strong> (<em>str</em>) – String to specify what version of the emulator to
 load. Default is ‘class_aemulus’.</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the <a class="reference internal" href="../example_notebooks/transfer_basic.html"><span class="doc">Basic emulator usage</span></a>
+example.</p>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.Transfer.emu_predict">
 <span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.Transfer.emu_predict" title="Permalink to this definition"></a></dt>
@@ -316,16 +316,16 @@ will have shape (m,n,k). If mean_or_full=’mean’ will have shape (n,k).</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">MatterBoost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">redshift_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.MatterBoost" title="Permalink to this definition"></a></dt>
 <dd><p>Class for emulator that predicts a nonlinear boost
 for the matter power spectrum.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>See the <a class="reference internal" href="../example_notebooks/QUIP.html"><span class="doc">QUIP</span></a> example.</p>
-</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>redshift_id</strong> (<em>int</em>) – Index in matter_boost_zlist or galaxy_boost_zlist
 that corespons to the desired redshift.</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the <a class="reference internal" href="../example_notebooks/QUIP.html"><span class="doc">QUIP</span></a> example.</p>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.MatterBoost.emu_predict">
 <span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.MatterBoost.emu_predict" title="Permalink to this definition"></a></dt>
@@ -476,27 +476,36 @@ In the current version predictions can only be made at z=0.51.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">EFT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multipole</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.EFT" title="Permalink to this definition"></a></dt>
 <dd><p>Emulator for predicting power spectrum multipoles that would
 be predicted using EFTofLSS.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>See the <a class="reference internal" href="../example_notebooks/EFTEMU_example.html"><span class="doc">EFTEMU</span></a>
-example.</p>
-</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>multipole</strong> (<em>int</em>) – Desired multipole. Can either be 0 or 2.</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the <a class="reference internal" href="../example_notebooks/EFTEMU_example.html"><span class="doc">EFTEMU</span></a>
+example.</p>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.EFT.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.EFT.emu_predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stochastic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">km</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.EFT.emu_predict" title="Permalink to this definition"></a></dt>
 <dd><p>Make predictions with the emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X</strong> (<em>array</em>) – Input cosmological parameters.
 Should have shape (n, 5).</p></li>
-<li><p><strong>bias</strong> (<em>array</em>) – Input bias parameters. Should
+<li><p><strong>bias</strong> (<em>array</em>) – Input bias parameters and counterterms. Should
 have shape (n, 7)</p></li>
+<li><p><strong>stochastic</strong> (<em>array</em>) – Input stochastic counterterms. Should have
+shape (n, 3). Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case no stochastic
+terms are used.</p></li>
+<li><p><strong>km</strong> (<em>float</em>) – Controls the bias derivative expansion (see eq. 5
+in arXiv:1909.05271). Default in <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case all
+counterterm inputs are assumed to be a ratio with km i.e.
+<code class="docutils literal notranslate"><span class="pre">c_i/km**2</span></code>.</p></li>
+<li><p><strong>ng</strong> (<em>float</em>) – Mean galaxy number density. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.
+Only required if <code class="docutils literal notranslate"><span class="pre">stochastic</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
