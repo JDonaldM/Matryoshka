@@ -903,6 +903,7 @@ class EFT:
         self.P11 = P11l(multipole)
         self.Ploop = Ploopl(multipole)
         self.Pct = Pctl(multipole)
+        self.multipole = multipole
 
     def emu_predict(self, X, bias, stochastic=None, km=None, 
                     ng=None):
@@ -941,9 +942,13 @@ class EFT:
                                                    bias, f.reshape(-1,1))
 
         if stochastic is not None:
-            multipole_array += stochastic[:,0].reshape(-1,1)/ng
-            multipole_array += (stochastic[:,1].reshape(-1,1)*self.P11.kbins**2)/ng
-            multipole_array += (stochastic[:,2].reshape(-1,1)*f.reshape(-1,1)*self.P11.kbins**2)/ng
+            
+            if self.multipole==0:
+                multipole_array += stochastic[:,0].reshape(-1,1)/ng
+                multipole_array += (stochastic[:,1].reshape(-1,1)*self.P11.kbins**2)/ng
+
+            elif self.multipole==2:    
+                multipole_array += (stochastic[:,2].reshape(-1,1)*self.P11.kbins**2)/ng
 
         return multipole_array
         
