@@ -133,7 +133,7 @@ def AP(lPk, mu_bins, kbins, qperp, qpar):
     mup = mugrid / F * (1 + mugrid**2 * (F**-2 - 1))**-0.5
 
     Pkint = interp1d(kbins, lPk, kind='cubic', bounds_error=False, fill_value='extrapolate', axis=-1)(kp)
-    print(Pkint.shape)
+    #print(Pkint.shape)
 
     _Pkmu = 0
     for i in range(lPk.shape[0]):
@@ -143,7 +143,7 @@ def AP(lPk, mu_bins, kbins, qperp, qpar):
     Pell = []
     for pole in range(2):
         l=pole*2
-        print(l)
+        #print(l)
         Interg = _Pkmu*eval_legendre(l, mugrid)
         Pell.append((2*l+1)/(2*qperp**2 * qpar)  * trapz(Interg, x=mugrid, axis=-1))
     return np.stack(Pell)
