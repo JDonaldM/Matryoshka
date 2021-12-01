@@ -1,4 +1,3 @@
-from re import X
 import numpy as np
 from scipy.special import eval_legendre
 from scipy.integrate import trapz, quad
@@ -154,7 +153,6 @@ def Hubble(Om, z):
     (from pybird) """
     return ((Om) * (1 + z)**3. + (1 - Om))**0.5
 
-#TODO: Write version of this that expects muliple values of Om.
 def DA(Om, z):
     """ LCDM AP parameter auxiliary function
     (from pybird) """
