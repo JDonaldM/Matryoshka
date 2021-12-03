@@ -899,10 +899,10 @@ class EFT:
         example.
     '''
 
-    def __init__(self, multipole):
-        self.P11 = P11l(multipole)
-        self.Ploop = Ploopl(multipole)
-        self.Pct = Pctl(multipole)
+    def __init__(self, multipole, version='EFT'):
+        self.P11 = P11l(multipole, version=version)
+        self.Ploop = Ploopl(multipole, version=version)
+        self.Pct = Pctl(multipole, version=version)
         self.multipole = multipole
 
     def emu_predict(self, X, bias, stochastic=None, km=None, 
