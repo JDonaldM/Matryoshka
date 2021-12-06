@@ -12,17 +12,17 @@ parser.add_argument("--cache", help="path to save outputs.")
 parser.add_argument("--new_split", help='use a new train test split? 0 for no, 1 for yes', 
                     default=0)
 parser.add_argument("--archP110", help='architecture for P110 emulator.', 
-                    default=[200,200])
+                    default="200 200")
 parser.add_argument("--archP112", help='architecture for P112 emulator.', 
-                    default=[200,200])
+                    default="200 200")
 parser.add_argument("--archPloop0", help='architecture for Ploop0 emulator.', 
-                    default=[600,600])
+                    default="600 600")
 parser.add_argument("--archPloop2", help='architecture for Ploop2 emulator.', 
-                    default=[600,600])
+                    default="600 600")
 parser.add_argument("--archPct0", help='architecture for Pct0 emulator.', 
-                    default=[200,200])
+                    default="200 200")
 parser.add_argument("--archPct2", help='architecture for Pct2 emulator.', 
-                    default=[200,200])
+                    default="200 200")
 parser.add_argument("--verbose", help='verbose for tensorflow.', default=0)
 args = parser.parse_args()
 
@@ -30,9 +30,9 @@ inputX_path = args.inputX
 inputY_path = args.inputY
 cache_path = args.cache
 new_split = bool(args.new_split)
-arch_dict = {'P11':[args.archP110, args.archP112], 
-             'Ploop':[args.archPloop0, args.archPloop2],
-             'Pct':[args.archPct0, args.archPct2]}
+arch_dict = {'P11':[[int(i) for i in args.archP110.split(" ")], [int(i) for i in args.archP112.split(" ")]], 
+             'Ploop':[[int(i) for i in args.archPloop0.split(" ")], [int(i) for i in args.archPloop2.split(" ")]],
+             'Pct':[[int(i) for i in args.archPct0.split(" ")], [int(i) for i in args.archPct2.split(" ")]]}
 
 print("Loading features...")
 cosmos = []
@@ -130,7 +130,7 @@ for component in ["P11", "Ploop", "Pct"]:
                          verbose=args.verbose)
     print("{a}{b} final loss: ".format(a=component, b=2), P2_model.evaluate(trainx, P2_trainy))
 
-    P0_model.save(cache_path+"models/{a}0/model_0".format(a=component))
-    P2_model.save(cache_path+"models/{a}2/model_0".format(a=component))
+    P0_model.save(cache_path+"models/{a}0/member_0".format(a=component))
+    P2_model.save(cache_path+"models/{a}2/member_0".format(a=component))
     print("Done.")
 
