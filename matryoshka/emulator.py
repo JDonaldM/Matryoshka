@@ -618,11 +618,12 @@ class P11l:
     P_n matrix.
     '''
 
-    def __init__(self, multipole, version='EFT'):
+    def __init__(self, multipole, version='EFT', redshift=0.51):
 
         self.kbins = kbird[:39]
 
-        models_path = cache_path+version+"/"+"models/P11{a}/".format(a=multipole)
+        models_path = cache_path+version+"/z{a}/models/P11{b}/".format(a=redshift, 
+                                                                      b=multipole)
 
         # Unlike many of the other matryoshka componenet emulators
         # the EFT components consist of just one NN.
@@ -631,8 +632,9 @@ class P11l:
         self.model = model
         '''The NN that forms this component emulator'''
 
-        xscalers_path = cache_path+version+"/scalers/"
-        yscalers_path = cache_path+version+"/scalers/P11{a}/".format(a=multipole)
+        xscalers_path = cache_path+version+"/z{a}/scalers/".format(a=redshift)
+        yscalers_path = cache_path+version+"/z{a}/scalers/P11{b}/".format(a=redshift,
+                                                                          b=multipole)
 
 
         self.nonzero_cols = np.load(yscalers_path+"nonzero_cols.npy")
@@ -688,11 +690,12 @@ class Ploopl:
     P_n matrix.
     '''
 
-    def __init__(self, multipole, version='EFT'):
+    def __init__(self, multipole, version='EFT', redshift=0.51):
 
         self.kbins = kbird[:39]
 
-        models_path = cache_path+version+"/"+"models/Ploop{a}/".format(a=multipole)
+        models_path = cache_path+version+"/z{a}/models/Ploop{b}/".format(a=redshift, 
+                                                                         b=multipole)
 
         # Unlike many of the other matryoshka componenet emulators
         # the EFT components consist of just one NN.
@@ -701,8 +704,9 @@ class Ploopl:
         self.model = model
         '''The NN that forms this component emulator'''
 
-        xscalers_path = cache_path+version+"/scalers/"
-        yscalers_path = cache_path+version+"/scalers/Ploop{a}/".format(a=multipole)
+        xscalers_path = cache_path+version+"/z{a}/scalers/".format(a=redshift)
+        yscalers_path = cache_path+version+"/z{a}/scalers/Ploop{b}/".format(a=redshift,
+                                                                            b=multipole)
         
         self.nonzero_cols = np.load(yscalers_path+"nonzero_cols.npy")
         '''There can be zeros for all cosmologies at certain k-values.
@@ -757,11 +761,12 @@ class Pctl:
     P_n matrix.
     '''
 
-    def __init__(self, multipole, version='EFT'):
+    def __init__(self, multipole, version='EFT' , redshift=0.51):
 
         self.kbins = kbird[:39]
 
-        models_path = cache_path+version+"/"+"models/Pct{a}/".format(a=multipole)
+        models_path = cache_path+version+"/z{a}/models/Pct{b}/".format(a=redshift, 
+                                                                      b=multipole)
 
         # Unlike many of the other matryoshka componenet emulators
         # the EFT components consist of just one NN.
@@ -770,8 +775,9 @@ class Pctl:
         self.model = model
         '''The NN that forms this component emulator'''
 
-        xscalers_path = cache_path+version+"/scalers/"
-        yscalers_path = cache_path+version+"/scalers/Pct{a}/".format(a=multipole)
+        xscalers_path = cache_path+version+"/z{a}/scalers/".format(a=redshift)
+        yscalers_path = cache_path+version+"/z{a}/scalers/Pct{b}/".format(a=redshift,
+                                                                          b=multipole)
 
         self.nonzero_cols = np.load(yscalers_path+"nonzero_cols.npy")
         '''There can be zeros for all cosmologies at certain k-values.
@@ -827,17 +833,20 @@ class EFT:
 
     Args:
         multipole (int) : Desired multipole. Can either be 0 or 2.
+        redshift (float) : Desired redshift. Can be 0.38, 0.51, or 0.61.
 
     .. note::
         See the `EFTEMU <../example_notebooks/EFTEMU_example.ipynb>`_
         example.
     '''
 
-    def __init__(self, multipole, version='EFT'):
-        self.P11 = P11l(multipole, version=version)
-        self.Ploop = Ploopl(multipole, version=version)
-        self.Pct = Pctl(multipole, version=version)
+    def __init__(self, multipole, version='EFT', redshift=0.51):
+
+        self.P11 = P11l(multipole, version=version, redshift=redshift)
+        self.Ploop = Ploopl(multipole, version=version, redshift=redshift)
+        self.Pct = Pctl(multipole, version=version, redshift=redshift)
         self.multipole = multipole
+        self.redshift = redshift
 
     def emu_predict(self, X, bias, stochastic=None, km=None, 
                     ng=None):
@@ -869,7 +878,7 @@ class EFT:
                 stochastic[1:] = stochastic[1:]/km**2
 
 
-        f = halo_model_funcs.fN_vec(X[:,0]/X[:,2]**2, 0.51)
+        f = halo_model_funcs.fN_vec(X[:,0]/X[:,2]**2, self.redshift)
         multipole_array = eft_funcs.multipole_vec([P11_preds.reshape(X.shape[0],3,self.P11.kbins.shape[0]),
                                                    Ploop_preds.reshape(X.shape[0],12,self.Ploop.kbins.shape[0]),
                                                    Pct_preds.reshape(X.shape[0],6,self.Pct.kbins.shape[0])],

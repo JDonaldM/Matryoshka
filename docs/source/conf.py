@@ -23,7 +23,7 @@ copyright = '2021, Jamie Donald-McCann'
 author = 'Jamie Donald-McCann'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.3'
+release = '0.2.4'
 
 
 # -- General configuration ---------------------------------------------------
