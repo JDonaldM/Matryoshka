@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Accelerated EFTofLSS predictions with EFTEMU &mdash; matryoshka 0.2.2 documentation</title>
+  <title>Accelerated EFTofLSS predictions with EFTEMU &mdash; matryoshka 0.2.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -21,7 +21,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="API Reference" href="../api.html" />
+    <link rel="next" title="Conveniently Re-train the EFTEMU" href="retrainEFTEMU.html" />
     <link rel="prev" title="The Quijote matter Power spectrum emulator (QUIP)" href="QUIP.html" /> 
 </head>
 
@@ -48,6 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="resample_example.html">Generating training samples for the base model componenets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QUIP.html">The <code class="docutils literal notranslate"><span class="pre">Qui</span></code>jote matter <code class="docutils literal notranslate"><span class="pre">P</span></code>ower spectrum emulator (QUIP)</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Accelerated EFTofLSS predictions with <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="retrainEFTEMU.html">Conveniently Re-train the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
@@ -873,7 +874,7 @@ Sampling progress :  27%|██████████████▎          
 <span class="n">chain</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">discard</span><span class="p">))</span>
 <span class="n">flat_chain</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">discard</span><span class="p">))</span>
 
-<span class="n">param_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$\omega_m$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$\omega_b$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$h$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$A_s$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$n_s$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$b_1$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_2$&quot;</span><span class="p">,</span>
+<span class="n">param_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$\omega_c$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$\omega_b$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$h$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$A_s$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$n_s$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$b_1$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_2$&quot;</span><span class="p">,</span>
                 <span class="sa">r</span><span class="s2">&quot;$b_3$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_4$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{ct}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{r1}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{r2}</span><span class="s2">$&quot;</span><span class="p">]</span>
 <span class="n">truths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">fid_cosmo</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fid_bs</span><span class="p">)])</span>
 <span class="n">truths</span><span class="p">[</span><span class="mi">5</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">fid_bs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">fid_bs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
@@ -945,7 +946,7 @@ Sampling progress :  27%|██████████████▎          
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="QUIP.html" class="btn btn-neutral float-left" title="The Quijote matter Power spectrum emulator (QUIP)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="retrainEFTEMU.html" class="btn btn-neutral float-right" title="Conveniently Re-train the EFTEMU" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

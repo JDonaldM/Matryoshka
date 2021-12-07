@@ -1,0 +1,29 @@
+Conveniently Re-train the ``EFTEMU``
+====================================
+
+We include the convenience script ``trainEFTEMUcomponents.py`` so that it is very simple to re-train the ``EFTEMU`` if desired.
+To use the script you will need to use the directory structure shown below for your new training data:
+.. code-block::
+    data
+    +-- features
+        +-- cosmos1.npy
+        +-- cosmos2.npy
+        +-- ...
+    +-- functions
+        +-- P110
+            +-- P110_1.npy
+            +-- P110_2.npy
+            +-- ...
+        +-- P112
+            +-- P112_1.npy
+            +-- ...
+        +-- Ploop0
+            +-- Ploop0_1.npy
+            +-- ...
+        +-- Ploop2
+            +-- ...
+        +-- Pct0
+            +-- Pct0_1.npy
+            +-- ...
+        +-- Pct2
+            +-- ...  

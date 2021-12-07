@@ -6,24 +6,26 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--inputX", help="directory with feature files.")
-parser.add_argument("--inputY", help="directory with target function files.")
-parser.add_argument("--cache", help="path to save outputs.")
-parser.add_argument("--new_split", help='use a new train test split? 0 for no, 1 for yes', 
+parser.add_argument("--inputX", help="Directory with feature files.")
+parser.add_argument("--inputY", help="Directory with target function files.")
+parser.add_argument("--cache", help="Path to save outputs.")
+parser.add_argument("--new_split", help='Use a new train test split? 0 for no, 1 for yes', 
                     default=0)
-parser.add_argument("--archP110", help='architecture for P110 emulator.', 
+parser.add_argument("--archP110", help="Architecture for P110 emulator. pass as a string i.e. '200 200'. This specifies two hidden layers with 200 nodes each.", 
                     default="200 200")
-parser.add_argument("--archP112", help='architecture for P112 emulator.', 
+parser.add_argument("--archP112", help='Architecture for P112 emulator.', 
                     default="200 200")
-parser.add_argument("--archPloop0", help='architecture for Ploop0 emulator.', 
+parser.add_argument("--archPloop0", help='Architecture for Ploop0 emulator.', 
                     default="600 600")
-parser.add_argument("--archPloop2", help='architecture for Ploop2 emulator.', 
+parser.add_argument("--archPloop2", help='Architecture for Ploop2 emulator.', 
                     default="600 600")
-parser.add_argument("--archPct0", help='architecture for Pct0 emulator.', 
+parser.add_argument("--archPct0", help='Architecture for Pct0 emulator.', 
                     default="200 200")
-parser.add_argument("--archPct2", help='architecture for Pct2 emulator.', 
+parser.add_argument("--archPct2", help='Architecture for Pct2 emulator.', 
                     default="200 200")
-parser.add_argument("--verbose", help='verbose for tensorflow.', default=0)
+parser.add_argument("--verbose", help='Verbose for tensorflow.', default=0)
+parser.add_argument("--to_train", help="Componenets to train. Pass as a string i.e. 'Ploop Pct'. This will only train the Ploop and Pct components.",
+                    default="P11 Ploop Pct")
 args = parser.parse_args()
 
 inputX_path = args.inputX
@@ -65,7 +67,7 @@ np.save(cache_path+"scalers/xscaler_min_diff",
 print("Done.")
 
 
-for component in ["P11", "Ploop", "Pct"]:
+for component in args.to_train.split(" "):
     print("Loading {a} data...".format(a=component))
     P0_data = []
     P2_data = []
