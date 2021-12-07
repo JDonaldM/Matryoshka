@@ -1,5 +1,4 @@
 import numpy as np
-from tensorflow.python.keras.utils.generic_utils import default
 import matryoshka.training_funcs as MatTrain
 from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
 import os
@@ -54,6 +53,7 @@ else:
     print("Doing new split...")
     test_id, train_id = MatTrain.train_test_indices(Nsamp, 0.2)
     if not os.path.isdir(cache_path+"/split"):
+            print("Creating directory: ", cache_path+"/split")
             os.mkdir(cache_path+"/split")
     np.save(cache_path+"split/train.npy", train_id)
     np.save(cache_path+"split/test.npy", test_id)
@@ -65,6 +65,7 @@ xscaler.fit(cosmos[train_id])
 trainx = xscaler.transform(cosmos[train_id])
 testx = xscaler.transform(cosmos[test_id])
 if not os.path.isdir(cache_path+"/scalers"):
+        print("Creating directory: ", cache_path+"/scalers")
         os.mkdir(cache_path+"/scalers")
 np.save(cache_path+"scalers/xscaler_min_diff",
         np.vstack([xscaler.min_val,xscaler.diff]))
@@ -99,10 +100,12 @@ for component in args.to_train.split(" "):
     P0_data = P0_data[:,P0_nonzero_cols]
     P2_data = P2_data[:,P2_nonzero_cols]
     if not os.path.isdir(cache_path+"scalers/{a}0".format(a=component)):
+            print("Creating directory: ", cache_path+"scalers/{a}0".format(a=component))
             os.mkdir(cache_path+"scalers/{a}0".format(a=component))
     np.save(cache_path+"scalers/{a}0/nonzero_cols".format(a=component),
             P0_nonzero_cols)
     if not os.path.isdir(cache_path+"scalers/{a}2".format(a=component)):
+            print("Creating directory: ", cache_path+"scalers/{a}2".format(a=component))
             os.mkdir(cache_path+"scalers/{a}2".format(a=component))
     np.save(cache_path+"scalers/{a}2/nonzero_cols".format(a=component),
             P2_nonzero_cols)
@@ -130,21 +133,31 @@ for component in args.to_train.split(" "):
     callbacks_list = [reduce_lr, early_stop]
 
     print("Training NNs...")
+
+    if not os.path.isdir(cache_path+"models"):
+            print("Creating directory: ", cache_path+"models")
+            os.mkdir(cache_path+"models")
+
+    if not os.path.isdir(cache_path+"models/{a}0".format(a=component)):
+            print("Creating directory: ", cache_path+"models/{a}0".format(a=component))
+            os.mkdir(cache_path+"models/{a}0".format(a=component))
+
     P0_model = MatTrain.trainNN(trainx, P0_trainy, validation_data=None, nodes=np.array(arch_dict[component][0]),
                          learning_rate=0.013, batch_size=100, epochs=10000, callbacks=callbacks_list,
                          verbose=args.verbose)
     print("{a}{b} final loss: ".format(a=component, b=0), P0_model.evaluate(trainx, P0_trainy))
+
+    if not os.path.isdir(cache_path+"models/{a}2".format(a=component)):
+            print("Creating directory: ", cache_path+"models/{a}2".format(a=component))
+            os.mkdir(cache_path+"models/{a}2".format(a=component))
 
     P2_model = MatTrain.trainNN(trainx, P2_trainy, validation_data=None, nodes=np.array(arch_dict[component][1]),
                          learning_rate=0.013, batch_size=100, epochs=10000, callbacks=callbacks_list,
                          verbose=args.verbose)
     print("{a}{b} final loss: ".format(a=component, b=2), P2_model.evaluate(trainx, P2_trainy))
 
-    if not os.path.isdir(cache_path+"models/{a}0".format(a=component)):
-            os.mkdir(cache_path+"models/{a}0".format(a=component))
     P0_model.save(cache_path+"models/{a}0/member_0".format(a=component))
-    if not os.path.isdir(cache_path+"models/{a}2".format(a=component)):
-            os.mkdir(cache_path+"models/{a}2".format(a=component))
     P2_model.save(cache_path+"models/{a}2/member_0".format(a=component))
+
     print("Done.")
 
