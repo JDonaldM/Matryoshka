@@ -631,22 +631,21 @@ class P11l:
         self.model = model
         '''The NN that forms this component emulator'''
 
-        scalers_path = cache_path+version+"/"+"scalers/P11{a}/".format(a=multipole)
+        xscalers_path = cache_path+version+"/scalers/"
+        yscalers_path = cache_path+version+"/scalers/P11{a}/".format(a=multipole)
 
-        if multipole==2:
-            self.nonzero_cols = np.load(scalers_path+"nonzero_cols.npy")
-            '''There can be zeros for all cosmologies at certain k-values.
-               The emulator does not make predictions here so we need to
-               know where to put zeros.'''
-        else:
-            self.nonzero_cols = np.ones((3*39, ), dtype='bool')
+
+        self.nonzero_cols = np.load(yscalers_path+"nonzero_cols.npy")
+        '''There can be zeros for all cosmologies at certain k-values.
+            The emulator does not make predictions here so we need to
+            know where to put zeros.'''
 
         xscaler = UniformScaler()
         yscaler = UniformScaler()
 
         # Load the variables that define the scalers.
-        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
-        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
+        xmin_diff = np.load(xscalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(yscalers_path+"yscaler_min_diff.npy")
 
         xscaler.min_val = xmin_diff[0, :]
         xscaler.diff = xmin_diff[1, :]
@@ -702,9 +701,10 @@ class Ploopl:
         self.model = model
         '''The NN that forms this component emulator'''
 
-        scalers_path = cache_path+version+"/"+"scalers/Ploop{a}/".format(a=multipole)
+        xscalers_path = cache_path+version+"/scalers/"
+        yscalers_path = cache_path+version+"/scalers/Ploop{a}/".format(a=multipole)
         
-        self.nonzero_cols = np.load(scalers_path+"nonzero_cols.npy")
+        self.nonzero_cols = np.load(yscalers_path+"nonzero_cols.npy")
         '''There can be zeros for all cosmologies at certain k-values.
            The emulator does not make predictions here so we need to
            know where to put zeros.'''
@@ -713,8 +713,8 @@ class Ploopl:
         yscaler = UniformScaler()
 
         # Load the variables that define the scalers.
-        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
-        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
+        xmin_diff = np.load(xscalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(yscalers_path+"yscaler_min_diff.npy")
 
         xscaler.min_val = xmin_diff[0, :]
         xscaler.diff = xmin_diff[1, :]
@@ -770,22 +770,20 @@ class Pctl:
         self.model = model
         '''The NN that forms this component emulator'''
 
-        scalers_path = cache_path+version+"/"+"scalers/Pct{a}/".format(a=multipole)
+        xscalers_path = cache_path+version+"/scalers/"
+        yscalers_path = cache_path+version+"/scalers/Pct{a}/".format(a=multipole)
 
-        if multipole==2:
-            self.nonzero_cols = np.load(scalers_path+"nonzero_cols.npy")
-            '''There can be zeros for all cosmologies at certain k-values.
-               The emulator does not make predictions here so we need to
-               know where to put zeros.'''
-        else:
-            self.nonzero_cols = np.ones((6*39, ), dtype='bool')
+        self.nonzero_cols = np.load(yscalers_path+"nonzero_cols.npy")
+        '''There can be zeros for all cosmologies at certain k-values.
+            The emulator does not make predictions here so we need to
+            know where to put zeros.'''
 
         xscaler = UniformScaler()
         yscaler = UniformScaler()
 
         # Load the variables that define the scalers.
-        xmin_diff = np.load(scalers_path+"xscaler_min_diff.npy")
-        ymin_diff = np.load(scalers_path+"yscaler_min_diff.npy")
+        xmin_diff = np.load(xscalers_path+"xscaler_min_diff.npy")
+        ymin_diff = np.load(yscalers_path+"yscaler_min_diff.npy")
 
         xscaler.min_val = xmin_diff[0, :]
         xscaler.diff = xmin_diff[1, :]
