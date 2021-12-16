@@ -531,7 +531,7 @@ def DgN(Om, z):
 def fN(Om, z):
     """ LCDM growth rate (from pybird) """
     a = 1. / (1. + z)
-    return (Om * (5 * a - 3 * DgN(Om, a))) / (2. * (a**3 * (1 - Om) + Om) * DgN(Om, a))
+    return (Om * (5 * a - 3 * DgN(Om, z))) / (2. * (a**3 * (1 - Om) + Om) * DgN(Om, z))
 
 def DgN_vec(Om, z):
     a = 1. / (1. + z)
@@ -541,4 +541,4 @@ def DgN_vec(Om, z):
 
 def fN_vec(Om, z):
     a = 1. / (1. + z)
-    return (Om * (5 * a - 3 * DgN_vec(Om, a))) / (2. * (a**3 * (1 - Om) + Om) * DgN_vec(Om, a))
+    return (Om * (5 * a - 3 * DgN_vec(Om, z))) / (2. * (a**3 * (1 - Om) + Om) * DgN_vec(Om, z))

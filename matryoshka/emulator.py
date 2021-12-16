@@ -878,7 +878,7 @@ class EFT:
                 stochastic[1:] = stochastic[1:]/km**2
 
 
-        f = halo_model_funcs.fN_vec(X[:,0]/X[:,2]**2, self.redshift)
+        f = halo_model_funcs.fN_vec((X[:,0]+X[:,1])/X[:,2]**2, self.redshift)
         multipole_array = eft_funcs.multipole_vec([P11_preds.reshape(X.shape[0],3,self.P11.kbins.shape[0]),
                                                    Ploop_preds.reshape(X.shape[0],12,self.Ploop.kbins.shape[0]),
                                                    Pct_preds.reshape(X.shape[0],6,self.Pct.kbins.shape[0])],
