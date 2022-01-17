@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>matryoshka.emulator &mdash; matryoshka 0.2.4 documentation</title>
+  <title>matryoshka.emulator &mdash; matryoshka 0.2.5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -46,6 +46,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#base-model">Base Model</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#nonlinear-boost-matter">Nonlinear Boost (Matter)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#nonlinear-boost-galaxy">Nonlinear Boost (Galaxy)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quip">QUIP</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#galaxy-power-spectrum">Galaxy Power Spectrum</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#eft">EFT</a></li>
 </ul>
@@ -314,18 +315,16 @@ will have shape (m,n,k). If mean_or_full=’mean’ will have shape (n,k).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="matryoshka.emulator.MatterBoost">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">MatterBoost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">redshift_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.MatterBoost" title="Permalink to this definition"></a></dt>
-<dd><p>Class for emulator that predicts a nonlinear boost
-for the matter power spectrum.</p>
+<dd><dl class="simple">
+<dt>Emulator for predicting the nonlinear boost for the matter power</dt><dd><p>spectrum in real space. Trained with the QUIJOTE simulations.</p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>redshift_id</strong> (<em>int</em>) – Index in matter_boost_zlist or galaxy_boost_zlist
+<dd class="field-odd"><p><strong>redshift_id</strong> (<em>int</em>) – Index in <code class="docutils literal notranslate"><span class="pre">matter_boost_zlist</span></code>
 that corespons to the desired redshift.</p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>See the <a class="reference internal" href="../example_notebooks/QUIP.html"><span class="doc">QUIP</span></a> example.</p>
-</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.MatterBoost.emu_predict">
 <span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.MatterBoost.emu_predict" title="Permalink to this definition"></a></dt>
@@ -410,6 +409,60 @@ will have shape (m,n,k). If mean_or_full=’mean’ will have shape (n,k).</p>
 <dt class="sig sig-object py" id="matryoshka.emulator.Boost.models">
 <span class="sig-name descname"><span class="pre">models</span></span><a class="headerlink" href="#matryoshka.emulator.Boost.models" title="Permalink to this definition"></a></dt>
 <dd><p>A list containing the individual ensemble members.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="quip">
+<h2>QUIP<a class="headerlink" href="#quip" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="matryoshka.emulator.QUIP">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">QUIP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">redshift_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.QUIP" title="Permalink to this definition"></a></dt>
+<dd><p>Emulator for predicting the real space nonlinear matter power spectrum. Trained
+with the QUIJOTE simulations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>redshift_id</strong> (<em>int</em>) – Index in <code class="docutils literal notranslate"><span class="pre">matter_boost_zlist</span></code>
+that corespons to the desired redshift.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the <a class="reference internal" href="../example_notebooks/QUIP.html"><span class="doc">QUIP</span></a> example.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="matryoshka.emulator.QUIP.MatterBoost">
+<span class="sig-name descname"><span class="pre">MatterBoost</span></span><a class="headerlink" href="#matryoshka.emulator.QUIP.MatterBoost" title="Permalink to this definition"></a></dt>
+<dd><p>The nonlinear boost component emulator.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="matryoshka.emulator.QUIP.Transfer">
+<span class="sig-name descname"><span class="pre">Transfer</span></span><a class="headerlink" href="#matryoshka.emulator.QUIP.Transfer" title="Permalink to this definition"></a></dt>
+<dd><p>The transfer function component emulator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="matryoshka.emulator.QUIP.emu_predict">
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.QUIP.emu_predict" title="Permalink to this definition"></a></dt>
+<dd><p>Make predictions with the emulator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters. If making
+a single prediction should have shape <code class="docutils literal notranslate"><span class="pre">(d,)</span></code>, if a batch prediction
+should have the shape <code class="docutils literal notranslate"><span class="pre">(N,d)</span></code>.</p></li>
+<li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
+ensemble mean prediction should be returned, or the predictions
+from each ensemble member (default is ‘mean’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array containing the predictions from the emulator. Array
+will have shape <code class="docutils literal notranslate"><span class="pre">(m,n,k)</span></code>. If <code class="docutils literal notranslate"><span class="pre">mean_or_full='mean'</span></code> will have shape <code class="docutils literal notranslate"><span class="pre">(n,k)</span></code>.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

@@ -516,15 +516,12 @@ class Boost:
 
 class MatterBoost:
     '''
-    Class for emulator that predicts a nonlinear boost
-    for the matter power spectrum.
+    Emulator for predicting the nonlinear boost for the matter power
+     spectrum in real space. Trained with the QUIJOTE simulations.
 
     Args:
-        redshift_id (int) : Index in matter_boost_zlist or galaxy_boost_zlist
+        redshift_id (int) : Index in ``matter_boost_zlist``
          that corespons to the desired redshift. 
-
-    .. note::
-        See the `QUIP <../example_notebooks/QUIP.ipynb>`_ example.
     '''
 
     def __init__(self, redshift_id):
@@ -894,7 +891,60 @@ class EFT:
                 multipole_array += (stochastic[:,2].reshape(-1,1)*self.P11.kbins**2)/ng
 
         return multipole_array
-        
+
+class QUIP:
+    '''
+    Emulator for predicting the real space nonlinear matter power spectrum. Trained 
+    with the QUIJOTE simulations.
+
+    Args:
+        redshift_id (int) : Index in ``matter_boost_zlist``
+         that corespons to the desired redshift.
+
+    .. note::
+        See the `QUIP <../example_notebooks/QUIP.ipynb>`_ example.
+    '''
+
+    def __init__(self, redshift_id):
+
+        self.Transfer = Transfer(version='QUIP')
+        '''The transfer function component emulator.'''
+
+        self.MatterBoost = MatterBoost(redshift_id=redshift_id)
+        '''The nonlinear boost component emulator.'''
+
+    def emu_predict(self, X, mean_or_full='mean'):
+        '''
+        Make predictions with the emulator.
+
+        Args:
+            X (array) : Array containing the relevant input parameters. If making
+             a single prediction should have shape ``(d,)``, if a batch prediction
+             should have the shape ``(N,d)``.
+            mean_or_full : Can be either 'mean' or 'full'. Determines if the
+             ensemble mean prediction should be returned, or the predictions
+             from each ensemble member (default is 'mean').
+
+        Returns:
+            Array containing the predictions from the emulator. Array
+            will have shape ``(m,n,k)``. If ``mean_or_full='mean'`` will have shape ``(n,k)``.
+        '''
+
+        transfer_preds = self.Transfer.emu_predict(X, mean_or_full=mean_or_full)
+        boost_preds = self.MatterBoost.emu_predict(X, mean_or_full=mean_or_full)
+
+        linPk0 = halo_model_funcs.power0_v2(self.Transfer.kbins, transfer_preds,
+                                            sigma8=X[:, parameter_ids['QUIP']['sigma8']],
+                                            ns=X[:, parameter_ids['QUIP']['ns']])
+
+        growths = halo_model_funcs.DgN_vec(X[:, parameter_ids['QUIP']['Om']], self.MatterBoost.redshift)
+        growths /= halo_model_funcs.DgN_vec(X[:, parameter_ids['QUIP']['Om']], 0.)
+
+        linPk = interp1d(self.Transfer.kbins, linPk0, kind='cubic')(self.MatterBoost.kbins)\
+                      *(growths**2).reshape(-1,1)
+
+        return linPk*boost_preds
+           
 
 class HaloModel:
     '''

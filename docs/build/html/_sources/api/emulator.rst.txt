@@ -33,6 +33,12 @@ In the current version of ``matryoshka`` the nonlinear boost component emulator 
 .. autoclass:: matryoshka.emulator.Boost
     :members:
 
+QUIP
+====
+
+.. autoclass:: matryoshka.emulator.QUIP     
+    :members:
+
 Galaxy Power Spectrum
 =====================
 
