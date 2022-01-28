@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>matryoshka.plot &mdash; matryoshka 0.2.5 documentation</title>
+  <title>matryoshka.plot &mdash; matryoshka 0.2.6 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -129,7 +129,7 @@ must not be None. Default is False.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="matryoshka.plot.sample_space">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.plot.</span></span><span class="sig-name descname"><span class="pre">sample_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(15,</span> <span class="pre">15)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour_variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.plot.sample_space" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">matryoshka.plot.</span></span><span class="sig-name descname"><span class="pre">sample_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(15,</span> <span class="pre">15)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour_variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds_colour</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lightgray'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_label_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'large'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tick_label_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'medium'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leg_label_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'large'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker_sizes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.plot.sample_space" title="Permalink to this definition"></a></dt>
 <dd><p>Function for producing a corner plot of the sample space.
 Adapted from corner by Daniel Foreman-Mackey.</p>
 <dl class="field-list simple">
@@ -148,6 +148,15 @@ when <cite>samples_list</cite> has more than one element.</p></li>
 used is <cite>samples_list</cite> has more than one element.</p></li>
 <li><p><strong>bounds</strong> (<em>array</em>) – Array containing bounds to be plotted. Should have shape (d,2). Default is
 None.</p></li>
+<li><p><strong>bounds_colour</strong> (<em>str</em>) – Colour of bounds. Default is ‘lightgrey’.</p></li>
+<li><p><strong>param_label_size</strong> (<em>str</em><em> or </em><em>float</em>) – The size of parameter labels. Can be a string or a float.
+Default is ‘large’.</p></li>
+<li><p><strong>tick_label_size</strong> (<em>str</em><em> or </em><em>float</em>) – The size of tick labels. Can be a string or a float.
+Default is ‘medium’.</p></li>
+<li><p><strong>leg_label_size</strong> (<em>str</em><em> or </em><em>float</em>) – The size of legend labels. Can be a string or a float.
+Default is ‘large’.</p></li>
+<li><p><strong>marker_sizes</strong> (<em>list</em>) – List of floats specifying the marker sizes for the scatter plots.
+Default is None.</p></li>
 </ul>
 </dd>
 </dl>
@@ -165,7 +174,7 @@ None.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Jamie Donald-McCann.</p>
+    <p>&#169; Copyright 2021-2022, Jamie Donald-McCann.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

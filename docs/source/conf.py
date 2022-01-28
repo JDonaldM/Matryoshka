@@ -19,11 +19,11 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'matryoshka'
-copyright = '2021, Jamie Donald-McCann'
+copyright = '2021-2022, Jamie Donald-McCann'
 author = 'Jamie Donald-McCann'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.5'
+release = '0.2.6'
 
 
 # -- General configuration ---------------------------------------------------

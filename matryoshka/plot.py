@@ -8,7 +8,9 @@ import matplotlib.patches as mpatches
 import matplotlib.colors as mcolors
 
 def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filename=None,
-                 set_labels=None, colour_variable=None, bounds=None):
+                 set_labels=None, colour_variable=None, bounds=None, bounds_colour='lightgray', 
+                 param_label_size='large', tick_label_size='medium', leg_label_size='large', 
+                 marker_sizes=None):
     '''
     Function for producing a corner plot of the sample space.
     Adapted from corner by Daniel Foreman-Mackey.
@@ -27,6 +29,15 @@ def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filena
          used is `samples_list` has more than one element.
         bounds (array) : Array containing bounds to be plotted. Should have shape (d,2). Default is 
          None.
+        bounds_colour (str) : Colour of bounds. Default is 'lightgrey'.
+        param_label_size (str or float) : The size of parameter labels. Can be a string or a float.
+         Default is 'large'.
+        tick_label_size (str or float) : The size of tick labels. Can be a string or a float.
+         Default is 'medium'.
+        leg_label_size (str or float) : The size of legend labels. Can be a string or a float.
+         Default is 'large'.
+        marker_sizes (list) : List of floats specifying the marker sizes for the scatter plots.
+         Default is None.
     '''
     # How many sample sets to plot?
     N = len(samples_list)
@@ -41,6 +52,10 @@ def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filena
     sizes = []
     for i in range(N):
         sizes.append(samples_list[i].shape[0])
+    order=np.argsort(sizes)
+
+    if marker_sizes is None or len(marker_sizes)<N:
+        marker_sizes = N*[marker_sizes]
 
     fig, ax = plt.subplots(d,d,figsize=figsize)
     for i in range(d):
@@ -48,45 +63,49 @@ def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filena
             if i == j:
                 for l in range(N):    
                     ax[i,j].hist(samples_list[l][:,i],density=True,histtype='step',
-                                 linewidth=1,zorder=sizes[::-1][l], 
+                                 linewidth=1,zorder=order[l], 
                                  color=colours[l])
                 ax[i,j].set_yticklabels([])
-                ax[i,j].set_title(param_labels[i])
+                ax[i,j].set_title(param_labels[i], fontsize=param_label_size)
                 if bounds is not None:
-                    ax[i,j].axvline(bounds[i,0], color='r', linestyle='--')
-                    ax[i,j].axvline(bounds[i,1], color='r', linestyle='--')
+                    ax[i,j].axvline(bounds[i,0], color=bounds_colour, linestyle='--')
+                    ax[i,j].axvline(bounds[i,1], color=bounds_colour, linestyle='--')
             elif j < i:
                 if colour_variable is not None:
-                     ax[i,j].scatter(samples_list[l][:,j], samples_list[l][:,i],s=2., 
-                                    zorder=sizes[::-1][l], c=colour_variable)
+                     ax[i,j].scatter(samples_list[l][:,j], samples_list[l][:,i],
+                                     s=marker_sizes[l], zorder=order[l],
+                                     c=colour_variable)
                 else:                  
                     for l in range(N):
-                        ax[i,j].scatter(samples_list[l][:,j], samples_list[l][:,i],s=2., 
-                                        zorder=sizes[::-1][l], color=colours[l])
+                        ax[i,j].scatter(samples_list[l][:,j], samples_list[l][:,i],
+                                        s=marker_sizes[l], zorder=sizes[::-1][l],
+                                        color=colours[l])
                 if bounds is not None:
-                    ax[i,j].axvline(bounds[j,0], color='r', linestyle='--')
-                    ax[i,j].axvline(bounds[j,1], color='r', linestyle='--')
-                    ax[i,j].axhline(bounds[i,0], color='r', linestyle='--')
-                    ax[i,j].axhline(bounds[i,1], color='r', linestyle='--')
+                    ax[i,j].axvline(bounds[j,0], color=bounds_colour, linestyle='--')
+                    ax[i,j].axvline(bounds[j,1], color=bounds_colour, linestyle='--')
+                    ax[i,j].axhline(bounds[i,0], color=bounds_colour, linestyle='--')
+                    ax[i,j].axhline(bounds[i,1], color=bounds_colour, linestyle='--')
             if j > i:
                 ax[i,j].set_frame_on(False)
                 ax[i,j].set_xticks([])
                 ax[i,j].set_yticks([])
             if i < d - 1:
+                ax[i,j].tick_params(axis='y', which='major', labelsize=tick_label_size)
                 ax[i,j].set_xticklabels([])
             else:
-                ax[i,j].set_xlabel(param_labels[j])
+                ax[i,j].tick_params(axis='both', which='major', labelsize=tick_label_size)
+                ax[i,j].set_xlabel(param_labels[j], fontsize=param_label_size)
                 [l.set_rotation(45) for l in ax[i,j].get_xticklabels()]
             if j != 0 :
                     ax[i,j].set_yticklabels([])
             elif i != j:
-                ax[i,j].set_ylabel(param_labels[i])
+                ax[i,j].set_ylabel(param_labels[i], fontsize=param_label_size)
 
     if set_labels is not None:
         legend_patches = []
         for l in range(N):
             legend_patches.append(mpatches.Patch(label=set_labels[l], color=colours[l]))
-        ax[1,3].legend(handles=legend_patches, fontsize="x-large", frameon=False)
+        ax[1,-1].legend(handles=legend_patches, fontsize=leg_label_size, frameon=False)
     plt.subplots_adjust(hspace=0.1,wspace=0.1)
     plt.locator_params(axis='y', nbins=3)
     plt.locator_params(axis='x', nbins=3)
