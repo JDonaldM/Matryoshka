@@ -111,7 +111,7 @@ def sample_space(samples_list, param_labels, save=False, figsize=(15,15), filena
     plt.locator_params(axis='x', nbins=3)
 
     if save is True:
-        plt.savefig(filename)
+        plt.savefig(filename, dpi=300, facecolor='white')
     else:
         plt.show()
 
