@@ -3,8 +3,6 @@ Flie contains Classes for the idividual component emulators. In addition to a
  Class that combines all the component preictions to predict the galaxy power
  spectrum.
 '''
-from operator import mul
-from numpy.core.fromnumeric import nonzero
 from tensorflow.keras.models import load_model
 import numpy as np
 from .training_funcs import UniformScaler, LogScaler
