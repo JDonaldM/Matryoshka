@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>matryoshka.emulator &mdash; matryoshka 0.2.6 documentation</title>
+  <title>matryoshka.emulator &mdash; matryoshka 0.2.7 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -526,14 +526,17 @@ of input parameters will have shape (1,k).</p>
 In the current version predictions can only be made at z=0.51.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="matryoshka.emulator.EFT">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">EFT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multipole</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EFT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.51</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.EFT" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">matryoshka.emulator.</span></span><span class="sig-name descname"><span class="pre">EFT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multipole</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EFTv2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.51</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.EFT" title="Permalink to this definition"></a></dt>
 <dd><p>Emulator for predicting power spectrum multipoles that would
 be predicted using EFTofLSS.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>multipole</strong> (<em>int</em>) – Desired multipole. Can either be 0 or 2.</p></li>
-<li><p><strong>redshift</strong> (<em>float</em>) – Desired redshift. Can be 0.38, 0.51, or 0.61.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – Version of <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code>. Can be <code class="docutils literal notranslate"><span class="pre">EFTv2</span></code>, <code class="docutils literal notranslate"><span class="pre">EFT-optiresum</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">EFT_lowAs</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">EFTv2</span></code>.</p></li>
+<li><p><strong>redshift</strong> (<em>float</em>) – Desired redshift. Can be 0.38, 0.51, or 0.61.
+Default is 0.51.</p></li>
 </ul>
 </dd>
 </dl>

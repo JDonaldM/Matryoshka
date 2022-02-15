@@ -830,14 +830,17 @@ class EFT:
 
     Args:
         multipole (int) : Desired multipole. Can either be 0 or 2.
+        version (str): Version of ``EFTEMU``. Can be ``EFTv2``, ``EFT-optiresum``,
+         or ``EFT_lowAs``. Default is ``EFTv2``.
         redshift (float) : Desired redshift. Can be 0.38, 0.51, or 0.61.
+         Default is 0.51.
 
     .. note::
         See the `EFTEMU <../example_notebooks/EFTEMU_example.ipynb>`_
         example.
     '''
 
-    def __init__(self, multipole, version='EFT', redshift=0.51):
+    def __init__(self, multipole, version='EFTv2', redshift=0.51):
 
         self.P11 = P11l(multipole, version=version, redshift=redshift)
         self.Ploop = Ploopl(multipole, version=version, redshift=redshift)
