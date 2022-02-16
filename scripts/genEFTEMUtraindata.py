@@ -1,5 +1,5 @@
 import numpy as np
-import classy as Class
+from classy import Class
 import pybird
 import tqdm
 import os
@@ -35,7 +35,7 @@ else:
             os.mkdir(save_dir+component)
 
 redshift = float(args.redshift)
-optiresum = bool(args.optiresum)
+optiresum = bool(int(args.optiresum))
 
 # Setup ##########################################
 
@@ -66,7 +66,7 @@ Pct2_array = np.zeros((cosmos.shape[0], 6, 50))
 
 # Loop ###########################################
 
-for i in tqdm(range(cosmos.shape[0])):
+for i in tqdm.tqdm(range(cosmos.shape[0])):
     M.set({'ln10^{10}A_s': cosmos[i,3],
            'n_s': cosmos[i,4],
            'h': cosmos[i,2],
