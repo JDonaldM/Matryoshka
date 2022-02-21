@@ -22,8 +22,13 @@ class UniformScaler:
         Fit the parameters of the transformer based on the training data.
 
         Args:
-            X (array) : The training data.
+            X (array) : The training data. Must have shape (nsamps, nfeatures).
         '''
+
+        # Check shape of X.
+        if len(X.shape) != 2:
+            raise ValueError("X does not have the correct shape. Must have shape (nsamps, nfeatures)")
+
         # Calculate min. value and largest diff. of all samples of X along the
         #  0th axis. Both min_val and diff can be vectors if required.
         self.min_val = np.min(X, axis=0)
@@ -35,6 +40,9 @@ class UniformScaler:
 
         Args:
             X (array) : The data to be transformed.
+
+        Returns:
+            Array containing the transformed data.
         '''
         x = np.subtract(X, self.min_val)
         return np.true_divide(x, self.diff)
@@ -45,6 +53,9 @@ class UniformScaler:
 
         Args:
             X (array) : The data to be transformed.
+
+        Returns:
+            Array containing the inverse transformed data.
         '''
         x = np.multiply(X, self.diff)
         return np.add(x, self.min_val)
@@ -63,12 +74,20 @@ class LogScaler:
         Fit the parameters of the transformer based on the training data.
 
         Args:
-            X (array) : The training data.
+            X (array) : The training data. Must have shape (nsamps, nfeatures).
         '''
-        # Take the logarithm of X. This assumes that the log has not already
-        #  been taken.
+        # Check shape of X.
+        if len(X.shape) != 2:
+            raise ValueError("X does not have the correct shape. Must have shape (nsamps, nfeatures)")
+
+        # Make sure there are no negative values or zeros.
+        if np.any(X<=0.):
+            raise ValueError("X contains negative values or zeros.")
+
         X = np.log(X)
 
+        # Calculate min. value and largest diff. of all samples of X along the
+        #  0th axis. Both min_val and diff can be vectors if required.
         self.min_val = np.min(X, axis=0)
         self.diff = np.max(X, axis=0) - np.min(X, axis=0)
 
@@ -78,6 +97,9 @@ class LogScaler:
 
         Args:
             X (array) : The data to be transformed.
+
+        Returns:
+            Array containing the transformed data.
         '''
         X = np.log(X)
         x = np.subtract(X, self.min_val)
@@ -89,6 +111,9 @@ class LogScaler:
 
         Args:
             X (array) : The data to be transformed.
+
+        Returns:
+            Array containing the inverse transformed data.
         '''
         x = np.multiply(X, self.diff)
         return np.exp(np.add(x, self.min_val))
@@ -107,8 +132,13 @@ class StandardScaler:
         Fit the parameters of the transformer based on the training data.
 
         Args:
-            X (array) : The training data.
+            X (array) : The training data. Must have shape (nsamps, nfeatures).
         '''
+
+        # Check shape of X.
+        if len(X.shape) != 2:
+            raise ValueError("X does not have the correct shape. Must have shape (nsamps, nfeatures).")
+
         # Calculate the mean and strandard deviation of X along the 0th axis.
         #  Can be vectors if needed.
         self.mean = np.mean(X, axis=0)
@@ -120,6 +150,9 @@ class StandardScaler:
 
         Args:
             X (array) : The data to be transformed.
+
+        Returns:
+            Array containing the transformed data.
         '''
         x = np.subtract(X, self.mean)
         return np.true_divide(x, self.scale)
@@ -130,6 +163,9 @@ class StandardScaler:
 
         Args:
             X (array) : The data to be transformed.
+
+        Returns:
+            Array containing the inverse transformed data.
         '''
         x = np.multiply(X, self.scale)
         return np.add(x, self.mean)
