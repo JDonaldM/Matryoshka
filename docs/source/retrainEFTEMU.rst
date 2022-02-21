@@ -1,16 +1,29 @@
 Conveniently Re-train the ``EFTEMU``
 ====================================
 
-We include the convenience script ``trainEFTEMUcomponents.py`` so that it is very simple to re-train the ``EFTEMU`` if desired.
+We include two convenience scripts, ``genEFTEMUtraindata.py`` and ``trainEFTEMUcomponents.py``, so that it is very simple to re-train the ``EFTEMU`` if desired.
 
-To use the script you will need to use the directory structure shown below for your new training data::
+The first script, ``genEFTEMUtraindata.py``, calculates the bias indpendent components with ``CLASS`` and ``PyBird``.
 
-    ./new_data
-    +-- features
-        +-- cosmos1.npy
-        +-- cosmos2.npy
-        +-- ...
-    +-- functions
+.. code:: bash
+
+    scripts]$ python genEFTEMUtraindata.py -h
+    usage: genEFTEMUtraindata.py [-h] --inputX INPUTX --save_dir SAVE_DIR
+                                --redshift REDSHIFT [--optiresum OPTIRESUM]
+
+    optional arguments:
+    -h, --help            show this help message and exit
+    --inputX INPUTX       Directroy with files containg the training
+                            cosmologies.
+    --save_dir SAVE_DIR   Path to save outputs.
+    --redshift REDSHIFT   Redshift at which to generate the data.
+    --optiresum OPTIRESUM
+                            Boolean. Use pybird optimal resummation. Can be 1 or
+                            0.
+
+This script will save the computed bias indpendent terms with the following data structure::
+
+    +-- save_dir
         +-- P110
             +-- P110_1.npy
             +-- P110_2.npy
@@ -29,20 +42,50 @@ To use the script you will need to use the directory structure shown below for y
         +-- Pct2
             +-- ...
 
-Where the ``cosmosX.npy`` files contain arrays of shape ``(nsamp, nparam)``, and the ``PY_X.npy`` files contain the component predictions corresponding to the cosmological parameters in the ``cosmosX.npy`` files made with ``PyBird``.
+This is the structure expected by ``trainEFTEMUcomponents.py`` so bare this in mind if you decide to generate new training data without the ``genEFTEMUtraindata.py`` script.
 
-Once you have your new data in the correct structure you can re-train the emulator with the following command.
-
-.. code:: bash
-
-    python trainEFTEMUcomponents.py --inputX $path_to_features --inputY $path_to_functions --cache $path_to_matryoshkadata
-
-All posible arguments can be listed with the following command.
+Once you have your new data in the correct structure you can re-train the emulator with the ``trainEFTEMUcomponents.py`` script.
 
 .. code:: bash
 
-    python trainEFTEMUcomponents.py -h
+    scripts]$ python trainEFTEMUcomponents.py -h
+    usage: trainEFTEMUcomponents.py [-h] [--inputX INPUTX] [--inputY INPUTY]
+                                    [--cache CACHE] [--new_split NEW_SPLIT]
+                                    [--archP110 ARCHP110] [--archP112 ARCHP112]
+                                    [--archPloop0 ARCHPLOOP0]
+                                    [--archPloop2 ARCHPLOOP2]
+                                    [--archPct0 ARCHPCT0] [--archPct2 ARCHPCT2]
+                                    [--verbose VERBOSE] [--to_train TO_TRAIN]
 
-It should be noted that tis script only allows for very limited adjustment of the NNs that form each of the component emulators. If you do not get good results using the script try creating your own using the one provided as a template and adjust some of the hyperparameters that enter into the ``trainNN`` function.
+    optional arguments:
+    -h, --help            show this help message and exit
+    --inputX INPUTX       Directory with feature files.
+    --inputY INPUTY       Directory with target function files.
+    --cache CACHE         Path to save outputs.
+    --new_split NEW_SPLIT
+                            Use a new train test split? 0 for no, 1 for yes
+    --archP110 ARCHP110   Architecture for P110 emulator. pass as a string i.e.
+                            '200 200'. This specifies two hidden layers with 200
+                            nodes each.
+    --archP112 ARCHP112   Architecture for P112 emulator.
+    --archPloop0 ARCHPLOOP0
+                            Architecture for Ploop0 emulator.
+    --archPloop2 ARCHPLOOP2
+                            Architecture for Ploop2 emulator.
+    --archPct0 ARCHPCT0   Architecture for Pct0 emulator.
+    --archPct2 ARCHPCT2   Architecture for Pct2 emulator.
+    --verbose VERBOSE     Verbose for tensorflow.
+    --to_train TO_TRAIN   Componenets to train. Pass as a string i.e. 'Ploop
+                            Pct'. This will only train the Ploop and Pct
+                            components.
 
- 
+Setting the variable ``--cache`` to the full path to ``matryoshka-data/EFTv2/`` will mean that no modification to ``matryoshka`` need to be made to use your newly trained emulator.
+It is also possible to save your new emulator as a new ``version``. To do this set ``--cache`` to to the full path to ``matryoshka-data/EFTv3/`` for example. Your new version can then be used by specifying it when initalising the emulator:
+
+.. code:: Python
+
+	import matryoshka.emulator as MatEmu
+	
+	P0_emu = MatEmu.EFTEMU(0, version="EFTv3")
+
+It should be noted that the ``trainEFTEMUcomponents.py`` script only allows for very limited adjustment of the NNs that form each of the component emulators. If you do not get good results using the script try creating your own using the one provided as a template and adjust some of the hyperparameters that enter into the ``trainNN`` function.

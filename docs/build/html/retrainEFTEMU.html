@@ -103,14 +103,25 @@
 </style>
 <section id="conveniently-re-train-the-eftemu">
 <h1>Conveniently Re-train the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code><a class="headerlink" href="#conveniently-re-train-the-eftemu" title="Permalink to this headline"></a></h1>
-<p>We include the convenience script <code class="docutils literal notranslate"><span class="pre">trainEFTEMUcomponents.py</span></code> so that it is very simple to re-train the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> if desired.</p>
-<p>To use the script you will need to use the directory structure shown below for your new training data:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">new_data</span>
-<span class="o">+--</span> <span class="n">features</span>
-    <span class="o">+--</span> <span class="n">cosmos1</span><span class="o">.</span><span class="n">npy</span>
-    <span class="o">+--</span> <span class="n">cosmos2</span><span class="o">.</span><span class="n">npy</span>
-    <span class="o">+--</span> <span class="o">...</span>
-<span class="o">+--</span> <span class="n">functions</span>
+<p>We include two convenience scripts, <code class="docutils literal notranslate"><span class="pre">genEFTEMUtraindata.py</span></code> and <code class="docutils literal notranslate"><span class="pre">trainEFTEMUcomponents.py</span></code>, so that it is very simple to re-train the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> if desired.</p>
+<p>The first script, <code class="docutils literal notranslate"><span class="pre">genEFTEMUtraindata.py</span></code>, calculates the bias indpendent components with <code class="docutils literal notranslate"><span class="pre">CLASS</span></code> and <code class="docutils literal notranslate"><span class="pre">PyBird</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>scripts<span class="o">]</span>$ python genEFTEMUtraindata.py -h
+usage: genEFTEMUtraindata.py <span class="o">[</span>-h<span class="o">]</span> --inputX INPUTX --save_dir SAVE_DIR
+                            --redshift REDSHIFT <span class="o">[</span>--optiresum OPTIRESUM<span class="o">]</span>
+
+optional arguments:
+-h, --help            show this <span class="nb">help</span> message and <span class="nb">exit</span>
+--inputX INPUTX       Directroy with files containg the training
+                        cosmologies.
+--save_dir SAVE_DIR   Path to save outputs.
+--redshift REDSHIFT   Redshift at which to generate the data.
+--optiresum OPTIRESUM
+                        Boolean. Use pybird optimal resummation. Can be <span class="m">1</span> or
+                        <span class="m">0</span>.
+</pre></div>
+</div>
+<p>This script will save the computed bias indpendent terms with the following data structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+--</span> <span class="n">save_dir</span>
     <span class="o">+--</span> <span class="n">P110</span>
         <span class="o">+--</span> <span class="n">P110_1</span><span class="o">.</span><span class="n">npy</span>
         <span class="o">+--</span> <span class="n">P110_2</span><span class="o">.</span><span class="n">npy</span>
@@ -130,16 +141,48 @@
         <span class="o">+--</span> <span class="o">...</span>
 </pre></div>
 </div>
-<p>Where the <code class="docutils literal notranslate"><span class="pre">cosmosX.npy</span></code> files contain arrays of shape <code class="docutils literal notranslate"><span class="pre">(nsamp,</span> <span class="pre">nparam)</span></code>, and the <code class="docutils literal notranslate"><span class="pre">PY_X.npy</span></code> files contain the component predictions corresponding to the cosmological parameters in the <code class="docutils literal notranslate"><span class="pre">cosmosX.npy</span></code> files made with <code class="docutils literal notranslate"><span class="pre">PyBird</span></code>.</p>
-<p>Once you have your new data in the correct structure you can re-train the emulator with the following command.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python trainEFTEMUcomponents.py --inputX <span class="nv">$path_to_features</span> --inputY <span class="nv">$path_to_functions</span> --cache <span class="nv">$path_to_matryoshkadata</span>
+<p>This is the structure expected by <code class="docutils literal notranslate"><span class="pre">trainEFTEMUcomponents.py</span></code> so bare this in mind if you decide to generate new training data without the <code class="docutils literal notranslate"><span class="pre">genEFTEMUtraindata.py</span></code> script.</p>
+<p>Once you have your new data in the correct structure you can re-train the emulator with the <code class="docutils literal notranslate"><span class="pre">trainEFTEMUcomponents.py</span></code> script.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>scripts<span class="o">]</span>$ python trainEFTEMUcomponents.py -h
+usage: trainEFTEMUcomponents.py <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--inputX INPUTX<span class="o">]</span> <span class="o">[</span>--inputY INPUTY<span class="o">]</span>
+                                <span class="o">[</span>--cache CACHE<span class="o">]</span> <span class="o">[</span>--new_split NEW_SPLIT<span class="o">]</span>
+                                <span class="o">[</span>--archP110 ARCHP110<span class="o">]</span> <span class="o">[</span>--archP112 ARCHP112<span class="o">]</span>
+                                <span class="o">[</span>--archPloop0 ARCHPLOOP0<span class="o">]</span>
+                                <span class="o">[</span>--archPloop2 ARCHPLOOP2<span class="o">]</span>
+                                <span class="o">[</span>--archPct0 ARCHPCT0<span class="o">]</span> <span class="o">[</span>--archPct2 ARCHPCT2<span class="o">]</span>
+                                <span class="o">[</span>--verbose VERBOSE<span class="o">]</span> <span class="o">[</span>--to_train TO_TRAIN<span class="o">]</span>
+
+optional arguments:
+-h, --help            show this <span class="nb">help</span> message and <span class="nb">exit</span>
+--inputX INPUTX       Directory with feature files.
+--inputY INPUTY       Directory with target <span class="k">function</span> files.
+--cache CACHE         Path to save outputs.
+--new_split NEW_SPLIT
+                        Use a new train <span class="nb">test</span> split? <span class="m">0</span> <span class="k">for</span> no, <span class="m">1</span> <span class="k">for</span> yes
+--archP110 ARCHP110   Architecture <span class="k">for</span> P110 emulator. pass as a string i.e.
+                        <span class="s1">&#39;200 200&#39;</span>. This specifies two hidden layers with <span class="m">200</span>
+                        nodes each.
+--archP112 ARCHP112   Architecture <span class="k">for</span> P112 emulator.
+--archPloop0 ARCHPLOOP0
+                        Architecture <span class="k">for</span> Ploop0 emulator.
+--archPloop2 ARCHPLOOP2
+                        Architecture <span class="k">for</span> Ploop2 emulator.
+--archPct0 ARCHPCT0   Architecture <span class="k">for</span> Pct0 emulator.
+--archPct2 ARCHPCT2   Architecture <span class="k">for</span> Pct2 emulator.
+--verbose VERBOSE     Verbose <span class="k">for</span> tensorflow.
+--to_train TO_TRAIN   Componenets to train. Pass as a string i.e. <span class="s1">&#39;Ploop</span>
+<span class="s1">                        Pct&#39;</span>. This will only train the Ploop and Pct
+                        components.
 </pre></div>
 </div>
-<p>All posible arguments can be listed with the following command.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python trainEFTEMUcomponents.py -h
+<p>Setting the variable <code class="docutils literal notranslate"><span class="pre">--cache</span></code> to the full path to <code class="docutils literal notranslate"><span class="pre">matryoshka-data/EFTv2/</span></code> will mean that no modification to <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> need to be made to use your newly trained emulator.
+It is also possible to save your new emulator as a new <code class="docutils literal notranslate"><span class="pre">version</span></code>. To do this set <code class="docutils literal notranslate"><span class="pre">--cache</span></code> to to the full path to <code class="docutils literal notranslate"><span class="pre">matryoshka-data/EFTv3/</span></code> for example. Your new version can then be used by specifying it when initalising the emulator:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matryoshka.emulator</span> <span class="k">as</span> <span class="nn">MatEmu</span>
+
+<span class="n">P0_emu</span> <span class="o">=</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">EFTEMU</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;EFTv3&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>It should be noted that tis script only allows for very limited adjustment of the NNs that form each of the component emulators. If you do not get good results using the script try creating your own using the one provided as a template and adjust some of the hyperparameters that enter into the <code class="docutils literal notranslate"><span class="pre">trainNN</span></code> function.</p>
+<p>It should be noted that the <code class="docutils literal notranslate"><span class="pre">trainEFTEMUcomponents.py</span></code> script only allows for very limited adjustment of the NNs that form each of the component emulators. If you do not get good results using the script try creating your own using the one provided as a template and adjust some of the hyperparameters that enter into the <code class="docutils literal notranslate"><span class="pre">trainNN</span></code> function.</p>
 </section>
 
 
