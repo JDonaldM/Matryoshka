@@ -3,3 +3,4 @@
 __pycache__
 .ipynb_checkpoints
 matryoshka.egg-info
+.pytest_cache
