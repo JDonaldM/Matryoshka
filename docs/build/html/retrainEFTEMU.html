@@ -144,8 +144,8 @@ optional arguments:
 <p>This is the structure expected by <code class="docutils literal notranslate"><span class="pre">trainEFTEMUcomponents.py</span></code> so bare this in mind if you decide to generate new training data without the <code class="docutils literal notranslate"><span class="pre">genEFTEMUtraindata.py</span></code> script.</p>
 <p>Once you have your new data in the correct structure you can re-train the emulator with the <code class="docutils literal notranslate"><span class="pre">trainEFTEMUcomponents.py</span></code> script.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>scripts<span class="o">]</span>$ python trainEFTEMUcomponents.py -h
-usage: trainEFTEMUcomponents.py <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--inputX INPUTX<span class="o">]</span> <span class="o">[</span>--inputY INPUTY<span class="o">]</span>
-                                <span class="o">[</span>--cache CACHE<span class="o">]</span> <span class="o">[</span>--new_split NEW_SPLIT<span class="o">]</span>
+usage: trainEFTEMUcomponents.py <span class="o">[</span>-h<span class="o">]</span> --inputX INPUTX --inputY INPUTY --cache
+                                CACHE <span class="o">[</span>--new_split NEW_SPLIT<span class="o">]</span>
                                 <span class="o">[</span>--archP110 ARCHP110<span class="o">]</span> <span class="o">[</span>--archP112 ARCHP112<span class="o">]</span>
                                 <span class="o">[</span>--archPloop0 ARCHPLOOP0<span class="o">]</span>
                                 <span class="o">[</span>--archPloop2 ARCHPLOOP2<span class="o">]</span>
@@ -158,28 +158,29 @@ optional arguments:
 --inputY INPUTY       Directory with target <span class="k">function</span> files.
 --cache CACHE         Path to save outputs.
 --new_split NEW_SPLIT
-                        Use a new train <span class="nb">test</span> split? <span class="m">0</span> <span class="k">for</span> no, <span class="m">1</span> <span class="k">for</span> yes
+                        Use a new train <span class="nb">test</span> split? <span class="m">0</span> <span class="k">for</span> no, <span class="m">1</span> <span class="k">for</span> yes.
+                        Default <span class="m">0</span>.
 --archP110 ARCHP110   Architecture <span class="k">for</span> P110 emulator. pass as a string i.e.
                         <span class="s1">&#39;200 200&#39;</span>. This specifies two hidden layers with <span class="m">200</span>
-                        nodes each.
---archP112 ARCHP112   Architecture <span class="k">for</span> P112 emulator.
+                        nodes each. Default <span class="s1">&#39;200 200&#39;</span>.
+--archP112 ARCHP112   Architecture <span class="k">for</span> P112 emulator. Default <span class="s1">&#39;200 200&#39;</span>.
 --archPloop0 ARCHPLOOP0
-                        Architecture <span class="k">for</span> Ploop0 emulator.
+                        Architecture <span class="k">for</span> Ploop0 emulator. Default <span class="s1">&#39;400 400&#39;</span>.
 --archPloop2 ARCHPLOOP2
-                        Architecture <span class="k">for</span> Ploop2 emulator.
---archPct0 ARCHPCT0   Architecture <span class="k">for</span> Pct0 emulator.
---archPct2 ARCHPCT2   Architecture <span class="k">for</span> Pct2 emulator.
---verbose VERBOSE     Verbose <span class="k">for</span> tensorflow.
+                        Architecture <span class="k">for</span> Ploop2 emulator. Default <span class="s1">&#39;400 400&#39;</span>.
+--archPct0 ARCHPCT0   Architecture <span class="k">for</span> Pct0 emulator. Default <span class="s1">&#39;200 200&#39;</span>.
+--archPct2 ARCHPCT2   Architecture <span class="k">for</span> Pct2 emulator. Default <span class="s1">&#39;200 200&#39;</span>.
+--verbose VERBOSE     Verbose <span class="k">for</span> tensorflow. Default <span class="m">0</span>.
 --to_train TO_TRAIN   Componenets to train. Pass as a string i.e. <span class="s1">&#39;Ploop</span>
 <span class="s1">                        Pct&#39;</span>. This will only train the Ploop and Pct
-                        components.
+                        components. Default <span class="s1">&#39;P11 Ploop Pct&#39;</span>.
 </pre></div>
 </div>
-<p>Setting the variable <code class="docutils literal notranslate"><span class="pre">--cache</span></code> to the full path to <code class="docutils literal notranslate"><span class="pre">matryoshka-data/EFTv2/</span></code> will mean that no modification to <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> need to be made to use your newly trained emulator.
-It is also possible to save your new emulator as a new <code class="docutils literal notranslate"><span class="pre">version</span></code>. To do this set <code class="docutils literal notranslate"><span class="pre">--cache</span></code> to to the full path to <code class="docutils literal notranslate"><span class="pre">matryoshka-data/EFTv3/</span></code> for example. Your new version can then be used by specifying it when initalising the emulator:</p>
+<p>Setting the variable <code class="docutils literal notranslate"><span class="pre">--cache</span></code> to the full path to <code class="docutils literal notranslate"><span class="pre">matryoshka-data/EFTv2/redshift/</span></code> will mean that no modification to <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> need to be made to use your newly trained emulator.
+It is also possible to save your new emulator as a new <code class="docutils literal notranslate"><span class="pre">version</span></code>. To do this set <code class="docutils literal notranslate"><span class="pre">--cache</span></code> to to the full path to <code class="docutils literal notranslate"><span class="pre">matryoshka-data/EFTv3/redshift</span></code> for example. Your new version can then be used by specifying it when initalising the emulator:</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matryoshka.emulator</span> <span class="k">as</span> <span class="nn">MatEmu</span>
 
-<span class="n">P0_emu</span> <span class="o">=</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">EFTEMU</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;EFTv3&quot;</span><span class="p">)</span>
+<span class="n">P0_emu</span> <span class="o">=</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">EFT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;EFTv3&quot;</span><span class="p">,</span> <span class="n">redshift</span><span class="o">=</span><span class="n">redshift</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>It should be noted that the <code class="docutils literal notranslate"><span class="pre">trainEFTEMUcomponents.py</span></code> script only allows for very limited adjustment of the NNs that form each of the component emulators. If you do not get good results using the script try creating your own using the one provided as a template and adjust some of the hyperparameters that enter into the <code class="docutils literal notranslate"><span class="pre">trainNN</span></code> function.</p>

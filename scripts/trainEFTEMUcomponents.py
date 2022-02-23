@@ -1,3 +1,4 @@
+import re
 import numpy as np
 import matryoshka.training_funcs as MatTrain
 from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
@@ -5,25 +6,25 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--inputX", help="Directory with feature files.")
-parser.add_argument("--inputY", help="Directory with target function files.")
-parser.add_argument("--cache", help="Path to save outputs.")
-parser.add_argument("--new_split", help='Use a new train test split? 0 for no, 1 for yes', 
+parser.add_argument("--inputX", help="Directory with feature files.", required=True)
+parser.add_argument("--inputY", help="Directory with target function files.", required=True)
+parser.add_argument("--cache", help="Path to save outputs.", required=True)
+parser.add_argument("--new_split", help='Use a new train test split? 0 for no, 1 for yes. Default 0.', 
                     default=0)
-parser.add_argument("--archP110", help="Architecture for P110 emulator. pass as a string i.e. '200 200'. This specifies two hidden layers with 200 nodes each.", 
+parser.add_argument("--archP110", help="Architecture for P110 emulator. pass as a string i.e. '200 200'. This specifies two hidden layers with 200 nodes each. Default '200 200'.", 
                     default="200 200")
-parser.add_argument("--archP112", help='Architecture for P112 emulator.', 
+parser.add_argument("--archP112", help="Architecture for P112 emulator. Default '200 200'.", 
                     default="200 200")
-parser.add_argument("--archPloop0", help='Architecture for Ploop0 emulator.', 
-                    default="600 600")
-parser.add_argument("--archPloop2", help='Architecture for Ploop2 emulator.', 
-                    default="600 600")
-parser.add_argument("--archPct0", help='Architecture for Pct0 emulator.', 
+parser.add_argument("--archPloop0", help="Architecture for Ploop0 emulator. Default '400 400'.", 
+                    default="400 400")
+parser.add_argument("--archPloop2", help="Architecture for Ploop2 emulator. Default '400 400'.", 
+                    default="400 400")
+parser.add_argument("--archPct0", help="Architecture for Pct0 emulator. Default '200 200'.", 
                     default="200 200")
-parser.add_argument("--archPct2", help='Architecture for Pct2 emulator.', 
+parser.add_argument("--archPct2", help="Architecture for Pct2 emulator. Default '200 200'.", 
                     default="200 200")
-parser.add_argument("--verbose", help='Verbose for tensorflow.', default=0)
-parser.add_argument("--to_train", help="Componenets to train. Pass as a string i.e. 'Ploop Pct'. This will only train the Ploop and Pct components.",
+parser.add_argument("--verbose", help='Verbose for tensorflow. Default 0.', default=0)
+parser.add_argument("--to_train", help="Componenets to train. Pass as a string i.e. 'Ploop Pct'. This will only train the Ploop and Pct components. Default 'P11 Ploop Pct'.",
                     default="P11 Ploop Pct")
 args = parser.parse_args()
 

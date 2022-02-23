@@ -49,8 +49,8 @@ Once you have your new data in the correct structure you can re-train the emulat
 .. code:: bash
 
     scripts]$ python trainEFTEMUcomponents.py -h
-    usage: trainEFTEMUcomponents.py [-h] [--inputX INPUTX] [--inputY INPUTY]
-                                    [--cache CACHE] [--new_split NEW_SPLIT]
+    usage: trainEFTEMUcomponents.py [-h] --inputX INPUTX --inputY INPUTY --cache
+                                    CACHE [--new_split NEW_SPLIT]
                                     [--archP110 ARCHP110] [--archP112 ARCHP112]
                                     [--archPloop0 ARCHPLOOP0]
                                     [--archPloop2 ARCHPLOOP2]
@@ -63,29 +63,30 @@ Once you have your new data in the correct structure you can re-train the emulat
     --inputY INPUTY       Directory with target function files.
     --cache CACHE         Path to save outputs.
     --new_split NEW_SPLIT
-                            Use a new train test split? 0 for no, 1 for yes
+                            Use a new train test split? 0 for no, 1 for yes.
+                            Default 0.
     --archP110 ARCHP110   Architecture for P110 emulator. pass as a string i.e.
                             '200 200'. This specifies two hidden layers with 200
-                            nodes each.
-    --archP112 ARCHP112   Architecture for P112 emulator.
+                            nodes each. Default '200 200'.
+    --archP112 ARCHP112   Architecture for P112 emulator. Default '200 200'.
     --archPloop0 ARCHPLOOP0
-                            Architecture for Ploop0 emulator.
+                            Architecture for Ploop0 emulator. Default '400 400'.
     --archPloop2 ARCHPLOOP2
-                            Architecture for Ploop2 emulator.
-    --archPct0 ARCHPCT0   Architecture for Pct0 emulator.
-    --archPct2 ARCHPCT2   Architecture for Pct2 emulator.
-    --verbose VERBOSE     Verbose for tensorflow.
+                            Architecture for Ploop2 emulator. Default '400 400'.
+    --archPct0 ARCHPCT0   Architecture for Pct0 emulator. Default '200 200'.
+    --archPct2 ARCHPCT2   Architecture for Pct2 emulator. Default '200 200'.
+    --verbose VERBOSE     Verbose for tensorflow. Default 0.
     --to_train TO_TRAIN   Componenets to train. Pass as a string i.e. 'Ploop
                             Pct'. This will only train the Ploop and Pct
-                            components.
+                            components. Default 'P11 Ploop Pct'.
 
-Setting the variable ``--cache`` to the full path to ``matryoshka-data/EFTv2/`` will mean that no modification to ``matryoshka`` need to be made to use your newly trained emulator.
-It is also possible to save your new emulator as a new ``version``. To do this set ``--cache`` to to the full path to ``matryoshka-data/EFTv3/`` for example. Your new version can then be used by specifying it when initalising the emulator:
+Setting the variable ``--cache`` to the full path to ``matryoshka-data/EFTv2/redshift/`` will mean that no modification to ``matryoshka`` need to be made to use your newly trained emulator.
+It is also possible to save your new emulator as a new ``version``. To do this set ``--cache`` to to the full path to ``matryoshka-data/EFTv3/redshift`` for example. Your new version can then be used by specifying it when initalising the emulator:
 
 .. code:: Python
 
 	import matryoshka.emulator as MatEmu
 	
-	P0_emu = MatEmu.EFTEMU(0, version="EFTv3")
+	P0_emu = MatEmu.EFT(0, version="EFTv3", redshift=redshift)
 
 It should be noted that the ``trainEFTEMUcomponents.py`` script only allows for very limited adjustment of the NNs that form each of the component emulators. If you do not get good results using the script try creating your own using the one provided as a template and adjust some of the hyperparameters that enter into the ``trainNN`` function.
