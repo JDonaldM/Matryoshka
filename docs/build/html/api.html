@@ -43,7 +43,12 @@
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/emulator.html">matryoshka.emulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#galaxy-power-spectrum">Galaxy power spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#dark-matter-power-spectrum">Dark matter power spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#complete-list-of-component-emulators">Complete list of component emulators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/halomodel.html">matryoshka.halo_model_funcs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/eftfuncs.html">matryoshka.eft_funcs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/rsd.html">matryoshka.rsd</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/training_funcs.html">matryoshka.training_funcs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/plot.html">matryoshka.plot</a></li>
 </ul>
@@ -100,22 +105,28 @@
 </style>
 <section id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline"></a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> is made up of two key modules:</p>
+<p>The core of <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> is the <code class="docutils literal notranslate"><span class="pre">emulator</span></code> module:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api/emulator.html">matryoshka.emulator</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#base-model">Base Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#nonlinear-boost-matter">Nonlinear Boost (Matter)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#nonlinear-boost-galaxy">Nonlinear Boost (Galaxy)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#quip">QUIP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#galaxy-power-spectrum">Galaxy Power Spectrum</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#eft">EFT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/emulator.html">matryoshka.emulator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/emulator.html#galaxy-power-spectrum">Galaxy power spectrum</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#eftoflss-multipoles">EFTofLSS multipoles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/emulator.html#halo-model-power-spectrum">Halo model power spectrum</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api/halomodel.html">matryoshka.halo_model_funcs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/emulator.html#dark-matter-power-spectrum">Dark matter power spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/emulator.html#complete-list-of-component-emulators">Complete list of component emulators</a></li>
 </ul>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> also includes some convenience functions for training and plotting.</p>
+<p><code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> also has modules to assist in making predictions of observables with the component emulators:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/halomodel.html">matryoshka.halo_model_funcs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/eftfuncs.html">matryoshka.eft_funcs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/rsd.html">matryoshka.rsd</a></li>
+</ul>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> also includes some convenience functions for re-training component emulators and producing some plots.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/training_funcs.html">matryoshka.training_funcs</a></li>
