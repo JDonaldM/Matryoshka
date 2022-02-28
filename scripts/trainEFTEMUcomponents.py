@@ -1,4 +1,4 @@
-import re
+import matryoshka.emulator as MatEmu
 import numpy as np
 import matryoshka.training_funcs as MatTrain
 from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
@@ -26,6 +26,8 @@ parser.add_argument("--archPct2", help="Architecture for Pct2 emulator. Default 
 parser.add_argument("--verbose", help='Verbose for tensorflow. Default 0.', default=0)
 parser.add_argument("--to_train", help="Componenets to train. Pass as a string i.e. 'Ploop Pct'. This will only train the Ploop and Pct components. Default 'P11 Ploop Pct'.",
                     default="P11 Ploop Pct")
+parser.add_argument("--kmax", help="Maximum k value to train the component emulators to predict. Default is 0.19", 
+                    default=0.19)
 args = parser.parse_args()
 
 inputX_path = args.inputX
@@ -72,6 +74,8 @@ np.save(cache_path+"scalers/xscaler_min_diff",
         np.vstack([xscaler.min_val,xscaler.diff]))
 print("Done.")
 
+kcut = MatEmu.kbird <= float(args.kmax)
+nk = np.sum(kcut)
 
 for component in args.to_train.split(" "):
     print("Loading {a} data...".format(a=component))
@@ -90,8 +94,8 @@ for component in args.to_train.split(" "):
     print("Flattening...")
     # Flatten all terms into one long vector.
     Ncomp = P0_data.shape[1]
-    P0_data = P0_data[:,:,:39].reshape(Nsamp,Ncomp*39)
-    P2_data = P2_data[:,:,:39].reshape(Nsamp,Ncomp*39)
+    P0_data = P0_data[:,:,kcut].reshape(Nsamp,Ncomp*nk)
+    P2_data = P2_data[:,:,kcut].reshape(Nsamp,Ncomp*nk)
     print("Done.")
 
     print("Removing zeros...")

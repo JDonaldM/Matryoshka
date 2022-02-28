@@ -613,9 +613,12 @@ class P11l:
     P_n matrix.
     '''
 
-    def __init__(self, multipole, version='EFT', redshift=0.51):
+    def __init__(self, multipole, version='EFTv2', redshift=0.51):
 
-        self.kbins = kbird[:39]
+        if version=='EFTv3':
+            self.kbins = kbird
+        else:
+            self.kbins = kbird[:39]
 
         models_path = cache_path+version+"/z{a}/models/P11{b}/".format(a=redshift, 
                                                                       b=multipole)
@@ -675,7 +678,7 @@ class P11l:
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
 
-        preds_incl_zeros = np.zeros((X.shape[0], 3*39))
+        preds_incl_zeros = np.zeros((X.shape[0], 3*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
         return preds_incl_zeros
 
@@ -685,9 +688,12 @@ class Ploopl:
     P_n matrix.
     '''
 
-    def __init__(self, multipole, version='EFT', redshift=0.51):
+    def __init__(self, multipole, version='EFTv2', redshift=0.51):
 
-        self.kbins = kbird[:39]
+        if version=='EFTv3':
+            self.kbins = kbird
+        else:
+            self.kbins = kbird[:39]
 
         models_path = cache_path+version+"/z{a}/models/Ploop{b}/".format(a=redshift, 
                                                                          b=multipole)
@@ -746,7 +752,7 @@ class Ploopl:
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
 
-        preds_incl_zeros = np.zeros((X.shape[0], 12*39))
+        preds_incl_zeros = np.zeros((X.shape[0], 12*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
         return preds_incl_zeros
 
@@ -756,9 +762,12 @@ class Pctl:
     P_n matrix.
     '''
 
-    def __init__(self, multipole, version='EFT' , redshift=0.51):
+    def __init__(self, multipole, version='EFTv2' , redshift=0.51):
 
-        self.kbins = kbird[:39]
+        if version=='EFTv3':
+            self.kbins = kbird
+        else:
+            self.kbins = kbird[:39]
 
         models_path = cache_path+version+"/z{a}/models/Pct{b}/".format(a=redshift, 
                                                                       b=multipole)
@@ -817,7 +826,7 @@ class Pctl:
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
 
-        preds_incl_zeros = np.zeros((X.shape[0], 6*39))
+        preds_incl_zeros = np.zeros((X.shape[0], 6*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
         return preds_incl_zeros
 
