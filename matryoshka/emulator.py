@@ -850,10 +850,19 @@ class EFT:
     def __init__(self, multipole, version='EFTv2', redshift=0.51):
 
         self.P11 = P11l(multipole, version=version, redshift=redshift)
+        '''The ``P_11`` component emulator.'''
+
         self.Ploop = Ploopl(multipole, version=version, redshift=redshift)
+        '''The ``P_loop`` component emulator.'''
+
         self.Pct = Pctl(multipole, version=version, redshift=redshift)
+        '''The ``P_ct`` component emulator.'''
+
         self.multipole = multipole
         self.redshift = redshift
+
+        self.param_names = ["w_m", "w_b", "h", "As", "ns"]
+        '''List of the input parameters.'''
 
     def emu_predict(self, X, bias, stochastic=None, km=None, 
                     ng=None):
@@ -879,11 +888,18 @@ class EFT:
         Ploop_preds = self.Ploop.emu_predict(X)
         Pct_preds = self.Pct.emu_predict(X)
 
-        if km is not None:
-            bias[4:] = bias[4:]/km**2
-            if stochastic is not None:
-                stochastic[1:] = stochastic[1:]/km**2
+        # If making a prediction on single parameter set, input array needs to
+        # be reshaped.
+        X = np.atleast_2d(X)
+        bias = np.atleast_2d(bias)
 
+        if stochastic is not None:
+            stochastic = np.atleast_2d(stochastic)
+            if km is not None:
+                stochastic[:,1:] = stochastic[:,1:]/km**2
+
+        if km is not None:
+            bias[:,4:] = bias[:,4:]/km**2
 
         f = halo_model_funcs.fN_vec((X[:,0]+X[:,1])/X[:,2]**2, self.redshift)
         multipole_array = eft_funcs.multipole_vec([P11_preds.reshape(X.shape[0],3,self.P11.kbins.shape[0]),
@@ -923,6 +939,9 @@ class QUIP:
         self.MatterBoost = MatterBoost(redshift_id=redshift_id)
         '''The nonlinear boost component emulator.'''
 
+        self.param_names = ["O_m", "O_b", "h", "ns", "sig8"]
+        '''List of the input parameters.'''
+
     def emu_predict(self, X, mean_or_full='mean'):
         '''
         Make predictions with the emulator.
@@ -939,6 +958,10 @@ class QUIP:
             Array containing the predictions from the emulator. Array
             will have shape ``(m,n,k)``. If ``mean_or_full='mean'`` will have shape ``(n,k)``.
         '''
+
+        # If making a prediction on single parameter set, input array needs to
+        # be reshaped.
+        X = np.atleast_2d(X)
 
         transfer_preds = self.Transfer.emu_predict(X, mean_or_full=mean_or_full)
         boost_preds = self.MatterBoost.emu_predict(X, mean_or_full=mean_or_full)
