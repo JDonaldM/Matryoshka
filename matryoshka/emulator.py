@@ -861,11 +861,11 @@ class EFT:
         self.multipole = multipole
         self.redshift = redshift
 
-        self.param_names = ["w_m", "w_b", "h", "As", "ns"]
+        self.param_names = ["w_c", "w_b", "h", "As", "ns"]
         '''List of the input parameters.'''
 
     def emu_predict(self, X, bias, stochastic=None, km=None, 
-                    ng=None):
+                    ng=None, kvals=None):
         '''
         Make predictions with the emulator.
 
@@ -883,6 +883,10 @@ class EFT:
              ``c_i/km**2``.
             ng (float) : Mean galaxy number density. Default is ``None``.
              Only required if ``stochastic`` is not ``None``.
+            kvals (array) : Array containing k-values at which to produce predictions.
+             Needs to be within the k-range that the emulator has been trained to
+             predict. Default is ``None``, in which case predicts will be made at the
+             default k-values.
         '''
         P11_preds = self.P11.emu_predict(X)
         Ploop_preds = self.Ploop.emu_predict(X)
@@ -916,7 +920,13 @@ class EFT:
             elif self.multipole==2:    
                 multipole_array += (stochastic[:,2].reshape(-1,1)*self.P11.kbins**2)/ng
 
-        return multipole_array
+        if kvals is not None:
+            if kvals.max()<self.P11.kbins.max() and kvals.min()>self.P11.kbins.min():
+                return interp1d(self.P11.kbins, multipole_array)(kvals)
+            else:
+                raise ValueError("kvals need to be covered by default eulator range.")
+        else:
+            return multipole_array
 
 class QUIP:
     '''
@@ -942,7 +952,7 @@ class QUIP:
         self.param_names = ["O_m", "O_b", "h", "ns", "sig8"]
         '''List of the input parameters.'''
 
-    def emu_predict(self, X, mean_or_full='mean'):
+    def emu_predict(self, X, kvals=None, mean_or_full='mean'):
         '''
         Make predictions with the emulator.
 
@@ -950,6 +960,10 @@ class QUIP:
             X (array) : Array containing the relevant input parameters. If making
              a single prediction should have shape ``(d,)``, if a batch prediction
              should have the shape ``(N,d)``.
+            kvals (array) : Array containing k-values at which to produce predictions.
+             Needs to be within the k-range that the emulator has been trained to
+             predict. Default is ``None``, in which case predicts will be made at the
+             default k-values.
             mean_or_full : Can be either 'mean' or 'full'. Determines if the
              ensemble mean prediction should be returned, or the predictions
              from each ensemble member (default is 'mean').
@@ -976,7 +990,13 @@ class QUIP:
         linPk = interp1d(self.Transfer.kbins, linPk0, kind='cubic')(self.MatterBoost.kbins)\
                       *(growths**2).reshape(-1,1)
 
-        return linPk*boost_preds
+        if kvals is not None:
+            if kvals.max()<self.MatterBoost.kbins.max() and kvals.min()>self.MatterBoost.kbins.min():
+                return interp1d(self.MatterBoost.kbins, linPk*boost_preds)(kvals)
+            else:
+                raise ValueError("kvals need to be covered by default eulator range.")
+        else:
+            return linPk*boost_preds
            
 
 class HaloModel:

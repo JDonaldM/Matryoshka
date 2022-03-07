@@ -157,7 +157,7 @@ example.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.EFT.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stochastic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">km</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.EFT.emu_predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stochastic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">km</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.EFT.emu_predict" title="Permalink to this definition"></a></dt>
 <dd><p>Make predictions with the emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -175,6 +175,10 @@ counterterm inputs are assumed to be a ratio with km i.e.
 <code class="docutils literal notranslate"><span class="pre">c_i/km**2</span></code>.</p></li>
 <li><p><strong>ng</strong> (<em>float</em>) – Mean galaxy number density. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.
 Only required if <code class="docutils literal notranslate"><span class="pre">stochastic</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>kvals</strong> (<em>array</em>) – Array containing k-values at which to produce predictions.
+Needs to be within the k-range that the emulator has been trained to
+predict. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case predicts will be made at the
+default k-values.</p></li>
 </ul>
 </dd>
 </dl>
@@ -275,7 +279,7 @@ that corespons to the desired redshift.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="matryoshka.emulator.QUIP.emu_predict">
-<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.QUIP.emu_predict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">emu_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kvals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_or_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.emulator.QUIP.emu_predict" title="Permalink to this definition"></a></dt>
 <dd><p>Make predictions with the emulator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -283,6 +287,10 @@ that corespons to the desired redshift.</p>
 <li><p><strong>X</strong> (<em>array</em>) – Array containing the relevant input parameters. If making
 a single prediction should have shape <code class="docutils literal notranslate"><span class="pre">(d,)</span></code>, if a batch prediction
 should have the shape <code class="docutils literal notranslate"><span class="pre">(N,d)</span></code>.</p></li>
+<li><p><strong>kvals</strong> (<em>array</em>) – Array containing k-values at which to produce predictions.
+Needs to be within the k-range that the emulator has been trained to
+predict. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case predicts will be made at the
+default k-values.</p></li>
 <li><p><strong>mean_or_full</strong> – Can be either ‘mean’ or ‘full’. Determines if the
 ensemble mean prediction should be returned, or the predictions
 from each ensemble member (default is ‘mean’).</p></li>
