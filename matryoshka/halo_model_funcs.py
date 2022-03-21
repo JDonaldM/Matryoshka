@@ -193,6 +193,50 @@ def sat_Z09(M, logM1, alpha, kappa, logM_cut):
         (M[idx_nonzero]-kappa*10**logM_cut)/(10**logM1))**alpha
     return mean
 
+def cen_A20_3(M, Ac, mu, sigma, gamma):
+    '''
+    Mean central occupation component of HOD-3 in Avial+ 2020 arXiv:2007.09012.
+
+    Args:
+        M (array) : Array of masses.
+        Ac (float) : Amplitude of centrals Gaussian. Nectral completeness.
+        mu (float) : Mean of centrals Gaussian.
+        sigma (float) : Standard deviation of centrals Gaussian.
+        gamma (float) : Exponent of decaying power-law.
+
+    Returns:
+        The expected central occupation corresponding to the input masses.
+    '''
+
+    mean = np.zeros_like(M)
+    mean[np.where(np.log(M)<=mu)] = Ac/(np.sqrt(2*np.pi)*sigma)\
+                                    *np.exp(-(np.log(M)-mu)**2/(2*sigma**2))
+    mean[np.where(np.log(M)>mu)] = Ac/(np.sqrt(2*np.pi)*sigma)\
+                                   *(M/10**mu)**gamma
+
+    return mean
+
+def sat_A20(M, logM1, logM0, alpha, As):
+    '''
+    Mean satellite occupation component in Avial+ 2020 arXiv:2007.09012.
+
+    Args:
+        M (array) : Array of masses.
+        logM1 (float) : Typical mass of halo to host a satellite.
+        logM0 (float) : Minimum masss for halo to host satellite.
+        alpha (float) : Exponent of power law that defines how the expected
+         number of sattelites grows with mass.
+        As (float) : Satellite completeness.
+
+    Returns:
+        The expected satellite occupation corresponding to the input masses.
+    '''
+
+    mean = np.zeros_like(M)
+    idx_nonzero = np.where(M - 10**logM0 > 0)[0]
+    mean[idx_nonzero] = As*(
+        (M[idx_nonzero]-10**logM0)/(10**logM1))**alpha
+    return mean
 
 def power_1h_ss(ukm, dndm, m, cen_occ, sat_occ, mean_tracer_den):
     '''
