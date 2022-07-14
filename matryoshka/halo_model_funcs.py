@@ -465,8 +465,8 @@ def halomodel_power(k, m, transfer, sigma, dlns, cosmo, sigma8, ns,
     tm = m >= HOD[0] - 5 * HOD[1]
 
     # Calculate the expected occupation from the HOD params.
-    N_c = cen_Z09(m[tm], HOD[0], HOD[1])
-    N_s = sat_Z09(m[tm], HOD[2], HOD[4], HOD[3], HOD[0])
+    N_c = cen_Z05(m[tm], HOD[0], HOD[1])
+    N_s = sat_Z05(m[tm], HOD[2], HOD[4], HOD[3], HOD[0])
     N_tot = N_c*(1+N_s)
 
     halo_bias = TinkerBias(np.sqrt(sigma**2*growth**2))
