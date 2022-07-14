@@ -160,77 +160,102 @@ def TinkerBias(sigma, delta_halo=200.0, delta_c=1.686):
     )
 
 
-def cen_Z09(M, logM_cut, sigma):
+def cen_Z05(M, theta):
     '''
+    A version of the model in arXiv:astro-ph/0408564 (see also 
+    arXiv:1211.3976 or arXiv:1010.4915).
+
     Args:
         M (array) : Array of masses.
-        logM_cut (float) : Minimum mass for halo to host a central galaxy.
-        sigma (float) : Smoothing factor for central step function.
+        theta (array) : Parameters of the model. Should contain 
+         ``[logM_cut, sigma, logM1, alpha, kappa]`` in that order.
+         Only ``logM_cut`` (minimum mass for halo to host a central galaxy)
+         and ``sigma`` (smoothing factor for central step function)
+         will be used here.
 
     Returns:
         The expected central occupation corresponding to the input masses.
     '''
+
+    logM_cut, sigma, logM1, alpha, kappa = theta
+
     return 0.5*sp.erfc((np.log(10**logM_cut)-np.log(M))/(np.sqrt(2)*sigma))
 
 
-def sat_Z09(M, logM1, alpha, kappa, logM_cut):
+def sat_Z05(M, theta):
     '''
+    A version of the model in arXiv:astro-ph/0408564 (see also 
+    arXiv:1211.3976 or arXiv:1010.4915).
+
     Args:
         M (array) : Array of masses.
-        logM1 (float) : Typical mass of halo to host a satellite.
-        alpha (float) : Exponent of power law that defines how the expected
-         number of sattelites grows with mass.
-        kappa (float) : The product kappa*logM_cut defines the mimum mass for a
-         halo to host a sattelite.
-        logM_cut (float) : Minimum mass for halo to host a central galaxy.
+        theta (array) : Parameters of the model. Should contain 
+         ``[logM_cut, sigma, logM1, alpha, kappa]`` in that order.
+         Only ``logM_cut`` (minimum mass for halo to host a central galaxy),
+         ``logM1`` (typical mass of halo to host a satellite),
+         ``alpha`` (exponent of power law that defines how the expected
+         number of sattelites grows with mass), and ``kappa`` (the product
+         kappa*logM_cut defines the mimum mass for a halo to host a sattelite)
+         will be used here.
 
     Returns:
         The expected sattelite occupation corresponding to the inputs masses.
     '''
+
+    logM_cut, sigma, logM1, alpha, kappa = theta
+
     mean = np.zeros_like(M)
     idx_nonzero = np.where(M - kappa*10**logM_cut > 0)[0]
     mean[idx_nonzero] = (
         (M[idx_nonzero]-kappa*10**logM_cut)/(10**logM1))**alpha
     return mean
 
-def cen_A20_3(M, Ac, mu, sigma, gamma):
+def cen_A20_3(M, theta):
     '''
     Mean central occupation component of HOD-3 in Avial+ 2020 arXiv:2007.09012.
 
     Args:
         M (array) : Array of masses.
-        Ac (float) : Amplitude of centrals Gaussian. Nectral completeness.
-        mu (float) : Mean of centrals Gaussian.
-        sigma (float) : Standard deviation of centrals Gaussian.
-        gamma (float) : Exponent of decaying power-law.
+        theta (array) : Parameters of the model. Should contain 
+         ``[Ac, As, mu, logM0, logM1, alpha, gamma, sigma]`` in that order.
+         Only ``Ac`` (amplitude of centrals Gaussian),
+         ``mu`` (mean of centrals Gaussian),
+         ``gamma`` (exponent of decaying power-law), and ``sigma`` (standard
+         deviation of centrals Gaussian) will be used here.
 
     Returns:
         The expected central occupation corresponding to the input masses.
     '''
 
+    Ac, As, mu, logM0, logM1, alpha, gamma, sigma = theta
+
     mean = np.zeros_like(M)
-    mean[np.where(np.log(M)<=mu)] = Ac/(np.sqrt(2*np.pi)*sigma)\
-                                    *np.exp(-(np.log(M)-mu)**2/(2*sigma**2))
-    mean[np.where(np.log(M)>mu)] = Ac/(np.sqrt(2*np.pi)*sigma)\
-                                   *(M/10**mu)**gamma
+    mean[np.where(np.log10(M)<=mu)] = Ac/(np.sqrt(2*np.pi)*sigma)\
+                                    *np.exp(-(np.log10(M[np.where(np.log10(M)<=mu)])-mu)**2/(2*sigma**2))
+    mean[np.where(np.log10(M)>mu)] = Ac/(np.sqrt(2*np.pi)*sigma)\
+                                   *(M[np.where(np.log10(M)>mu)]/10**mu)**gamma
 
     return mean
 
-def sat_A20(M, logM1, logM0, alpha, As):
+def sat_A20(M, theta):
     '''
     Mean satellite occupation component in Avial+ 2020 arXiv:2007.09012.
 
     Args:
         M (array) : Array of masses.
-        logM1 (float) : Typical mass of halo to host a satellite.
-        logM0 (float) : Minimum masss for halo to host satellite.
-        alpha (float) : Exponent of power law that defines how the expected
-         number of sattelites grows with mass.
-        As (float) : Satellite completeness.
+        theta (array) : Parameters of the model. Should contain 
+         ``[Ac, As, mu, logM0, logM1, alpha, gamma, sigma]`` in that order.
+         Only ``logM1`` (typical mass of halo to host a satellite),
+         ``As`` (satellite completeness), ``alpha`` (exponent of power law
+         that defines how the expected number of sattelites grows with mass),
+         and ``logM0`` (mimum mass for a halo to host a sattelite) will be
+         used here.
 
     Returns:
         The expected satellite occupation corresponding to the input masses.
     '''
+
+    Ac, As, mu, logM0, logM1, alpha, gamma, sigma = theta
 
     mean = np.zeros_like(M)
     idx_nonzero = np.where(M - 10**logM0 > 0)[0]

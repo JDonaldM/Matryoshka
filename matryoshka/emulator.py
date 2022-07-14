@@ -40,6 +40,12 @@ kbird = np.array([0.001, 0.005, 0.0075, 0.01, 0.0125, 0.015, 0.0175, 0.02, 0.025
                   0.145, 0.15, 0.155, 0.16, 0.17, 0.18, 0.19, 0.2, 0.21, 0.22, 0.23, 0.24,
                   0.25, 0.26, 0.27, 0.28, 0.29, 0.3])
 
+# Dictionary containing appropriate HOD functions for each tracer.
+HOD_model_dict = {"LRG_cen": halo_model_funcs.cen_Z05,
+                  "LRG_sat": halo_model_funcs.sat_Z05,
+                  "ELG_cen": halo_model_funcs.cen_A20_3,
+                  "ELG_sat": halo_model_funcs.sat_A20}
+
 class Transfer:
     '''
     Class for the transfer function componenet emulator.
@@ -1008,19 +1014,22 @@ class HaloModel:
     Args:
         k (array) : The k-bins over which predictions will be made. Cannot be
          outside the ranges used when training the component emulators.
-        redshift_id (int) : Index in matter_boost_zlist or galaxy_boost_zlist
-         that corespons to the desired redshift. Only needed if nonlinear is True.
-         Default is None.
+        redshift_id (int) : Index in ``matter_boost_zlist`` or
+         ``galaxy_boost_zlist`` that corespons to the desired redshift. Only
+         needed if ``nonlinear=True``.
+         Default is ``None``.
         redshift (float) : The redshift at which predictions should be made. Can
-         only be used if nonlinear is False. If nonlinear is True this will be ignored.
+         only be used if ``nonlinear=False``. If ``nonlinear=True`` this will be
+         ignored.
         nonlinear (bool) : Determines if nonlinear predictions should be made.
-         If False, the nonlinear boost componenet emulator will not be
+         If ``False``, the nonlinear boost componenet emulator will not be
          initalised.
-        matter (bool) : If nonlinear=True setting matter=True will use emulated
-         nonlinear matter power. If matter=False the nonlinear boost will be
-         applied to the galaxy power spectrum.
-        version (str) : Version of the emulators to be loaded.
-        kspace_filt (bool) : If True reduces contribution from P2h on small scales.
+        matter (bool) : If ``nonlinear=True`` setting ``matter=True`` will use
+         emulated nonlinear matter power. If ``matter=False`` the nonlinear
+         boost will be applied to the galaxy power spectrum.
+        version (str) : Version of the emulators to be loaded. Can be either 
+         ``'class_aemulus'`` or ``'QUIP'``.
+        kspace_filt (bool) : If ``True`` reduces contribution from P2h on small scales.
          Inspired by halomod. See section 2.9.1 of arXiv:2009.14066.
     '''
 
@@ -1072,19 +1081,39 @@ class HaloModel:
         conc_duffy = Duffy08cmz(self.sigma.mbins, self.redshift)
         self.cm = conc_duffy
 
-    def emu_predict(self, X_COSMO, X_HOD, kspace_filt=False, RT=3.0):
+    def emu_predict(self, X_COSMO, X_HOD, use_filt=False, RT=3.0,
+                    tracer='LRG'):
         '''
         Make predictions for the halo model power spectrum with the
         pre-initalised component emulators.
 
         Args:
             X_COSMO (array) : Input cosmological parameters.
-            X_HOD (array) : Input HOD parameters.
+            X_HOD (array) : Input HOD parameters. If
+             ``tracer='LRG'`` should contain
+             ``[logM_cut, sigma, logM1, alpha, kappa]`` in that
+             order. If ``tracer='ELG'`` should contain
+             ``Ac, As, mu, logM0, logM1, alpha, gamma, sigma``
+             in that order.
+            use_filt (bool) : If true will use k-space filter. 
+             On initalisation of the class ``kspace_filt=True`` 
+             to use the filter when making predictions.
+             Default is ``False``.
+            RT (float) : Parameter of the k-space filter. See
+             See section 2.9.1 of arXiv:2009.14066. Default is
+             ``3.0``.
+            tracer (str) : Define the kind of tracer. This will
+             determine the HOD model used. Can either be ``'LRG'``
+             or ``'ELG'``. If ``'LRG'`` a version of the model in
+             arXiv:astro-ph/0408564 will be used (see also 
+             arXiv:1211.3976 or arXiv:1010.4915). If ``'ELG'``
+             HOD-3 from arXiv:2007.09012 will be used.
+             
 
         Returns:
             Array containing the predictions from the halo model power spectrum.
-            Array will have shape (n,k). If making a prediction for a single set 
-            of input parameters will have shape (1,k).
+            Array will have shape ``(n,k)``. If making a prediction for a single set 
+            of input parameters will have shape ``(1,k)``.
         '''
 
         # Input must be reshaped if producing sinlge prediction.
@@ -1126,7 +1155,7 @@ class HaloModel:
         if self.nonlinear and self.matter:
             p_ml = p_ml*boost_preds
 
-        if kspace_filt:
+        if use_filt:
             # Inspired by halomod.
             p_ml = p_ml*self.filter.k_space(self.k*RT)
 
@@ -1150,13 +1179,17 @@ class HaloModel:
         n_ts = np.zeros((X_HOD.shape[0]))
         for i in range(X_HOD.shape[0]):
             # Create mass mask.
-            tm = self.sigma.mbins >= X_HOD[i, 0] - 5*X_HOD[i, 1]
+            tm = np.log10(self.sigma.mbins) >= 11.
 
-            Nc = halo_model_funcs.cen_Z09(
-                self.sigma.mbins[tm], X_HOD[i, 0], X_HOD[i, 1])
-            Ns = halo_model_funcs.sat_Z09(
-                self.sigma.mbins[tm], X_HOD[i, 2], X_HOD[i, 4], X_HOD[i, 3], X_HOD[i, 0])
-            Ntot = Nc*(1+Ns)
+            Nc = HOD_model_dict[f"{tracer}_cen"](
+                self.sigma.mbins[tm], X_HOD[i])
+            Ns = HOD_model_dict[f"{tracer}_sat"](
+                self.sigma.mbins[tm], X_HOD[i])
+
+            if tracer == "LRG":
+                Ntot = Nc*(1+Ns)
+            else:
+                Ntot = Nc+Ns
 
             mean_dens = halo_model_funcs.mean_density0_v2(
                 h=X_COSMO[i, 3], Om0=X_COSMO[i, 0])

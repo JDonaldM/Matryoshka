@@ -241,14 +241,41 @@ mass variance (halomod hack).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="matryoshka.halo_model_funcs.cen_Z09">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">cen_Z09</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logM_cut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.cen_Z09" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="matryoshka.halo_model_funcs.cen_A20_3">
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">cen_A20_3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.cen_A20_3" title="Permalink to this definition"></a></dt>
+<dd><p>Mean central occupation component of HOD-3 in Avial+ 2020 arXiv:2007.09012.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>array</em>) – Array of masses.</p></li>
-<li><p><strong>logM_cut</strong> (<em>float</em>) – Minimum mass for halo to host a central galaxy.</p></li>
-<li><p><strong>sigma</strong> (<em>float</em>) – Smoothing factor for central step function.</p></li>
+<li><p><strong>theta</strong> (<em>array</em>) – Parameters of the model. Should contain
+<code class="docutils literal notranslate"><span class="pre">[Ac,</span> <span class="pre">As,</span> <span class="pre">mu,</span> <span class="pre">logM0,</span> <span class="pre">logM1,</span> <span class="pre">alpha,</span> <span class="pre">gamma,</span> <span class="pre">sigma]</span></code> in that order.
+Only <code class="docutils literal notranslate"><span class="pre">Ac</span></code> (amplitude of centrals Gaussian),
+<code class="docutils literal notranslate"><span class="pre">mu</span></code> (mean of centrals Gaussian),
+<code class="docutils literal notranslate"><span class="pre">gamma</span></code> (exponent of decaying power-law), and <code class="docutils literal notranslate"><span class="pre">sigma</span></code> (standard
+deviation of centrals Gaussian) will be used here.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The expected central occupation corresponding to the input masses.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="matryoshka.halo_model_funcs.cen_Z05">
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">cen_Z05</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.cen_Z05" title="Permalink to this definition"></a></dt>
+<dd><p>A version of the model in arXiv:astro-ph/0408564 (see also
+arXiv:1211.3976 or arXiv:1010.4915).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>M</strong> (<em>array</em>) – Array of masses.</p></li>
+<li><p><strong>theta</strong> (<em>array</em>) – Parameters of the model. Should contain
+<code class="docutils literal notranslate"><span class="pre">[logM_cut,</span> <span class="pre">sigma,</span> <span class="pre">logM1,</span> <span class="pre">alpha,</span> <span class="pre">kappa]</span></code> in that order.
+Only <code class="docutils literal notranslate"><span class="pre">logM_cut</span></code> (minimum mass for halo to host a central galaxy)
+and <code class="docutils literal notranslate"><span class="pre">sigma</span></code> (smoothing factor for central step function)
+will be used here.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -522,18 +549,45 @@ profile.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="matryoshka.halo_model_funcs.sat_Z09">
-<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">sat_Z09</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logM1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logM_cut</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.sat_Z09" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dt class="sig sig-object py" id="matryoshka.halo_model_funcs.sat_A20">
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">sat_A20</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.sat_A20" title="Permalink to this definition"></a></dt>
+<dd><p>Mean satellite occupation component in Avial+ 2020 arXiv:2007.09012.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>M</strong> (<em>array</em>) – Array of masses.</p></li>
-<li><p><strong>logM1</strong> (<em>float</em>) – Typical mass of halo to host a satellite.</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – Exponent of power law that defines how the expected
-number of sattelites grows with mass.</p></li>
-<li><p><strong>kappa</strong> (<em>float</em>) – The product kappa*logM_cut defines the mimum mass for a
-halo to host a sattelite.</p></li>
-<li><p><strong>logM_cut</strong> (<em>float</em>) – Minimum mass for halo to host a central galaxy.</p></li>
+<li><p><strong>theta</strong> (<em>array</em>) – Parameters of the model. Should contain
+<code class="docutils literal notranslate"><span class="pre">[Ac,</span> <span class="pre">As,</span> <span class="pre">mu,</span> <span class="pre">logM0,</span> <span class="pre">logM1,</span> <span class="pre">alpha,</span> <span class="pre">gamma,</span> <span class="pre">sigma]</span></code> in that order.
+Only <code class="docutils literal notranslate"><span class="pre">logM1</span></code> (typical mass of halo to host a satellite),
+<code class="docutils literal notranslate"><span class="pre">As</span></code> (satellite completeness), <code class="docutils literal notranslate"><span class="pre">alpha</span></code> (exponent of power law
+that defines how the expected number of sattelites grows with mass),
+and <code class="docutils literal notranslate"><span class="pre">logM0</span></code> (mimum mass for a halo to host a sattelite) will be
+used here.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The expected satellite occupation corresponding to the input masses.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="matryoshka.halo_model_funcs.sat_Z05">
+<span class="sig-prename descclassname"><span class="pre">matryoshka.halo_model_funcs.</span></span><span class="sig-name descname"><span class="pre">sat_Z05</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#matryoshka.halo_model_funcs.sat_Z05" title="Permalink to this definition"></a></dt>
+<dd><p>A version of the model in arXiv:astro-ph/0408564 (see also
+arXiv:1211.3976 or arXiv:1010.4915).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>M</strong> (<em>array</em>) – Array of masses.</p></li>
+<li><p><strong>theta</strong> (<em>array</em>) – Parameters of the model. Should contain
+<code class="docutils literal notranslate"><span class="pre">[logM_cut,</span> <span class="pre">sigma,</span> <span class="pre">logM1,</span> <span class="pre">alpha,</span> <span class="pre">kappa]</span></code> in that order.
+Only <code class="docutils literal notranslate"><span class="pre">logM_cut</span></code> (minimum mass for halo to host a central galaxy),
+<code class="docutils literal notranslate"><span class="pre">logM1</span></code> (typical mass of halo to host a satellite),
+<code class="docutils literal notranslate"><span class="pre">alpha</span></code> (exponent of power law that defines how the expected
+number of sattelites grows with mass), and <code class="docutils literal notranslate"><span class="pre">kappa</span></code> (the product
+kappa*logM_cut defines the mimum mass for a halo to host a sattelite)
+will be used here.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
