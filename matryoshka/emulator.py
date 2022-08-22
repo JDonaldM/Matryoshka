@@ -901,7 +901,7 @@ class EFT:
             stochastic = np.atleast_2d(stochastic)
             if km is not None:
                 # Make copy of array otherwise elements will be changed in place.
-                stochastic = np.copy(bias)
+                stochastic = np.copy(stochastic)
                 stochastic[:,1:] = stochastic[:,1:]/km**2
 
         if km is not None:
