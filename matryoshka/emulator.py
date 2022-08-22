@@ -1082,7 +1082,7 @@ class HaloModel:
         self.cm = conc_duffy
 
     def emu_predict(self, X_COSMO, X_HOD, use_filt=False, RT=3.0,
-                    tracer='LRG'):
+                    tracer='LRG', just_power=False):
         '''
         Make predictions for the halo model power spectrum with the
         pre-initalised component emulators.
@@ -1108,6 +1108,10 @@ class HaloModel:
              arXiv:astro-ph/0408564 will be used (see also 
              arXiv:1211.3976 or arXiv:1010.4915). If ``'ELG'``
              HOD-3 from arXiv:2007.09012 will be used.
+            just_power (bool) : If ``True`` just the power spectrum
+             will be returned, if ``False`` the number density and 
+             effective bias will also be returned. Default is
+             ``True``.
              
 
         Returns:
@@ -1217,4 +1221,9 @@ class HaloModel:
                 hm_preds[i, :] = (P2h+P1h_cs+P1h_ss)*boost_preds[i]
             else:
                 hm_preds[i, :] = P2h+P1h_cs+P1h_ss
-        return hm_preds, n_ts
+
+        if just_power:
+            return hm_preds
+        else:
+            return hm_preds, n_ts, halo_model_funcs.beff(self.sigma.mbins[tm].reshape(1, -1), hmf.reshape(1, -1),
+                                                         halo_bias.reshape(1, -1), Ntot.reshape(1, -1))
