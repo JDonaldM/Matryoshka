@@ -900,9 +900,12 @@ class EFT:
         if stochastic is not None:
             stochastic = np.atleast_2d(stochastic)
             if km is not None:
+                # Make copy of array otherwise elements will be changed in place.
+                stochastic = np.copy(bias)
                 stochastic[:,1:] = stochastic[:,1:]/km**2
 
         if km is not None:
+            bias = np.copy(bias)
             bias[:,4:] = bias[:,4:]/km**2
 
         f = halo_model_funcs.fN_vec((X[:,0]+X[:,1])/X[:,2]**2, self.redshift)
