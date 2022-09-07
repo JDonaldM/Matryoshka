@@ -613,15 +613,24 @@ class P11l:
     P_n matrix.
     '''
 
-    def __init__(self, multipole, version='EFTv2', redshift=0.51):
+    def __init__(self, multipole, version='EFTv2', redshift=0.51,
+                 path_to_model=None, kmax=None):
 
         if version=='EFTv3':
             self.kbins = kbird
+        elif version=='custom':
+            self.kbins = kbird[kbird <= float(kmax)]
         else:
             self.kbins = kbird[:39]
 
-        models_path = cache_path+version+"/z{a}/models/P11{b}/".format(a=redshift, 
-                                                                      b=multipole)
+        if version=='custom':
+            models_path = f"{path_to_model}/models/P11{multipole}/"
+            xscalers_path = f"{path_to_model}/scalers/"
+            yscalers_path = f"{path_to_model}/scalers/P11{multipole}/"
+        else:            
+            models_path = f"{cache_path}{version}/z{redshift}/models/P11{multipole}/"
+            xscalers_path = f"{cache_path}{version}/z{redshift}/scalers/"
+            yscalers_path = f"{cache_path}{version}/z{redshift}/scalers/P11{multipole}/"
 
         # Unlike many of the other matryoshka componenet emulators
         # the EFT components consist of just one NN.
@@ -629,11 +638,6 @@ class P11l:
 
         self.model = model
         '''The NN that forms this component emulator'''
-
-        xscalers_path = cache_path+version+"/z{a}/scalers/".format(a=redshift)
-        yscalers_path = cache_path+version+"/z{a}/scalers/P11{b}/".format(a=redshift,
-                                                                          b=multipole)
-
 
         self.nonzero_cols = np.load(yscalers_path+"nonzero_cols.npy")
         '''There can be zeros for all cosmologies at certain k-values.
@@ -688,15 +692,24 @@ class Ploopl:
     P_n matrix.
     '''
 
-    def __init__(self, multipole, version='EFTv2', redshift=0.51):
+    def __init__(self, multipole, version='EFTv2', redshift=0.51,
+                 path_to_model=None, kmax=None):
 
         if version=='EFTv3':
             self.kbins = kbird
+        elif version=='custom':
+            self.kbins = kbird[kbird <= float(kmax)]
         else:
             self.kbins = kbird[:39]
 
-        models_path = cache_path+version+"/z{a}/models/Ploop{b}/".format(a=redshift, 
-                                                                         b=multipole)
+        if version=='custom':
+            models_path = f"{path_to_model}/models/Ploop{multipole}/"
+            xscalers_path = f"{path_to_model}/scalers/"
+            yscalers_path = f"{path_to_model}/scalers/Ploop{multipole}/"
+        else:            
+            models_path = f"{cache_path}{version}/z{redshift}/models/Ploop{multipole}/"
+            xscalers_path = f"{cache_path}{version}/z{redshift}/scalers/"
+            yscalers_path = f"{cache_path}{version}/z{redshift}/scalers/Ploop{multipole}/"
 
         # Unlike many of the other matryoshka componenet emulators
         # the EFT components consist of just one NN.
@@ -705,10 +718,6 @@ class Ploopl:
         self.model = model
         '''The NN that forms this component emulator'''
 
-        xscalers_path = cache_path+version+"/z{a}/scalers/".format(a=redshift)
-        yscalers_path = cache_path+version+"/z{a}/scalers/Ploop{b}/".format(a=redshift,
-                                                                            b=multipole)
-        
         self.nonzero_cols = np.load(yscalers_path+"nonzero_cols.npy")
         '''There can be zeros for all cosmologies at certain k-values.
            The emulator does not make predictions here so we need to
@@ -762,15 +771,25 @@ class Pctl:
     P_n matrix.
     '''
 
-    def __init__(self, multipole, version='EFTv2' , redshift=0.51):
+    def __init__(self, multipole, version='EFTv2' , redshift=0.51,
+                 path_to_model=None, kmax=None):
 
         if version=='EFTv3':
             self.kbins = kbird
+        elif version=='custom':
+            self.kbins = kbird[kbird <= float(kmax)]
         else:
             self.kbins = kbird[:39]
 
-        models_path = cache_path+version+"/z{a}/models/Pct{b}/".format(a=redshift, 
-                                                                      b=multipole)
+        if version=='custom':
+            models_path = f"{path_to_model}/models/Pct{multipole}/"
+            xscalers_path = f"{path_to_model}/scalers/"
+            yscalers_path = f"{path_to_model}/scalers/Pct{multipole}/"
+        else:            
+            models_path = f"{cache_path}{version}/z{redshift}/models/Pct{multipole}/"
+            print(models_path)
+            xscalers_path = f"{cache_path}{version}/z{redshift}/scalers/"
+            yscalers_path = f"{cache_path}{version}/z{redshift}/scalers/Pct{multipole}/"
 
         # Unlike many of the other matryoshka componenet emulators
         # the EFT components consist of just one NN.
@@ -778,10 +797,6 @@ class Pctl:
 
         self.model = model
         '''The NN that forms this component emulator'''
-
-        xscalers_path = cache_path+version+"/z{a}/scalers/".format(a=redshift)
-        yscalers_path = cache_path+version+"/z{a}/scalers/Pct{b}/".format(a=redshift,
-                                                                          b=multipole)
 
         self.nonzero_cols = np.load(yscalers_path+"nonzero_cols.npy")
         '''There can be zeros for all cosmologies at certain k-values.
@@ -838,24 +853,38 @@ class EFT:
     Args:
         multipole (int) : Desired multipole. Can either be 0 or 2.
         version (str): Version of ``EFTEMU``. Can be ``EFTv2``, ``EFT-optiresum``,
-         or ``EFT_lowAs``. Default is ``EFTv2``.
+         ``EFT_lowAs``, or ``custom``. Using ``custom`` requires ``path_to_model``
+         and ``kmax`` to also be passed. Default is ``EFTv2``.
         redshift (float) : Desired redshift. Can be 0.38, 0.51, or 0.61.
          Default is 0.51.
+        path_to_model (str) : Path where model trained with the ``trainEFTEMUcomponenets``
+         script is saved. Only requred if ``version='custom'``. Default is ``None``.
+        kmax (float) : The value of ``kmax`` that was passed to the
+         ``trainEFTEMUcomponenets`` script when the model was trained. Only requred if
+         ``version='custom'``. Default is ``None``.
 
     .. note::
         See the `EFTEMU <../example_notebooks/EFTEMU_example.ipynb>`_
         example.
     '''
 
-    def __init__(self, multipole, version='EFTv2', redshift=0.51):
+    def __init__(self, multipole, version='EFTv2', redshift=0.51,
+                 path_to_model=None, kmax=None):
 
-        self.P11 = P11l(multipole, version=version, redshift=redshift)
+        if version=='custom' and (path_to_model is None or kmax is None):
+            raise TypeError("when using version='custom' both path_to_mode and kmax must be specified.")
+
+
+        self.P11 = P11l(multipole, version=version, redshift=redshift,
+                        path_to_model=path_to_model, kmax=kmax)
         '''The ``P_11`` component emulator.'''
 
-        self.Ploop = Ploopl(multipole, version=version, redshift=redshift)
+        self.Ploop = Ploopl(multipole, version=version, redshift=redshift,
+                            path_to_model=path_to_model, kmax=kmax)
         '''The ``P_loop`` component emulator.'''
 
-        self.Pct = Pctl(multipole, version=version, redshift=redshift)
+        self.Pct = Pctl(multipole, version=version, redshift=redshift,
+                        path_to_model=path_to_model, kmax=kmax)
         '''The ``P_ct`` component emulator.'''
 
         self.multipole = multipole
