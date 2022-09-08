@@ -787,7 +787,6 @@ class Pctl:
             yscalers_path = f"{path_to_model}/scalers/Pct{multipole}/"
         else:            
             models_path = f"{cache_path}{version}/z{redshift}/models/Pct{multipole}/"
-            print(models_path)
             xscalers_path = f"{cache_path}{version}/z{redshift}/scalers/"
             yscalers_path = f"{cache_path}{version}/z{redshift}/scalers/Pct{multipole}/"
 
