@@ -197,6 +197,8 @@ class Resampler:
         # Make sure the user has passed either simulation_samples or parameter_ranges.
         if (simulation_samples is None) and (parameter_ranges is None):
             raise ValueError("Please provide either simulation samples or parameter ranges.")
+        if (simulation_samples is None) and (use_latent_space is True):
+            raise ValueError("Latent space cannot be used without simulation samples.")
         elif (parameter_ranges is None) and (use_latent_space is False):
             self.min = np.min(simulation_samples, axis=0)
             self.max = np.max(simulation_samples, axis=0)
