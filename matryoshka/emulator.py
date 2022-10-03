@@ -614,12 +614,12 @@ class P11l:
     '''
 
     def __init__(self, multipole, version='EFTv2', redshift=0.51,
-                 path_to_model=None, kmax=None):
+                 path_to_model=None):
 
         if version=='EFTv3':
             self.kbins = kbird
         elif version=='custom':
-            self.kbins = kbird[kbird <= float(kmax)]
+            self.kbins = np.load(f"{path_to_model}kbins.npy")
         else:
             self.kbins = kbird[:39]
 
@@ -693,12 +693,12 @@ class Ploopl:
     '''
 
     def __init__(self, multipole, version='EFTv2', redshift=0.51,
-                 path_to_model=None, kmax=None):
+                 path_to_model=None):
 
         if version=='EFTv3':
             self.kbins = kbird
         elif version=='custom':
-            self.kbins = kbird[kbird <= float(kmax)]
+            self.kbins = np.load(f"{path_to_model}kbins.npy")
         else:
             self.kbins = kbird[:39]
 
@@ -772,12 +772,12 @@ class Pctl:
     '''
 
     def __init__(self, multipole, version='EFTv2' , redshift=0.51,
-                 path_to_model=None, kmax=None):
+                 path_to_model=None):
 
         if version=='EFTv3':
             self.kbins = kbird
         elif version=='custom':
-            self.kbins = kbird[kbird <= float(kmax)]
+            self.kbins = np.load(f"{path_to_model}kbins.npy")
         else:
             self.kbins = kbird[:39]
 
@@ -858,9 +858,6 @@ class EFT:
          Default is 0.51.
         path_to_model (str) : Path where model trained with the ``trainEFTEMUcomponenets``
          script is saved. Only requred if ``version='custom'``. Default is ``None``.
-        kmax (float) : The value of ``kmax`` that was passed to the
-         ``trainEFTEMUcomponenets`` script when the model was trained. Only requred if
-         ``version='custom'``. Default is ``None``.
 
     .. note::
         See the `EFTEMU <../example_notebooks/EFTEMU_example.ipynb>`_
@@ -868,22 +865,24 @@ class EFT:
     '''
 
     def __init__(self, multipole, version='EFTv2', redshift=0.51,
-                 path_to_model=None, kmax=None):
+                 path_to_model=None):
 
-        if version=='custom' and (path_to_model is None or kmax is None):
-            raise TypeError("when using version='custom' both path_to_mode and kmax must be specified.")
+        if version=='custom' and (path_to_model is None):
+            raise TypeError("when using version='custom' path_to_model must be specified.")
 
+        if version=='custom' and (not os.path.isfile(f"{path_to_model}kbins.npy")):
+            raise TypeError("when using version='custom' the directory at path_to_model must contaain a .npy file with the kbins the model predicts the kernels.")        
 
         self.P11 = P11l(multipole, version=version, redshift=redshift,
-                        path_to_model=path_to_model, kmax=kmax)
+                        path_to_model=path_to_model)
         '''The ``P_11`` component emulator.'''
 
         self.Ploop = Ploopl(multipole, version=version, redshift=redshift,
-                            path_to_model=path_to_model, kmax=kmax)
+                            path_to_model=path_to_model)
         '''The ``P_loop`` component emulator.'''
 
         self.Pct = Pctl(multipole, version=version, redshift=redshift,
-                        path_to_model=path_to_model, kmax=kmax)
+                        path_to_model=path_to_model)
         '''The ``P_ct`` component emulator.'''
 
         self.multipole = multipole
