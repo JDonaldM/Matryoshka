@@ -614,7 +614,7 @@ class P11l:
     '''
 
     def __init__(self, multipole, version='EFTv2', redshift=0.51,
-                 path_to_model=None):
+                 path_to_model=None, yscaler=None):
 
         if version=='EFTv3':
             self.kbins = kbird
@@ -645,7 +645,10 @@ class P11l:
             know where to put zeros.'''
 
         xscaler = UniformScaler()
-        yscaler = UniformScaler()
+        if yscaler is None:
+            yscaler = UniformScaler()
+        else:
+            yscaler = yscaler
 
         # Load the variables that define the scalers.
         xmin_diff = np.load(xscalers_path+"xscaler_min_diff.npy")
@@ -693,7 +696,7 @@ class Ploopl:
     '''
 
     def __init__(self, multipole, version='EFTv2', redshift=0.51,
-                 path_to_model=None):
+                 path_to_model=None, yscaler=None):
 
         if version=='EFTv3':
             self.kbins = kbird
@@ -724,7 +727,10 @@ class Ploopl:
            know where to put zeros.'''
 
         xscaler = UniformScaler()
-        yscaler = UniformScaler()
+        if yscaler is None:
+            yscaler = UniformScaler()
+        else:
+            yscaler = yscaler
 
         # Load the variables that define the scalers.
         xmin_diff = np.load(xscalers_path+"xscaler_min_diff.npy")
@@ -772,7 +778,7 @@ class Pctl:
     '''
 
     def __init__(self, multipole, version='EFTv2' , redshift=0.51,
-                 path_to_model=None):
+                 path_to_model=None, yscaler=None):
 
         if version=='EFTv3':
             self.kbins = kbird
@@ -803,7 +809,10 @@ class Pctl:
             know where to put zeros.'''
 
         xscaler = UniformScaler()
-        yscaler = UniformScaler()
+        if yscaler is None:
+            yscaler = UniformScaler()
+        else:
+            yscaler = yscaler
 
         # Load the variables that define the scalers.
         xmin_diff = np.load(xscalers_path+"xscaler_min_diff.npy")
@@ -865,7 +874,7 @@ class EFT:
     '''
 
     def __init__(self, multipole, version='EFTv2', redshift=0.51,
-                 path_to_model=None):
+                 path_to_model=None, yscaler_P11=None, yscaler_Ploop=None, yscaler_Pct=None):
 
         if version=='custom' and (path_to_model is None):
             raise TypeError("when using version='custom' path_to_model must be specified.")
@@ -874,15 +883,15 @@ class EFT:
             raise TypeError("when using version='custom' the directory at path_to_model must contaain a .npy file with the kbins the model predicts the kernels.")        
 
         self.P11 = P11l(multipole, version=version, redshift=redshift,
-                        path_to_model=path_to_model)
+                        path_to_model=path_to_model, yscaler=yscaler_P11)
         '''The ``P_11`` component emulator.'''
 
         self.Ploop = Ploopl(multipole, version=version, redshift=redshift,
-                            path_to_model=path_to_model)
+                            path_to_model=path_to_model, yscaler=yscaler_Ploop)
         '''The ``P_loop`` component emulator.'''
 
         self.Pct = Pctl(multipole, version=version, redshift=redshift,
-                        path_to_model=path_to_model)
+                        path_to_model=path_to_model, yscaler=yscaler_Pct)
         '''The ``P_ct`` component emulator.'''
 
         self.multipole = multipole
