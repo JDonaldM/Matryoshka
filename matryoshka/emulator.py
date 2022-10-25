@@ -766,7 +766,7 @@ class Ploopl:
 
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
-
+        preds -= 10000
         preds_incl_zeros = np.zeros((X.shape[0], 12*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
         return preds_incl_zeros
@@ -946,7 +946,7 @@ class EFT:
 
         f = halo_model_funcs.fN_vec((X[:,0]+X[:,1])/X[:,2]**2, self.redshift)
         multipole_array = eft_funcs.multipole_vec([P11_preds.reshape(X.shape[0],3,self.P11.kbins.shape[0]),
-                                                   Ploop_preds.reshape(X.shape[0],12,self.Ploop.kbins.shape[0]),
+                                                   Ploop_preds.reshape(X.shape[0],12,self.Ploop.kbins.shape[0])*np.array([-1., -1., 1., -1., 1., -1., 1., 1., 1., -1., -1., -1.])[np.newaxis,:,np.newaxis],
                                                    Pct_preds.reshape(X.shape[0],6,self.Pct.kbins.shape[0])],
                                                    bias, f.reshape(-1,1))
 
