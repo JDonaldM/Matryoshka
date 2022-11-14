@@ -107,7 +107,7 @@ def multipole(Pk, l, mu_bins):
     I = Pk*eval_legendre(l, mu_bins)
     return (2*l+1)/2 * trapz(I, x=mu_bins, axis=1)
 
-def AP(lPk, mu_bins, kbins, qperp, qpar):
+def AP(lPk, mu_bins, kbins, qperp, qpar, Nl=2):
     '''
     Function to include the AP effect into multipoles. The function reconstructs
     the 2d power before including AP.
@@ -141,7 +141,7 @@ def AP(lPk, mu_bins, kbins, qperp, qpar):
         _Pkmu += Pkint[i]*eval_legendre(l, mup)
 
     Pell = []
-    for pole in range(2):
+    for pole in range(Nl):
         l=pole*2
         #print(l)
         Interg = _Pkmu*eval_legendre(l, mugrid)
