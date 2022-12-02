@@ -951,7 +951,7 @@ class EFT:
         # Iterpolate prediction with input k/
         if kvals is not None:
             # Check that inperpolation is possible.
-            if kvals.max()<self.P11.kbins.max() and kvals.min()>self.P11.kbins.min():
+            if kvals.max()<=self.P11.kbins.max() and kvals.min()>=self.P11.kbins.min():
                 multipole_array =  interp1d(self.P11.kbins, multipole_array, 
                                             axis=-1)(kvals)
             else:
