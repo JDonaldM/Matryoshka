@@ -851,7 +851,7 @@ class Pctl:
 
         preds_incl_zeros = np.zeros((X.shape[0], 6*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
-        return preds_incl_zeros.reshape(X.shape[0],6,self.Pct.kbins.shape[0])
+        return preds_incl_zeros.reshape(X.shape[0],6,self.kbins.shape[0])
 
 class EFT:
     '''
