@@ -668,12 +668,12 @@ class P11l:
 
         Args:
             X (array) : Array containing the relevant input parameters. If making
-             a single prediction should have shape (d,), if a batch prediction
-             should have the shape (N,d).
+             a single prediction should have shape ``(d,)``, if a batch prediction
+             should have the shape ``(nsamp,d)``.
 
         Returns:
             Array containing the predictions from the component emulator 
-            will have shape (n,k).
+            will have shape ``(nsamp,nkern,k)``.
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -687,7 +687,7 @@ class P11l:
 
         preds_incl_zeros = np.zeros((X.shape[0], 3*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
-        return preds_incl_zeros
+        return preds_incl_zeros.reshape(X.shape[0],3,self.kbins.shape[0])
 
 class Ploopl:
     '''
@@ -750,12 +750,12 @@ class Ploopl:
 
         Args:
             X (array) : Array containing the relevant input parameters. If making
-             a single prediction should have shape (d,), if a batch prediction
-             should have the shape (N,d).
+             a single prediction should have shape ``(d,)``, if a batch prediction
+             should have the shape ``(nsamp,d)``.
 
         Returns:
             Array containing the predictions from the component emulator 
-            will have shape (n,k).
+            will have shape ``(nsamp,nkern,k)``.
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -769,7 +769,7 @@ class Ploopl:
         preds -= 10000
         preds_incl_zeros = np.zeros((X.shape[0], 12*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
-        return preds_incl_zeros
+        return preds_incl_zeros.reshape(X.shape[0],12,self.kbins.shape[0])*np.array([-1., -1., 1., -1., 1., -1., 1., 1., 1., -1., -1., -1.])[np.newaxis,:,np.newaxis]
 
 class Pctl:
     '''
@@ -832,12 +832,12 @@ class Pctl:
 
         Args:
             X (array) : Array containing the relevant input parameters. If making
-             a single prediction should have shape (d,), if a batch prediction
-             should have the shape (N,d).
+             a single prediction should have shape ``(d,)``, if a batch prediction
+             should have the shape ``(nsamp,d)``.
 
         Returns:
             Array containing the predictions from the component emulator 
-            will have shape (n,k).
+            will have shape ``(nsamp,nkern,k)``.
         '''
 
         # If making a prediction on single parameter set, input array needs to
@@ -851,7 +851,7 @@ class Pctl:
 
         preds_incl_zeros = np.zeros((X.shape[0], 6*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
-        return preds_incl_zeros
+        return preds_incl_zeros.reshape(X.shape[0],6,self.Pct.kbins.shape[0])
 
 class EFT:
     '''
@@ -945,9 +945,7 @@ class EFT:
             bias[:,4:] = bias[:,4:]/km**2
 
         f = halo_model_funcs.fN_vec((X[:,0]+X[:,1])/X[:,2]**2, self.redshift)
-        multipole_array = eft_funcs.multipole_vec([P11_preds.reshape(X.shape[0],3,self.P11.kbins.shape[0]),
-                                                   Ploop_preds.reshape(X.shape[0],12,self.Ploop.kbins.shape[0])*np.array([-1., -1., 1., -1., 1., -1., 1., 1., 1., -1., -1., -1.])[np.newaxis,:,np.newaxis],
-                                                   Pct_preds.reshape(X.shape[0],6,self.Pct.kbins.shape[0])],
+        multipole_array = eft_funcs.multipole_vec([P11_preds, Ploop_preds, Pct_preds],
                                                    bias, f.reshape(-1,1))
 
         if stochastic is not None:
