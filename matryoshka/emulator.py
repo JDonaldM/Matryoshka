@@ -661,6 +661,7 @@ class P11l:
         yscaler.diff = ymin_diff[1, :]
 
         self.scalers = (xscaler, yscaler)
+        self.multipole = multipole
 
     def emu_predict(self, X):
         '''
@@ -684,7 +685,8 @@ class P11l:
 
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
-
+        if self.multipole==2:
+            preds -= 100.
         preds_incl_zeros = np.zeros((X.shape[0], 3*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
         return preds_incl_zeros.reshape(X.shape[0],3,self.kbins.shape[0])
@@ -825,6 +827,7 @@ class Pctl:
         yscaler.diff = ymin_diff[1, :]
 
         self.scalers = (xscaler, yscaler)
+        self.multipole = multipole
 
     def emu_predict(self, X):
         '''
@@ -848,7 +851,8 @@ class Pctl:
 
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
-
+        if self.multipole==2:
+            preds -= 100.
         preds_incl_zeros = np.zeros((X.shape[0], 6*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
         return preds_incl_zeros.reshape(X.shape[0],6,self.kbins.shape[0])
