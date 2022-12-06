@@ -27,6 +27,10 @@ def multipole(P_n, b, f, stochastic=None, kbins=None, ng=None,
     lin = np.einsum('b,bx->x', b11, P_n[0])
     loop = np.einsum('b,bx->x', bloop, P_n[1]) 
     counterterm = np.einsum('b,bx->x', bct, P_n[2])
+
+    if (stochastic is not None) and ((multipole is None) or (kbins is None)):
+        raise ValueError("If using stochastic counterms the multipole order and kbins need to be passed.")
+
     if stochastic is not None and multipole==0:
         return lin + loop + counterterm + stochastic[0]/ng + (stochastic[1]*kbins**2)/ng
 
@@ -74,6 +78,9 @@ def multipole_vec(P_n, b, f, stochastic=None, kbins=None, ng=None,
     lin = np.einsum('nb,nbx->nx', b11, P_n[0])
     loop = np.einsum('nb,nbx->nx', bloop, P_n[1]) 
     counterterm = np.einsum('nb,nbx->nx', bct, P_n[2])
+
+    if (stochastic is not None) and ((multipole is None) or (kbins is None)):
+        raise ValueError("If using stochastic counterms the multipole order and kbins need to be passed.")
 
     if stochastic is not None and multipole==0:
         return lin + loop + counterterm + stochastic[:,0].reshape(-1,1)/ng + (stochastic[:,1].reshape(-1,1)*kbins**2)/ng
