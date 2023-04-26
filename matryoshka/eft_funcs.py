@@ -1,7 +1,7 @@
 import numpy as np
 
 def multipole(P_n, b, f, stochastic=None, kbins=None, ng=None,
-              multipole=None):
+              multipole=None, seperate=False):
     '''
     Calculates the galaxy power spectrum multipole given a P_n matrix 
     that corresponds to the desired multipole.
@@ -32,13 +32,18 @@ def multipole(P_n, b, f, stochastic=None, kbins=None, ng=None,
         raise ValueError("If using stochastic counterms the multipole order and kbins need to be passed.")
 
     if stochastic is not None and multipole==0:
-        return lin + loop + counterterm + stochastic[0]/ng + (stochastic[1]*kbins**2)/ng
+        stoch_cont =  stochastic[0]/ng + (stochastic[1]*kbins**2)/ng
 
     elif stochastic is not None and multipole==2:
-        return lin + loop + counterterm + (stochastic[2]*kbins**2)/ng
+        stoch_cont = (stochastic[2]*kbins**2)/ng
 
     else:
-        return lin + loop + counterterm
+        stoch_cont = np.zeros_like(lin)
+
+    if seperate:
+        return lin, loop, counterterm, stoch_cont
+    else:
+        return lin + loop + counterterm + stoch_cont
 
 def multipole_vec(P_n, b, f, stochastic=None, kbins=None, ng=None,
                   multipole=None, seperate=False):
@@ -91,10 +96,7 @@ def multipole_vec(P_n, b, f, stochastic=None, kbins=None, ng=None,
         stoch_cont =  (stochastic[:,2].reshape(-1,1)*kbins**2)/ng
 
     else:
-        stoch_cont = np.zeros((
-            stochastic.shape[0],
-            kbins.shape[0]
-            ))
+        stoch_cont = np.zeros_like(lin)
 
     if seperate:
         return lin, loop, counterterm, stoch_cont
