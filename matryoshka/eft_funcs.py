@@ -41,7 +41,7 @@ def multipole(P_n, b, f, stochastic=None, kbins=None, ng=None,
         return lin + loop + counterterm
 
 def multipole_vec(P_n, b, f, stochastic=None, kbins=None, ng=None,
-                  multipole=None):
+                  multipole=None, seperate=False):
     '''
     Vectorized version of ``multipole`` that allows for multipoles to be calculated for
     multiple cosmologies.
@@ -63,6 +63,8 @@ def multipole_vec(P_n, b, f, stochastic=None, kbins=None, ng=None,
          is not ``None``. Default is ``None``.
         multipole (int) : Desired multipole. Can either be 0 or 1. Default is
          ``None``. Only is required if ``stochastic`` is not ``None``.
+        seperate (bool) : If ``True`` seperate contributions to multipoles.
+         Default is ``False``.
 
     Returns:
         The galaxy multipoles.
@@ -83,10 +85,18 @@ def multipole_vec(P_n, b, f, stochastic=None, kbins=None, ng=None,
         raise ValueError("If using stochastic counterms the multipole order and kbins need to be passed.")
 
     if stochastic is not None and multipole==0:
-        return lin + loop + counterterm + stochastic[:,0].reshape(-1,1)/ng + (stochastic[:,1].reshape(-1,1)*kbins**2)/ng
+        stoch_cont =  stochastic[:,0].reshape(-1,1)/ng + (stochastic[:,1].reshape(-1,1)*kbins**2)/ng
 
     elif stochastic is not None and multipole==2:
-        return lin + loop + counterterm + (stochastic[:,2].reshape(-1,1)*kbins**2)/ng
+        stoch_cont =  (stochastic[:,2].reshape(-1,1)*kbins**2)/ng
 
     else:
-        return lin + loop + counterterm
+        stoch_cont = np.zeros((
+            stochastic.shape[0],
+            kbins.shape[0]
+            ))
+
+    if seperate:
+        return lin, loop, counterterm, stoch_cont
+    else:
+        return lin + loop + counterterm + stoch_cont
