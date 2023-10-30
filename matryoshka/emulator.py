@@ -62,6 +62,7 @@ class Transfer:
         '''The k-bins at which predictions will be made.'''
 
         self.relevant_params = relevant_transfer[version]
+        self.model_version = version
 
         models_path = cache_path+version+"/"+"models/transfer/"
 
@@ -112,9 +113,11 @@ class Transfer:
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
         X = np.atleast_2d(X)
-        if (X.shape[1] != len(self.relevant_params)) and (X.shape[1] == 7):
+        if (X.shape[1] != len(self.relevant_params)) and\
+            (X.shape[1] == len(parameter_ids[self.model_version])):
             X = X[:,self.relevant_params]
-        elif (X.shape[1] != len(self.relevant_params)) and (X.shape[1] != 7):
+        elif (X.shape[1] != len(self.relevant_params)) and\
+            (X.shape[1] != len(parameter_ids[self.model_version])):
             raise ValueError("Incorrect numper of input parameters.")
 
         X_prime = self.scalers[0].transform(X)
@@ -341,6 +344,7 @@ class Growth:
         '''The z-bins at which predictions will be made.'''
 
         self.relevant_params = relevant_transfer[version]
+        self.model_version = version
 
         models_path = cache_path+version+"/"+"models/growth/"
 
@@ -392,9 +396,11 @@ class Growth:
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
         X = np.atleast_2d(X)
-        if (X.shape[1] != len(self.relevant_params)) and (X.shape[1] == 7):
+        if (X.shape[1] != len(self.relevant_params)) and\
+            (X.shape[1] == len(parameter_ids[self.model_version])):
             X = X[:,self.relevant_params]
-        elif (X.shape[1] != len(self.relevant_params)) and (X.shape[1] != 7):
+        elif (X.shape[1] != len(self.relevant_params)) and\
+            (X.shape[1] != len(parameter_ids[self.model_version])):
             raise ValueError("Incorrect numper of input parameters.")
 
 
