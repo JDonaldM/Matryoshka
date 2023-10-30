@@ -1,6 +1,6 @@
 sphinx_rtd_theme==1.0.0
 nbsphinx==0.8.7
-IPython==7.31.1
+IPython==8.10.0
 numpy>=1.19.2
 scipy>=1.5.0
 tensorflow>=2.5.1
