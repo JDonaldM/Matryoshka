@@ -111,7 +111,11 @@ class Transfer:
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
-        X = np.atleast_2d(X)[:,self.relevant_params]
+        X = np.atleast_2d(X)
+        if (X.shape[1] != len(self.relevant_params)) and (X.shape[1] == 7):
+            X = X[:,self.relevant_params]
+        elif (X.shape[1] != len(self.relevant_params)) and (X.shape[1] != 7):
+            raise ValueError("Incorrect numper of input parameters.")
 
         X_prime = self.scalers[0].transform(X)
 
@@ -387,7 +391,12 @@ class Growth:
 
         # If making a prediction on single parameter set, input array needs to
         # be reshaped.
-        X = np.atleast_2d(X)[:,self.relevant_params]
+        X = np.atleast_2d(X)
+        if (X.shape[1] != len(self.relevant_params)) and (X.shape[1] == 7):
+            X = X[:,self.relevant_params]
+        elif (X.shape[1] != len(self.relevant_params)) and (X.shape[1] != 7):
+            raise ValueError("Incorrect numper of input parameters.")
+
 
         X_prime = self.scalers[0].transform(X)
 
