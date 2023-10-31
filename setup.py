@@ -25,5 +25,5 @@ setuptools.setup(
         'Topic :: Scientific/Engineering :: Mathematics',
     ],
     install_requires=requirements,
-    python_requires='>=3.7',
+    python_requires='>=3.8',
 )

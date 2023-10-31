@@ -18,13 +18,13 @@ The example bellow shows how to generate a prediction for a Planck18 LCDM transf
 ```python
 import numpy as np
 import matryoshka.emulator as Matry
-from astropy.cosmology import Planck18_arXiv_v2
+from astropy.cosmology import Planck18
 
 COSMO = np.array([
-    Planck18_arXiv_v2.Om0,
-    Planck18_arXiv_v2.Ob0,
-    Planck18_arXiv_v2.H0.value/100,
-    Planck18_arXiv_v2.Neff,
+    Planck18.Om0,
+    Planck18.Ob0,
+    Planck18.H0.value/100,
+    Planck18.Neff,
     -1.0
 ])
 
