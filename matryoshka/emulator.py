@@ -702,7 +702,7 @@ class P11l:
 
         preds_incl_zeros = np.zeros((X.shape[0], 3*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
-        return preds_incl_zeros
+        return preds_incl_zeros.reshape(X.shape[0],3,self.P11.kbins.shape[0])
 
 class Ploopl:
     '''
@@ -784,7 +784,7 @@ class Ploopl:
 
         preds_incl_zeros = np.zeros((X.shape[0], 12*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
-        return preds_incl_zeros
+        return preds_incl_zeros.reshape(X.shape[0],12,self.Ploop.kbins.shape[0])
 
 class Pctl:
     '''
@@ -866,7 +866,7 @@ class Pctl:
 
         preds_incl_zeros = np.zeros((X.shape[0], 6*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
-        return preds_incl_zeros
+        return preds_incl_zeros.reshape(X.shape[0],6,self.kbins.shape[0])
 
 class EFT:
     '''
@@ -960,9 +960,7 @@ class EFT:
             bias[:,4:] = bias[:,4:]/km**2
 
         f = halo_model_funcs.fN_vec((X[:,0]+X[:,1])/X[:,2]**2, self.redshift)
-        multipole_array = eft_funcs.multipole_vec([P11_preds.reshape(X.shape[0],3,self.P11.kbins.shape[0]),
-                                                   Ploop_preds.reshape(X.shape[0],12,self.Ploop.kbins.shape[0]),
-                                                   Pct_preds.reshape(X.shape[0],6,self.Pct.kbins.shape[0])],
+        multipole_array = eft_funcs.multipole_vec([P11_preds,Ploop_preds,Pct_preds],
                                                    bias, f.reshape(-1,1))
 
         # Iterpolate prediction with input k/
