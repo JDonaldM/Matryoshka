@@ -328,7 +328,7 @@ def dataset(target, split, X_or_Y):
     cache_path = os.fsdecode(pathlib.Path(os.path.dirname(__file__)
                                           ).parent.absolute())+"/matryoshka-data/"
     cache_path += "class_aemulus/"
-    return np.load(cache_path+split+"/"+X_or_Y+"_"+target+"-v3.npy")
+    return np.load(cache_path+split+"/"+X_or_Y+"_"+target+".npy")
 
 def train_test_indices(N, split=0.2):
     '''

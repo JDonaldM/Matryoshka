@@ -965,22 +965,30 @@ class EFT:
                                                    Pct_preds.reshape(X.shape[0],6,self.Pct.kbins.shape[0])],
                                                    bias, f.reshape(-1,1))
 
+        # Iterpolate prediction with input k/
+        if kvals is not None:
+            # Check that inperpolation is possible.
+            if kvals.max()<=self.P11.kbins.max() and kvals.min()>=self.P11.kbins.min():
+                multipole_array =  interp1d(self.P11.kbins, multipole_array, 
+                                            axis=-1)(kvals)
+            else:
+                #If not possible raise an error.
+                raise ValueError("kvals need to be covered by default eulator range.")
+        else:
+            # Set the kvals variable if one isn't passed.
+            # Allows kvals to alway be used for the stochastic terms below.
+            kvals = self.P11.kbins
+
         if stochastic is not None:
             
             if self.multipole==0:
                 multipole_array += stochastic[:,0].reshape(-1,1)/ng
-                multipole_array += (stochastic[:,1].reshape(-1,1)*self.P11.kbins**2)/ng
+                multipole_array += (stochastic[:,1].reshape(-1,1)*kvals**2)/ng
 
             elif self.multipole==2:    
-                multipole_array += (stochastic[:,2].reshape(-1,1)*self.P11.kbins**2)/ng
+                multipole_array += (stochastic[:,2].reshape(-1,1)*kvals**2)/ng
 
-        if kvals is not None:
-            if kvals.max()<self.P11.kbins.max() and kvals.min()>self.P11.kbins.min():
-                return interp1d(self.P11.kbins, multipole_array)(kvals)
-            else:
-                raise ValueError("kvals need to be covered by default eulator range.")
-        else:
-            return multipole_array
+        return multipole_array
 
 class QUIP:
     '''

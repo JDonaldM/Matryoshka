@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Accelerated EFTofLSS predictions with EFTEMU &mdash; matryoshka 0.2.14 documentation</title>
+  <title>Accelerated EFTofLSS predictions with EFTEMU &mdash; matryoshka 0.2.15 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -47,7 +47,11 @@
 <li class="toctree-l2"><a class="reference internal" href="toy_example_mcmc.html">MCMC with <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code> and <code class="docutils literal notranslate"><span class="pre">zeus</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="resample_example.html">Generating training samples for the base model componenets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="QUIP.html">The <code class="docutils literal notranslate"><span class="pre">Qui</span></code>jote matter <code class="docutils literal notranslate"><span class="pre">P</span></code>ower spectrum emulator (QUIP)</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Accelerated EFTofLSS predictions with <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Accelerated EFTofLSS predictions with <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#General-usage-and-prediction-accuracy.">General usage and prediction accuracy.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Inference-example">Inference example</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../retrainEFTEMU.html">Conveniently Re-train the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code></a></li>
 </ul>
 </li>
@@ -351,64 +355,67 @@ div.rendered_html tbody tr:hover {
 </style>
 <section id="Accelerated-EFTofLSS-predictions-with-EFTEMU">
 <h1>Accelerated EFTofLSS predictions with <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code><a class="headerlink" href="#Accelerated-EFTofLSS-predictions-with-EFTEMU" title="Permalink to this headline"></a></h1>
-<p>In this notebook we introduce the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> that is part of the suite of emulators included with <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code>. The purpose of this emulator is to accelerate EFTofLSS analyses. The emulator has been trained to predict the monopole <span class="math notranslate nohighlight">\(P_0\)</span> and quandrupole <span class="math notranslate nohighlight">\(P_2\)</span> returned by <a class="reference external" href="https://github.com/pierrexyz/pybird">PyBird</a>.</p>
+<p>In this notebook we introduce the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code>. A collection of component emulators included with <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code>. The purpose of the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> is to accelerate EFTofLSS analyses. The emulator has been trained to predict the monopole <span class="math notranslate nohighlight">\(P_0\)</span> and quandrupole <span class="math notranslate nohighlight">\(P_2\)</span> returned by <a class="reference external" href="https://github.com/pierrexyz/pybird">PyBird</a>. For further details see Donald-McCann et al (<a class="reference external" href="https://academic.oup.com/mnras/article/518/2/3106/6831642?login=false">2022</a>) and the accompanying GitHub
+<a class="reference external" href="https://github.com/JDonaldM/matryoshka_II_paper">repository</a>.</p>
+<section id="General-usage-and-prediction-accuracy.">
+<h2>General usage and prediction accuracy.<a class="headerlink" href="#General-usage-and-prediction-accuracy." title="Permalink to this headline"></a></h2>
 <p>We start by importing all the modules required for this example.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">matryoshka.eft_funcs</span> <span class="k">as</span> <span class="nn">MatEFT</span>
+<span></span><span class="c1"># matryoshka modules</span>
+<span class="kn">import</span> <span class="nn">matryoshka.eft_funcs</span> <span class="k">as</span> <span class="nn">MatEFT</span>
 <span class="kn">import</span> <span class="nn">matryoshka.halo_model_funcs</span> <span class="k">as</span> <span class="nn">MatHM</span>
 <span class="kn">import</span> <span class="nn">matryoshka.emulator</span> <span class="k">as</span> <span class="nn">MatEmu</span>
 <span class="kn">import</span> <span class="nn">matryoshka.plot</span> <span class="k">as</span> <span class="nn">MatPlt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># Needed fro inference example</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
 <span class="kn">import</span> <span class="nn">zeus</span>
-<span class="kn">import</span> <span class="nn">corner</span>
+
+<span class="c1"># General imports</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># Make reproducible</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>Next we load the cosmologies that for the train and test sets for <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code>. These training samples were chosen to overlap the <a class="reference external" href="https://aemulusproject.github.io">Aemulus</a> and <a class="reference external" href="https://abacussummit.readthedocs.io/en/latest/">AbacusSummit</a> simulation samples, and were generated using the <code class="docutils literal notranslate"><span class="pre">matryoshka.training_funcs.Resampler</span></code> class.</p>
-<p>It should be noted that these cosmological parameters are the <strong>only</strong> input for the NNs that the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> is based on. In equation 10 of <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1475-7516/2020/05/005">d’Amico et al. (2019)</a> they write the power spectrum as a sum of terms that are bias independant. Training the emulator to predict these bias independant terms rather than <span class="math notranslate nohighlight">\(P_0\)</span> or <span class="math notranslate nohighlight">\(P_2\)</span> directly is advantageous because it greatly reduces the dimensionality of the input.</p>
+<p>Next we load the cosmologies that correspond to the train and test sets for <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code>. These training samples were chosen to overlap the <a class="reference external" href="https://aemulusproject.github.io">Aemulus</a> and <a class="reference external" href="https://abacussummit.readthedocs.io/en/latest/">AbacusSummit</a> simulation samples (see section 2 of Donald-McCann et al. <a class="reference external" href="https://academic.oup.com/mnras/article/518/2/3106/6831642?login=false">2022</a>), and were generated using the <code class="docutils literal notranslate"><span class="pre">matryoshka.training_funcs.Resampler</span></code> class. <strong>All data used in this
+notebook is available in the accompanying repository of Donald-McCann et al. **`2022 &lt;https://academic.oup.com/mnras/article/518/2/3106/6831642?login=false&gt;`__**, which can be found</strong><a class="reference external" href="https://github.com/JDonaldM/matryoshka_II_paper">here</a><strong>.</strong></p>
+<p>It should be noted that these cosmological parameters are the <strong>only</strong> input for the NNs that the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> is based on. In equation 10 of D’Amico et al. (<a class="reference external" href="https://iopscience.iop.org/article/10.1088/1475-7516/2020/05/005">2019</a>) they write the power spectrum as a sum of terms that are bias independant. Training the emulator to predict these bias independant terms rather than <span class="math notranslate nohighlight">\(P_0\)</span> or <span class="math notranslate nohighlight">\(P_2\)</span> directly is advantageous because it greatly reduces the dimensionality of the input.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">cosmos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/Users/jamie/Desktop/EFT/notebooks/eft_cosmologies_noDQ1.npy&quot;</span><span class="p">)</span>
+<span></span><span class="c1"># Define path to the data in the matryoshka_II_paper</span>
+<span class="c1"># https://github.com/JDonaldM/matryoshka_II_paper</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="s2">&quot;/Users/jamie/Desktop/GitHubProjects/matryoshka_II_paper/data/&quot;</span>
+<span class="n">cosmos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">training/cosmologies/eft_cosmologies_noDQ1.npy&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>We plot these samples to visualise the extent of the space covered.</p>
+<p>Next we initalise <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> for <span class="math notranslate nohighlight">\(P_0\)</span> and <span class="math notranslate nohighlight">\(P_2\)</span>. By default this will load the version of the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> presented in Donald-McCann et al. (<a class="reference external" href="https://academic.oup.com/mnras/article/518/2/3106/6831642?login=false">2022</a>).</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">param_labels</span> <span class="o">=</span> <span class="n">param_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$\omega_c$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$\omega_b$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$h$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$A_s$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$n_s$&quot;</span><span class="p">]</span>
-<span class="n">MatPlt</span><span class="o">.</span><span class="n">sample_space</span><span class="p">([</span><span class="n">cosmos</span><span class="p">],</span> <span class="n">param_labels</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/example_notebooks_EFTEMU_example_5_0.png" src="../_images/example_notebooks_EFTEMU_example_5_0.png" />
-</div>
-</div>
-<p>Next we initalise <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> for <span class="math notranslate nohighlight">\(P_0\)</span> and <span class="math notranslate nohighlight">\(P_2\)</span>.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">P0_emu</span> <span class="o">=</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">EFT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;EFT-optiresum&#39;</span><span class="p">)</span>
-<span class="n">P2_emu</span> <span class="o">=</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">EFT</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;EFT-optiresum&#39;</span><span class="p">)</span>
+<span></span><span class="n">P0_emu</span> <span class="o">=</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">EFT</span><span class="p">(</span>
+    <span class="n">multipole</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="c1"># Multipole order</span>
+    <span class="n">redshift</span><span class="o">=</span><span class="mf">0.61</span>
+<span class="p">)</span>
+
+<span class="n">P2_emu</span> <span class="o">=</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">EFT</span><span class="p">(</span>
+    <span class="n">multipole</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">redshift</span><span class="o">=</span><span class="mf">0.61</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -417,39 +424,46 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2021-11-26 16:20:49.101428: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+2023-11-03 13:45:05.499008: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
 To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
 </pre></div></div>
 </div>
-<p>We also load the training and test sets for <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> so we can assess the prediction accuracy.</p>
+<p>We can now make predictions for the multipoles with the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> via the <code class="docutils literal notranslate"><span class="pre">.emu_predict()</span></code> method. If instead we want to make predictions for the individual kernels of the EFTofLSS model, predictions can be made with the individual component emulators of the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> (see section 3 of Donald-McCann et al. <a class="reference external" href="https://academic.oup.com/mnras/article/518/2/3106/6831642?login=false">2022</a> for details). Each component emulator is stored as an attribute that has the same <code class="docutils literal notranslate"><span class="pre">.emu_predict()</span></code>
+method.</p>
+<p>For now we consider the case in which the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> is being used to make predictions for the multipoles. We load the training and test sets for <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> so we can have a look at the prediction accuracy.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Training and test data is stored in the same array.</span>
+<span class="c1"># Seperate arrays for each of the componenets and for each multipole.</span>
+<span class="n">P110_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">training/z0.61/P110/P110_array-z0.61_noDQ1_optiresum-False.npy&quot;</span><span class="p">)</span>
+<span class="n">Ploop0_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">training/z0.61/Ploop0/Ploop0_array-z0.61_noDQ1_optiresum-False.npy&quot;</span><span class="p">)</span>
+<span class="n">Pct0_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">training/z0.61/Pct0/Pct0_array-z0.61_noDQ1_optiresum-False.npy&quot;</span><span class="p">)</span>
+<span class="n">P112_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">training/z0.61/P112/P112_array-z0.61_noDQ1_optiresum-False.npy&quot;</span><span class="p">)</span>
+<span class="n">Ploop2_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">training/z0.61/Ploop2/Ploop2_array-z0.61_noDQ1_optiresum-False.npy&quot;</span><span class="p">)</span>
+<span class="n">Pct2_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">training/z0.61/Pct2/Pct2_array-z0.61_noDQ1_optiresum-False.npy&quot;</span><span class="p">)</span>
+
+<span class="c1"># Test data is located with ids.</span>
+<span class="n">test_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/Users/jamie/Desktop/GitHubProjects/Matryoshka/matryoshka-data/EFTv2/z0.61/split/test.npy&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We are not so interested in the prediction accuracy of the bias independant terms themselves but rather the multipoles <span class="math notranslate nohighlight">\(P_0\)</span> and <span class="math notranslate nohighlight">\(P_2\)</span>. This means that we need to generate multipoles from the bias free componenets, and this means we need to decide what nuisance parameters we should use.</p>
+<p>For this notebook we simply take random draws from the priors that were used in D’Amico et al. (<a class="reference external" href="https://iopscience.iop.org/article/10.1088/1475-7516/2020/05/005">2019</a>) (equation 35). Randomly selecting nuiscance parameters like this will lead to some strange predictions for <span class="math notranslate nohighlight">\(P_0\)</span> and <span class="math notranslate nohighlight">\(P_2\)</span>. These predictions may not be physical. However, this is the simplest way of generating nuisance parameters so we don’t concern ourselves with this for this example.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">path_to_eft_data</span> <span class="o">=</span> <span class="s2">&quot;/Users/jamie/Desktop/EFT/data/&quot;</span>
-
-<span class="n">P110_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;P110_array-z0.51_noDQ1_optiresum-True.npy&quot;</span><span class="p">)</span>
-<span class="n">Ploop0_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;Ploop0_array-z0.51_noDQ1_optiresum-True.npy&quot;</span><span class="p">)</span>
-<span class="n">Pct0_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;Pct0_array-z0.51_noDQ1_optiresum-True.npy&quot;</span><span class="p">)</span>
-<span class="n">P112_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;P112_array-z0.51_noDQ1_optiresum-True.npy&quot;</span><span class="p">)</span>
-<span class="n">Ploop2_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;Ploop2_array-z0.51_noDQ1_optiresum-True.npy&quot;</span><span class="p">)</span>
-<span class="n">Pct2_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;Pct2_array-z0.51_noDQ1_optiresum-True.npy&quot;</span><span class="p">)</span>
-
-<span class="n">test_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/Users/jamie/Desktop/EFT/split/test.npy&quot;</span><span class="p">)</span>
-<span class="n">train_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/Users/jamie/Desktop/EFT/split/train.npy&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>We are not so interested in the prediction accuracy of these bias independant terms but rather the multipoles <span class="math notranslate nohighlight">\(P_0\)</span> and <span class="math notranslate nohighlight">\(P_2\)</span>. This means that we need to generate multipoles from the bias free componenets, and this means we need to decide what bias parameters we should use.</p>
-<p>For this notebook we simply take random draws from the priors that were used in <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1475-7516/2020/05/005">d’Amico et al. (2019)</a> (equation 35). This will lead to some strange sets of bias parameters and may not be the best method to assess the predicion accuracy on <span class="math notranslate nohighlight">\(P_0\)</span> and <span class="math notranslate nohighlight">\(P_2\)</span>, however it is the simplest.</p>
-<p>Define a simple function that will generate samples from the prior.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="k">def</span> <span class="nf">random_bias</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Generate ``N`` sets of random nuisance parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        N (int) : The number of sets of parameters to generate.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">b1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
 
     <span class="n">c2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
@@ -469,64 +483,57 @@ To enable them in other operations, rebuild TensorFlow with the appropriate comp
 </pre></div>
 </div>
 </div>
-<p>We generate random sets of bias parameters for each sample in the training and test sets.</p>
+<p>We can now calculate the multipoles by combining the randomly selected nuisance parameters and the kernels calculated with <code class="docutils literal notranslate"><span class="pre">PyBird</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">random_bs</span> <span class="o">=</span> <span class="n">random_bias</span><span class="p">(</span><span class="n">test_id</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Calculate growth rate.</span>
+<span class="c1"># LCDM assumption that growth only dpeneds on Om.</span>
+<span class="n">fs</span> <span class="o">=</span> <span class="n">MatHM</span><span class="o">.</span><span class="n">fN_vec</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">cosmos</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">cosmos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">cosmos</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># Om</span>
+    <span class="mf">0.61</span> <span class="c1"># redshift</span>
+<span class="p">)</span>
+
+<span class="c1"># combine kernels and nuisance.</span>
+<span class="n">P0_test</span> <span class="o">=</span> <span class="n">MatEFT</span><span class="o">.</span><span class="n">multipole_vec</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">P110_array</span><span class="p">[</span><span class="n">test_id</span><span class="p">],</span>
+        <span class="n">Ploop0_array</span><span class="p">[</span><span class="n">test_id</span><span class="p">],</span>
+        <span class="n">Pct0_array</span><span class="p">[</span><span class="n">test_id</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">random_bs</span><span class="p">,</span>
+    <span class="n">fs</span><span class="p">[</span><span class="n">test_id</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">P2_test</span> <span class="o">=</span> <span class="n">MatEFT</span><span class="o">.</span><span class="n">multipole_vec</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">P112_array</span><span class="p">[</span><span class="n">test_id</span><span class="p">],</span>
+        <span class="n">Ploop2_array</span><span class="p">[</span><span class="n">test_id</span><span class="p">],</span>
+        <span class="n">Pct2_array</span><span class="p">[</span><span class="n">test_id</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">random_bs</span><span class="p">,</span>
+    <span class="n">fs</span><span class="p">[</span><span class="n">test_id</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now we make predictions for the same multipoles with the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">random_bs</span> <span class="o">=</span> <span class="n">random_bias</span><span class="p">(</span><span class="n">cosmos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-<span class="n">bias_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$b_1$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$b_2$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$b_3$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$b_4$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{ct}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{r1}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{r2}</span><span class="s2">$&quot;</span><span class="p">]</span>
-<span class="n">MatPlt</span><span class="o">.</span><span class="n">sample_space</span><span class="p">([</span><span class="n">random_bs</span><span class="p">],</span> <span class="n">bias_labels</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/example_notebooks_EFTEMU_example_13_0.png" src="../_images/example_notebooks_EFTEMU_example_13_0.png" />
-</div>
-</div>
-<p>We can now calculate the multipoles.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">P0_train_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cosmos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-<span class="n">P2_train_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cosmos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-<span class="n">f_train_test</span> <span class="o">=</span> <span class="n">MatHM</span><span class="o">.</span><span class="n">fN_vec</span><span class="p">(</span><span class="n">cosmos</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">cosmos</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.51</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cosmos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">MatHM</span><span class="o">.</span><span class="n">fN</span><span class="p">(</span><span class="n">cosmos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">cosmos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.51</span><span class="p">)</span>
-    <span class="n">P0_train_test</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">MatEFT</span><span class="o">.</span><span class="n">multipole</span><span class="p">([</span><span class="n">P110_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                     <span class="n">Ploop0_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                     <span class="n">Pct0_array</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
-                                     <span class="n">random_bs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                     <span class="n">f</span><span class="p">)[:</span><span class="mi">39</span><span class="p">]</span> <span class="c1"># We impose a scale cut here as in the current version of matryoshka</span>
-                                             <span class="c1"># EFTEMU does not make predictions up to k=0.3h/Mpc</span>
-    <span class="n">P2_train_test</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">MatEFT</span><span class="o">.</span><span class="n">multipole</span><span class="p">([</span><span class="n">P112_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                     <span class="n">Ploop2_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                     <span class="n">Pct2_array</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
-                                     <span class="n">random_bs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                     <span class="n">f</span><span class="p">)[:</span><span class="mi">39</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-<p>Now we can check the prediction accuracy.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">P0_preds</span> <span class="o">=</span> <span class="n">P0_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">cosmos</span><span class="p">,</span> <span class="n">random_bs</span><span class="p">)</span>
-<span class="n">P2_preds</span> <span class="o">=</span> <span class="n">P2_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">cosmos</span><span class="p">,</span> <span class="n">random_bs</span><span class="p">)</span>
+
+<span class="n">P0_preds</span> <span class="o">=</span> <span class="n">P0_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">cosmos</span><span class="p">[</span><span class="n">test_id</span><span class="p">],</span><span class="n">random_bs</span><span class="p">)</span>
+<span class="n">P2_preds</span> <span class="o">=</span> <span class="n">P2_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">cosmos</span><span class="p">[</span><span class="n">test_id</span><span class="p">],</span><span class="n">random_bs</span><span class="p">)</span>
+
 <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{a}</span><span class="s2"> predictions made in </span><span class="si">{b}</span><span class="s2"> seconds.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">cosmos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                                    <span class="n">b</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">,</span><span class="mi">3</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cosmos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> predictions made in </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -535,21 +542,32 @@ To enable them in other operations, rebuild TensorFlow with the appropriate comp
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-10000 predictions made in 0.872 seconds.
+10000 predictions made in 0.223 seconds.
 </pre></div></div>
 </div>
+<p>We plot the prediction accuracy with some of the plotting functions in <code class="docutils literal notranslate"><span class="pre">matryoshka</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">MatPlt</span><span class="o">.</span><span class="n">per_err</span><span class="p">(</span><span class="n">P0_train_test</span><span class="p">[</span><span class="n">test_id</span><span class="p">],</span> <span class="n">P0_preds</span><span class="p">[</span><span class="n">test_id</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span>
-               <span class="n">xlabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$k \ [h \ \mathrm</span><span class="si">{Mpc}</span><span class="s2">^{-1}]$&quot;</span><span class="p">,</span>
-               <span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$[P_0^\mathrm{emu.}(k) \ / \ P_0^\mathrm</span><span class="si">{EFT}</span><span class="s2">(k)-1] \times 100\%$&quot;</span><span class="p">)</span>
+<span></span><span class="n">MatPlt</span><span class="o">.</span><span class="n">per_err</span><span class="p">(</span>
+    <span class="n">P0_test</span><span class="p">[:,:</span><span class="mi">39</span><span class="p">],</span> <span class="c1"># Trim the truth as EFTEMU can&#39;t predict over full k-range.</span>
+    <span class="n">P0_preds</span><span class="p">,</span>
+    <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="c1"># Trim k-range.</span>
+    <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="c1"># Limit to +- 5%</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$k \ [h \ \mathrm</span><span class="si">{Mpc}</span><span class="s2">^{-1}]$&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$[P_0^\mathrm{emu.}(k) \ / \ P_0^\mathrm</span><span class="si">{EFT}</span><span class="s2">(k)-1] \times 100\%$&quot;</span>
+<span class="p">)</span>
 
-<span class="n">MatPlt</span><span class="o">.</span><span class="n">per_err</span><span class="p">(</span><span class="n">P2_train_test</span><span class="p">[</span><span class="n">test_id</span><span class="p">],</span> <span class="n">P2_preds</span><span class="p">[</span><span class="n">test_id</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span>
-               <span class="n">xlabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$k \ [h \ \mathrm</span><span class="si">{Mpc}</span><span class="s2">^{-1}]$&quot;</span><span class="p">,</span>
-               <span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$[P_2^\mathrm{emu.}(k) \ / \ P_2^\mathrm</span><span class="si">{EFT}</span><span class="s2">(k)-1] \times 100\%$&quot;</span><span class="p">)</span>
+<span class="n">MatPlt</span><span class="o">.</span><span class="n">per_err</span><span class="p">(</span>
+    <span class="n">P2_test</span><span class="p">[:,:</span><span class="mi">39</span><span class="p">],</span>
+    <span class="n">P2_preds</span><span class="p">,</span>
+    <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span>
+    <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$k \ [h \ \mathrm</span><span class="si">{Mpc}</span><span class="s2">^{-1}]$&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$[P_2^\mathrm{emu.}(k) \ / \ P_2^\mathrm</span><span class="si">{EFT}</span><span class="s2">(k)-1] \times 100\%$&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -567,16 +585,32 @@ To enable them in other operations, rebuild TensorFlow with the appropriate comp
 <img alt="../_images/example_notebooks_EFTEMU_example_18_1.png" src="../_images/example_notebooks_EFTEMU_example_18_1.png" />
 </div>
 </div>
-<p>The plots above do not really indicate the prediction accuracy for sensible sets of bias parameters but rather visualise a worst case scenario.</p>
-<p>We can produce a very rough estimate of the average prediction error across the test set.</p>
+<p>The plots above show that there are some sets of cosmological an nuisance parameters which have a very high prediction error. However, when considering the 68% CI (the green shaded region), we that the predictions from the <code class="docutils literal notranslate"><span class="pre">EFTEMU</span></code> agree very well with the truth for both multipoles.</p>
+<p>We can produce a very rough estimate of the average prediction error across the test set by treating the prediction error at each <span class="math notranslate nohighlight">\(k\)</span> value to be a Gaussian distribution centred on zero and with standard deviation being the midpoint of the upper and lower limits of the 68% CI.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">P0_pred_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">((</span><span class="n">P0_train_test</span><span class="p">[</span><span class="n">test_id</span><span class="p">]</span><span class="o">/</span><span class="n">P0_preds</span><span class="p">[</span><span class="n">test_id</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">),[</span><span class="mf">0.16</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.16</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span></span><span class="c1"># Calculate upper and lower bounds of 68% CI.</span>
+<span class="n">P0_pred_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">P0_test</span><span class="p">[:,:</span><span class="mi">39</span><span class="p">]</span><span class="o">/</span><span class="n">P0_preds</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="c1"># Calculate percentage error.</span>
+    <span class="p">[</span> <span class="c1"># Define quantiles for 68% CI</span>
+        <span class="mf">0.16</span><span class="p">,</span>
+        <span class="mi">1</span><span class="o">-</span><span class="mf">0.16</span>
+    <span class="p">],</span>
+    <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+
+<span class="c1"># Calculate the mid point</span>
 <span class="n">P0_pred_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">P0_pred_std</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span>
-<span class="n">P2_pred_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">((</span><span class="n">P2_train_test</span><span class="p">[</span><span class="n">test_id</span><span class="p">]</span><span class="o">/</span><span class="n">P2_preds</span><span class="p">[</span><span class="n">test_id</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">),[</span><span class="mf">0.16</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.16</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">P2_pred_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">P2_test</span><span class="p">[:,:</span><span class="mi">39</span><span class="p">]</span><span class="o">/</span><span class="n">P2_preds</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">[</span>
+        <span class="mf">0.16</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.16</span>
+    <span class="p">],</span>
+    <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">P2_pred_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">P2_pred_std</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -597,52 +631,134 @@ To enable them in other operations, rebuild TensorFlow with the appropriate comp
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/example_notebooks_EFTEMU_example_20_0.png" src="../_images/example_notebooks_EFTEMU_example_20_0.png" />
+<img alt="../_images/example_notebooks_EFTEMU_example_21_0.png" src="../_images/example_notebooks_EFTEMU_example_21_0.png" />
 </div>
 </div>
-<p>To investigate how this level of prediction accuracy propgates into constraints on cosmological and bias parameters we run perform an MCMC using a <span class="math notranslate nohighlight">\(P_0\)</span> and <span class="math notranslate nohighlight">\(P_2\)</span> calculated using <code class="docutils literal notranslate"><span class="pre">PyBird</span></code> with the Planck 2018 <span class="math notranslate nohighlight">\(\Lambda\)</span>CDM cosmology and reasonable bias parameters.</p>
+</section>
+<section id="Inference-example">
+<h2>Inference example<a class="headerlink" href="#Inference-example" title="Permalink to this headline"></a></h2>
+<p>To investigate how this level of prediction accuracy propgates into constraints on cosmological parameters we run an MCMC with mock <span class="math notranslate nohighlight">\(P_0\)</span> and <span class="math notranslate nohighlight">\(P_2\)</span> calculated using <code class="docutils literal notranslate"><span class="pre">PyBird</span></code> with the Planck 2018 <span class="math notranslate nohighlight">\(\Lambda\)</span>CDM cosmology and ‘reasonable’ nuisance parameters (see section 4.1 of Donald-McCann et al. <a class="reference external" href="https://academic.oup.com/mnras/article/518/2/3106/6831642?login=false">2022</a>).</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fid_bs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span> <span class="c1"># These are the parameters from the PyBird example notebook.</span>
-<span class="n">fid_cosmo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.11933</span><span class="p">,</span> <span class="mf">0.02242</span><span class="p">,</span> <span class="mf">0.6766</span><span class="p">,</span> <span class="mf">3.047</span><span class="p">,</span> <span class="mf">0.9665</span><span class="p">])</span>
+<span></span><span class="c1"># Load the mock multipoles.</span>
+<span class="n">P0_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_dir</span><span class="o">+</span><span class="s2">&quot;P18/z0.61/poles/P0_P18--z-0.61_optiresum-False.npy&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">P2_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_dir</span><span class="o">+</span><span class="s2">&quot;P18/z0.61/poles/P2_P18--z-0.61_optiresum-False.npy&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">klin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_dir</span><span class="o">+</span><span class="s2">&quot;P18/z0.61/poles/P2_P18--z-0.61_optiresum-False.npy&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="n">P110_P18</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;P110-z0.51_P18_optiresum-True.npy&quot;</span><span class="p">)</span>
-<span class="n">Ploop0_P18</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;Ploop0-z0.51_P18_optiresum-True.npy&quot;</span><span class="p">)</span>
-<span class="n">Pct0_P18</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;Pct0-z0.51_P18_optiresum-True.npy&quot;</span><span class="p">)</span>
-<span class="n">P112_P18</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;P112-z0.51_P18_optiresum-True.npy&quot;</span><span class="p">)</span>
-<span class="n">Ploop2_P18</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;Ploop2-z0.51_P18_optiresum-True.npy&quot;</span><span class="p">)</span>
-<span class="n">Pct2_P18</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_eft_data</span><span class="o">+</span><span class="s2">&quot;Pct2-z0.51_P18_optiresum-True.npy&quot;</span><span class="p">)</span>
+<span class="c1"># Define true cosmology</span>
+<span class="n">cosmo_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="mf">0.11933</span><span class="p">,</span> <span class="c1"># w_c</span>
+    <span class="mf">0.02242</span><span class="p">,</span> <span class="c1"># w_b</span>
+    <span class="mf">0.6766</span><span class="p">,</span> <span class="c1"># h</span>
+    <span class="mf">3.047</span><span class="p">,</span> <span class="c1"># ln(10^10 A_s)</span>
+    <span class="mf">0.9665</span> <span class="c1"># n_s</span>
+<span class="p">])</span>
 
-<span class="n">f</span> <span class="o">=</span> <span class="n">MatHM</span><span class="o">.</span><span class="n">fN</span><span class="p">(</span><span class="n">fid_cosmo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">fid_cosmo</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.51</span><span class="p">)</span>
-<span class="n">P0_fid</span> <span class="o">=</span> <span class="n">MatEFT</span><span class="o">.</span><span class="n">multipole</span><span class="p">([</span><span class="n">P110_P18</span><span class="p">,</span>
-                                 <span class="n">Ploop0_P18</span><span class="p">,</span><span class="n">Pct0_P18</span><span class="p">],</span><span class="n">fid_bs</span><span class="p">,</span><span class="n">f</span><span class="p">)[:</span><span class="mi">39</span><span class="p">]</span>
-<span class="n">P2_fid</span> <span class="o">=</span> <span class="n">MatEFT</span><span class="o">.</span><span class="n">multipole</span><span class="p">([</span><span class="n">P112_P18</span><span class="p">,</span>
-                                 <span class="n">Ploop2_P18</span><span class="p">,</span><span class="n">Pct2_P18</span><span class="p">],</span><span class="n">fid_bs</span><span class="p">,</span><span class="n">f</span><span class="p">)[:</span><span class="mi">39</span><span class="p">]</span>
+<span class="c1"># Define true nuisance parameters</span>
+<span class="n">bs_CMASS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="mf">2.22</span><span class="p">,</span> <span class="c1"># b1</span>
+    <span class="mf">1.2</span><span class="p">,</span> <span class="c1"># c2</span>
+    <span class="mf">0.1</span><span class="p">,</span> <span class="c1"># b3</span>
+    <span class="mf">0.0</span><span class="p">,</span> <span class="c1"># c4</span>
+    <span class="mf">0.4</span><span class="p">,</span> <span class="c1"># cct</span>
+    <span class="o">-</span><span class="mf">7.7</span><span class="p">,</span> <span class="c1"># cr1</span>
+    <span class="mf">0.</span><span class="p">,</span> <span class="c1"># cr2</span>
+    <span class="mf">0.</span><span class="p">,</span> <span class="c1"># ce1</span>
+    <span class="mf">0.</span><span class="p">,</span> <span class="c1"># cmono</span>
+    <span class="o">-</span><span class="mf">3.7</span> <span class="c1"># cquad</span>
+<span class="p">])</span>
+
+<span class="c1"># Define numver density associated to the mock.</span>
+<span class="n">ng</span> <span class="o">=</span> <span class="mf">4.5e-4</span>
 </pre></div>
 </div>
 </div>
 <p>Before running our MCMC we can make predictions with the emulators and the true parameters.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">P0_fid_pred</span> <span class="o">=</span> <span class="n">P0_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">fid_cosmo</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">fid_bs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">P2_fid_pred</span> <span class="o">=</span> <span class="n">P2_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">fid_cosmo</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">fid_bs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+<span></span><span class="c1"># EFTEMU expectes b2 and b4 as input rather than c2 and c4</span>
+<span class="k">def</span> <span class="nf">c_to_b</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span> <span class="n">c4</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert c2 and c4 to b2 and b4.</span>
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="sd">    Args:</span>
+<span class="sd">        c2 (float) : Value of c2.</span>
+<span class="sd">        c4 (float) : Value of c4</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">c2</span><span class="o">+</span><span class="n">c4</span><span class="p">),</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">c2</span><span class="o">-</span><span class="n">c4</span><span class="p">)])</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">]</span><span class="o">*</span><span class="n">P0_fid</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PyBird&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">]</span><span class="o">*</span><span class="n">P0_fid_pred</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;EFTEMU w/truth&quot;</span><span class="p">)</span>
+<span class="n">bs_CMASS_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">bs_CMASS</span><span class="p">)</span>
+<span class="n">bs_CMASS_mod</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="n">c_to_b</span><span class="p">(</span><span class="n">bs_CMASS</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">bs_CMASS</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">]</span><span class="o">*</span><span class="n">P2_fid</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:green&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">]</span><span class="o">*</span><span class="n">P2_fid_pred</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">P0_true_pred</span> <span class="o">=</span> <span class="n">P0_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span>
+    <span class="n">cosmo_true</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="c1"># Reshape as EFTEMU expectes 2d input</span>
+    <span class="n">bs_CMASS_mod</span><span class="p">[:</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">stochastic</span><span class="o">=</span><span class="n">bs_CMASS_mod</span><span class="p">[</span><span class="mi">7</span><span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">ng</span><span class="o">=</span><span class="n">ng</span><span class="p">,</span>
+    <span class="n">kvals</span><span class="o">=</span><span class="n">klin</span>
+<span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">P2_true_pred</span> <span class="o">=</span> <span class="n">P2_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span>
+    <span class="n">cosmo_true</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">bs_CMASS_mod</span><span class="p">[:</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">stochastic</span><span class="o">=</span><span class="n">bs_CMASS_mod</span><span class="p">[</span><span class="mi">7</span><span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">ng</span><span class="o">=</span><span class="n">ng</span><span class="p">,</span>
+    <span class="n">kvals</span><span class="o">=</span><span class="n">klin</span>
+<span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">P0_fid</span><span class="o">/</span><span class="n">P0_fid_pred</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">P2_fid</span><span class="o">/</span><span class="n">P2_fid_pred</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:green&quot;</span><span class="p">)</span>
+<span class="c1"># Define figure</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">2</span><span class="p">,</span> <span class="c1"># nrow</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="c1"># ncol</span>
+    <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span>
+    <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;height_ratios&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Upper plot</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="c1"># Plot true P0</span>
+    <span class="n">klin</span><span class="p">,</span>
+    <span class="n">klin</span><span class="o">*</span><span class="n">P0_true</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PyBird&quot;</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="c1"># Plot predicted P0</span>
+    <span class="n">klin</span><span class="p">,</span>
+    <span class="n">klin</span><span class="o">*</span><span class="n">P0_true_pred</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;EFTEMU w/truth&quot;</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="c1"># Plot true P2</span>
+    <span class="n">klin</span><span class="p">,</span>
+    <span class="n">klin</span><span class="o">*</span><span class="n">P2_true</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:green&quot;</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="c1"># Plot predicted P2</span>
+    <span class="n">klin</span><span class="p">,</span>
+    <span class="n">klin</span><span class="o">*</span><span class="n">P2_true_pred</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Lower plot</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">klin</span><span class="p">,</span>
+    <span class="n">P0_true</span><span class="o">/</span><span class="n">P0_true_pred</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">klin</span><span class="p">,</span>
+    <span class="n">P2_true</span><span class="o">/</span><span class="n">P2_true_pred</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:green&quot;</span>
+<span class="p">)</span>
 
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$k \ [h \ \mathrm</span><span class="si">{Mpc}</span><span class="s1">^{-1}]$&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$kP_l(k) \ [h^{-1} \ \mathrm</span><span class="si">{Mpc}</span><span class="s1">]^2$&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">)</span>
@@ -660,30 +776,39 @@ To enable them in other operations, rebuild TensorFlow with the appropriate comp
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/example_notebooks_EFTEMU_example_24_0.png" src="../_images/example_notebooks_EFTEMU_example_24_0.png" />
+<img alt="../_images/example_notebooks_EFTEMU_example_26_0.png" src="../_images/example_notebooks_EFTEMU_example_26_0.png" />
 </div>
 </div>
-<p>We will be running our MCMC with <a class="reference external" href="https://zeus-mcmc.readthedocs.io/en/latest/index.html">zeus</a>. Bellow we define the functions that form the log probabolity that we will pass to <code class="docutils literal notranslate"><span class="pre">zeus</span></code>.</p>
-<p>Note that we will be using <span class="math notranslate nohighlight">\(c_2\)</span> and <span class="math notranslate nohighlight">\(c_4\)</span> rather than <span class="math notranslate nohighlight">\(b_2\)</span> and <span class="math notranslate nohighlight">\(b_4\)</span>, this is following <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1475-7516/2020/05/005">d’Amico et al. (2019)</a> (see section 3.5).</p>
+<p>We will be running our MCMC with <a class="reference external" href="https://zeus-mcmc.readthedocs.io/en/latest/index.html">zeus</a>. Below we define the functions that form the log probabolity that we will pass to <code class="docutils literal notranslate"><span class="pre">zeus</span></code>.</p>
+<p>Note that we will be using <span class="math notranslate nohighlight">\(c_2\)</span> and <span class="math notranslate nohighlight">\(c_4\)</span> rather than <span class="math notranslate nohighlight">\(b_2\)</span> and <span class="math notranslate nohighlight">\(b_4\)</span>, this is following D’Amico et al. (<a class="reference external" href="https://iopscience.iop.org/article/10.1088/1475-7516/2020/05/005">2019</a>) (see section 3.5).</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">log_prior</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span></span><span class="k">def</span> <span class="nf">log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">ng</span><span class="p">,</span> <span class="n">cosmo_bounds</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Evaluate the log prior.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theta (array) : Array containing ``n_samples`` sets of paramaeters for which the prior should be evaluated.</span>
+<span class="sd">        ng (float): Number density.</span>
+<span class="sd">        cosmo_bounds (array) : The hard bounds defining the training space of the ``EFTEMU``.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Oc, Ob, h, As, ns</span>
-    <span class="n">cosmo</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,:</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">cosmo</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[:,:</span><span class="mi">5</span><span class="p">]</span>
     <span class="c1"># b1, c2, b3, c4, cct, cr1, cr2</span>
-    <span class="n">bias</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">5</span><span class="p">:]</span>
+    <span class="n">bias</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[:,</span><span class="mi">5</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
+    <span class="c1"># ce1, cmono, cquad</span>
+    <span class="n">stoch</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[:,</span><span class="mi">12</span><span class="p">:]</span>
 
-    <span class="c1"># Flat prior on the cosmological parameters.</span>
-    <span class="n">box_cosmo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="mf">0.10121926</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="mf">0.13999676</span><span class="p">)</span> \
-        <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="mf">0.02066472</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="mf">0.02427991</span><span class="p">)</span> \
-        <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="mf">0.57451438</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="mf">0.74766042</span><span class="p">)</span>\
-        <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span> <span class="mf">2.77885117</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span> <span class="mf">3.32142323</span><span class="p">)</span>\
-        <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">],</span> <span class="mf">0.90120542</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">],</span> <span class="mf">1.02488991</span><span class="p">)</span>
+    <span class="c1"># Evaluate uniform prior on cosmo params.</span>
+    <span class="n">box_cosmo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">cosmo_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">cosmo_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> \
+        <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">cosmo_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">cosmo_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> \
+        <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">cosmo_bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">cosmo_bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>\
+        <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">cosmo_bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">cosmo_bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>\
+        <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">cosmo_bounds</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">cosmo</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">cosmo_bounds</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="c1"># Flat prior on a selection of the bias parameters</span>
     <span class="n">box_bias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="mf">0.</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="mf">4.</span><span class="p">)</span> \
         <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mf">4.</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="mf">4.</span><span class="p">)</span>
 
@@ -691,57 +816,126 @@ To enable them in other operations, rebuild TensorFlow with the appropriate comp
            <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>\
            <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span><span class="mi">3</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>\
            <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span><span class="mi">4</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>\
-           <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span><span class="mi">5</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>\
-           <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span><span class="mi">6</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+           <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span><span class="mi">5</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>\
+           <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span><span class="mi">6</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>\
+           <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">stoch</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">ng</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>\
+           <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">stoch</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>\
+           <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">stoch</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">log_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">log_like</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">kobs</span><span class="p">,</span> <span class="n">ng</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Evaluate the log likelohood.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theta (array) : Array containing ``n_samples`` sets of paramaeters for which the likelihood should be</span>
+<span class="sd">         evaluated.</span>
+<span class="sd">        obs (array) : The multipoles from which parameters will be infered.</span>
+<span class="sd">         Should be concatination of P_0 and P_2.</span>
+<span class="sd">        kobs (array) : k-values for the multipoles in ``obs``.</span>
+<span class="sd">        ng (float): Number density.</span>
+<span class="sd">        err (array) : The average prediction error from the ``EFTEMU``.</span>
+<span class="sd">         Should be concatination of the error on P_0 and P_2.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Oc, Ob, h, As, ns</span>
-    <span class="n">cosmo</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,:</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">cosmo</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[:,:</span><span class="mi">5</span><span class="p">]</span>
     <span class="c1"># b1, c2, b3, c4, cct, cr1, cr2</span>
-    <span class="n">bias</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="mi">5</span><span class="p">:]</span>
+    <span class="n">bias</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[:,</span><span class="mi">5</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
+    <span class="c1"># ce1, cmono, cquad</span>
+    <span class="n">stoch</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[:,</span><span class="mi">12</span><span class="p">:]</span>
+
 
     <span class="n">c2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">c4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">bias</span><span class="p">[:,</span><span class="mi">3</span><span class="p">])</span>
 
-    <span class="c1"># b1, b2, b3, b4, cct, cr1, cr2</span>
     <span class="n">bias</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">c2</span><span class="o">+</span><span class="n">c4</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">bias</span><span class="p">[:,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">c2</span><span class="o">-</span><span class="n">c4</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
-    <span class="n">P0_pred</span> <span class="o">=</span> <span class="n">P0_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">cosmo</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
-    <span class="n">P2_pred</span> <span class="o">=</span> <span class="n">P2_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">cosmo</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+    <span class="n">P0_pred</span> <span class="o">=</span> <span class="n">P0_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">cosmo</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">stochastic</span><span class="o">=</span><span class="n">stoch</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="n">ng</span><span class="p">,</span> <span class="n">kvals</span><span class="o">=</span><span class="n">kobs</span><span class="p">)</span>
+    <span class="n">P2_pred</span> <span class="o">=</span> <span class="n">P2_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">cosmo</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">stochastic</span><span class="o">=</span><span class="n">stoch</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="n">ng</span><span class="p">,</span> <span class="n">kvals</span><span class="o">=</span><span class="n">kobs</span><span class="p">)</span>
 
     <span class="n">pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">P0_pred</span><span class="p">,</span> <span class="n">P2_pred</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(((</span><span class="n">pred</span><span class="o">-</span><span class="n">obs</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">err</span><span class="o">*</span><span class="n">pred</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">log_prob</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">log_prob</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">kobs</span><span class="p">,</span> <span class="n">ng</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">cosmo_bounds</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Evaluate the log posterior.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theta (array) : Array containing ``n_samples`` sets of paramaeters for which the likelihood should be</span>
+<span class="sd">         evaluated.</span>
+<span class="sd">        obs (array) : The multipoles from which parameters will be infered.</span>
+<span class="sd">         Should be concatination of P_0 and P_2.</span>
+<span class="sd">        kobs (array) : k-values for the multipoles in ``obs``.</span>
+<span class="sd">        ng (float): Number density.</span>
+<span class="sd">        err (array) : The average prediction error from the ``EFTEMU``.</span>
+<span class="sd">         Should be concatination of the error on P_0 and P_2.</span>
+<span class="sd">        cosmo_bounds (array) : The hard bounds defining the training space of the ``EFTEMU``.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
-    <span class="n">lp</span> <span class="o">=</span> <span class="n">log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
-    <span class="n">ll</span> <span class="o">=</span> <span class="n">log_like</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+    <span class="n">lp</span> <span class="o">=</span> <span class="n">log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">ng</span><span class="p">,</span> <span class="n">cosmo_bounds</span><span class="p">)</span>
+    <span class="n">ll</span> <span class="o">=</span> <span class="n">log_like</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">kobs</span><span class="p">,</span> <span class="n">ng</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ll</span><span class="o">+</span><span class="n">lp</span>
 
-<span class="k">def</span> <span class="nf">neg_log_prob</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">err</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">neg_log_prob</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">kobs</span><span class="p">,</span> <span class="n">ng</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">cosmo_bounds</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Evaluate the negative log posterior.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        theta (array) : Array containing ``n_samples`` sets of paramaeters for which the likelihood should be</span>
+<span class="sd">         evaluated.</span>
+<span class="sd">        obs (array) : The multipoles from which parameters will be infered.</span>
+<span class="sd">         Should be concatination of P_0 and P_2.</span>
+<span class="sd">        kobs (array) : k-values for the multipoles in ``obs``.</span>
+<span class="sd">        ng (float): Number density.</span>
+<span class="sd">        err (array) : The average prediction error from the ``EFTEMU``.</span>
+<span class="sd">         Should be concatination of the error on P_0 and P_2.</span>
+<span class="sd">        cosmo_bounds (array) : The hard bounds defining the training space of the ``EFTEMU``.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">log_prob</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">log_prob</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">kobs</span><span class="p">,</span> <span class="n">ng</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">cosmo_bounds</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
-<p>Before running our MCMC we quickly calculate the best fit parameters. With an inital guesses that are perturbations of the truth.</p>
+<p>When carrying out inference with <code class="docutils literal notranslate"><span class="pre">zeus</span></code>, we initalise the walkers around the MAP. To calculate the MAP we minimise the negative log posterior.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">init_cosmo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">fid_cosmo</span><span class="p">)</span><span class="o">+</span><span class="mf">1e-3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">init_bias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">fid_bs</span><span class="p">)</span><span class="o">+</span><span class="mf">1e-2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
-<span class="n">init_bias</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">fid_bs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">fid_bs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-<span class="n">init_bias</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">fid_bs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">fid_bs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span></span><span class="c1"># Extract hard bounds on cosmological parameters from the EFTEMU</span>
+<span class="n">emu_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span>
+    <span class="n">P0_emu</span><span class="o">.</span><span class="n">P11</span><span class="o">.</span><span class="n">scalers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min_val</span><span class="p">,</span> <span class="c1"># Lower bound for all parameters</span>
+    <span class="n">P0_emu</span><span class="o">.</span><span class="n">P11</span><span class="o">.</span><span class="n">scalers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min_val</span><span class="o">+</span><span class="n">P0_emu</span><span class="o">.</span><span class="n">P11</span><span class="o">.</span><span class="n">scalers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span> <span class="c1"># Sum of lower bound and range.</span>
+<span class="p">])</span><span class="o">.</span><span class="n">T</span>
 
-<span class="n">obs_pow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">P0_fid</span><span class="p">,</span> <span class="n">P2_fid</span><span class="p">])</span>
+<span class="c1"># Define an inital guess for the parameters that is equivalent to small perturbations from the truth.</span>
+<span class="n">init_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">cosmo_true</span><span class="p">,</span> <span class="n">bs_CMASS</span><span class="p">])</span>
+<span class="n">init_guess</span> <span class="o">+=</span> <span class="mf">1e-3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">init_guess</span><span class="p">),</span> <span class="p">)</span>
+
+<span class="c1"># Concatenate the true multipoles</span>
+<span class="n">obs_pow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">P0_true</span><span class="p">,</span> <span class="n">P2_true</span><span class="p">])</span>
+
+<span class="c1"># Concatenate the average percentage error for the two multipoles</span>
 <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">P0_pred_std</span><span class="p">,</span> <span class="n">P2_pred_std</span><span class="p">])</span>
 
-<span class="n">results</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">neg_log_prob</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">init_cosmo</span><span class="p">,</span><span class="n">init_bias</span><span class="p">]),</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">obs_pow</span><span class="p">,</span> <span class="n">err</span><span class="p">),</span>
-                   <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="mi">100000</span><span class="p">},</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
+<span class="c1"># minimise neglogprob</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+    <span class="n">neg_log_prob</span><span class="p">,</span>
+    <span class="n">init_guess</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">obs_pow</span><span class="p">,</span>
+        <span class="n">klin</span><span class="p">,</span>
+        <span class="n">ng</span><span class="p">,</span>
+        <span class="n">err</span><span class="p">,</span>
+        <span class="n">emu_bounds</span>
+    <span class="p">),</span>
+    <span class="n">options</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="mi">100000</span>
+    <span class="p">},</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Nelder-Mead&#39;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -751,91 +945,84 @@ To enable them in other operations, rebuild TensorFlow with the appropriate comp
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Optimization terminated successfully.
-         Current function value: 12.156676
-         Iterations: 750
-         Function evaluations: 1081
+         Current function value: 24.262603
+         Iterations: 1247
+         Function evaluations: 1802
 </pre></div></div>
 </div>
-<p>We can make predictions for the best fit parameters and plot these versus the truth.</p>
+<p>Now we run the MCMC.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">best_bias</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
-<span class="n">c2_best</span> <span class="o">=</span> <span class="n">best_bias</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">c4_best</span> <span class="o">=</span> <span class="n">best_bias</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="n">best_bias</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">c2_best</span><span class="o">+</span><span class="n">c4_best</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">best_bias</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">c2_best</span><span class="o">-</span><span class="n">c4_best</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">best_cosmo</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+<span></span><span class="c1"># Number of walkers for zeus.</span>
+<span class="n">nwalk</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span>
 
-<span class="n">P0_best</span> <span class="o">=</span> <span class="n">P0_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">best_cosmo</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">best_bias</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">P2_best</span> <span class="o">=</span> <span class="n">P2_emu</span><span class="o">.</span><span class="n">emu_predict</span><span class="p">(</span><span class="n">best_cosmo</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">best_bias</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">]</span><span class="o">*</span><span class="n">P0_fid</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PyBird&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">]</span><span class="o">*</span><span class="n">P0_best</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;EFTEMU w/best&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">]</span><span class="o">*</span><span class="n">P2_fid</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:green&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">]</span><span class="o">*</span><span class="n">P2_best</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">P0_fid</span><span class="o">/</span><span class="n">P0_best</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">MatEmu</span><span class="o">.</span><span class="n">kbird</span><span class="p">[:</span><span class="mi">39</span><span class="p">],</span> <span class="n">P2_fid</span><span class="o">/</span><span class="n">P2_best</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:green&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$k \ [h \ \mathrm</span><span class="si">{Mpc}</span><span class="s1">^{-1}]$&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$kP_l(k) \ [h^{-1} \ \mathrm</span><span class="si">{Mpc}</span><span class="s1">]^2$&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$P_l^\mathrm{emu.} \ / \ P_l^\mathrm</span><span class="si">{EFT}</span><span class="s1">$&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;large&#39;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/example_notebooks_EFTEMU_example_30_0.png" src="../_images/example_notebooks_EFTEMU_example_30_0.png" />
-</div>
-</div>
-<p>In the cell bellow we define the setup of our MCMC, as well as the inital positions of the walkers.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">nwalk</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span>
+<span class="c1"># Total number of dimensions for zeus</span>
 <span class="n">ndim</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Inital position of walkers as perturbations around MAP</span>
+<span class="c1"># When perturbing from the truth for initial guess when calculating MAP we didn&#39;t think too much about this.</span>
+<span class="c1"># However, poorly initalised walkers can increase time to reach convergence.</span>
+<span class="c1"># We put a but more effort to initalise properly in this case.</span>
+<span class="c1"># Ideally the perturbation from the map would match the standard deviation of the posterior.</span>
+<span class="c1"># As we don&#39;t know this a priori we base the level of perturbation on the scale of the parmater.</span>
+
+<span class="c1"># List of ids for each parameter that we can modify</span>
+<span class="n">param_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="c1"># Start with the same level of pertubation for all parameters</span>
 <span class="n">init_pos</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">x</span><span class="o">+</span><span class="mf">1e-4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nwalk</span><span class="p">,</span> <span class="n">ndim</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>We will be moinitoring convergence of our chains by monitoring the autocorrelation time, once we have run for more than <span class="math notranslate nohighlight">\(50\tau\)</span> and our estimate of <span class="math notranslate nohighlight">\(\tau\)</span> has converged to within <span class="math notranslate nohighlight">\(1\%\)</span> we will stop the chain. <code class="docutils literal notranslate"><span class="pre">zeus</span></code> has in-built functions that allow us to do this very easily.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">cb0</span> <span class="o">=</span> <span class="n">zeus</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">AutocorrelationCallback</span><span class="p">(</span><span class="n">ncheck</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dact</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">nact</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c1"># Remove w_b from id list</span>
+<span class="k">del</span> <span class="n">param_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># Add increased lebel of perturbation for remaining params</span>
+<span class="n">init_pos</span><span class="p">[:,</span><span class="n">param_ids</span><span class="p">]</span> <span class="o">+=</span><span class="mf">1e-3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nwalk</span><span class="p">,</span> <span class="n">ndim</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Remove w_c, h, and ns</span>
+<span class="k">del</span> <span class="n">param_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">del</span> <span class="n">param_ids</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="k">del</span> <span class="n">param_ids</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="c1"># Add increased lebel of perturbation for remaining params</span>
+<span class="n">init_pos</span><span class="p">[:,</span><span class="n">param_ids</span><span class="p">]</span> <span class="o">+=</span><span class="mf">1e-3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nwalk</span><span class="p">,</span> <span class="n">ndim</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># Define callbacks to monitor sampling.</span>
+<span class="n">cb0</span> <span class="o">=</span> <span class="n">zeus</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">AutocorrelationCallback</span><span class="p">(</span>
+    <span class="n">ncheck</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="c1"># How often to check</span>
+    <span class="n">dact</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="c1"># Convergence threshold for tau</span>
+    <span class="n">nact</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="c1"># How many tau before termination.</span>
+    <span class="n">discard</span><span class="o">=</span><span class="mf">0.5</span> <span class="c1"># How much of the chain to discard when calculating</span>
+<span class="p">)</span>
 <span class="n">cb1</span> <span class="o">=</span> <span class="n">zeus</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">MinIterCallback</span><span class="p">(</span><span class="n">nmin</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>Now we finally run our MCMC!</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">sampler</span> <span class="o">=</span> <span class="n">zeus</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalk</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">log_prob</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">obs_pow</span><span class="p">,</span><span class="n">err</span><span class="p">),</span> <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Define sampler</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">zeus</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span>
+    <span class="n">nwalk</span><span class="p">,</span>
+    <span class="n">ndim</span><span class="p">,</span>
+    <span class="n">log_prob</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">obs_pow</span><span class="p">,</span>
+        <span class="n">klin</span><span class="p">,</span>
+        <span class="n">ng</span><span class="p">,</span>
+        <span class="n">err</span><span class="p">,</span>
+        <span class="n">emu_bounds</span>
+    <span class="p">),</span>
+    <span class="n">vectorize</span><span class="o">=</span><span class="kc">True</span> <span class="c1"># EFTEMU is more efficent when making batch predictions.</span>
+<span class="p">)</span>
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">init_pos</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">cb0</span><span class="p">,</span> <span class="n">cb1</span><span class="p">])</span>
+<span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span>
+    <span class="n">init_pos</span><span class="p">,</span>
+    <span class="mi">20000</span><span class="p">,</span> <span class="c1"># Max number of samples</span>
+    <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="c1"># Display progress bar</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">cb0</span><span class="p">,</span>
+        <span class="n">cb1</span>
+    <span class="p">])</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{a}</span><span class="s2"> likelihood evaluations in </span><span class="si">{b}</span><span class="s2"> minutes.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">ncall</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sampler</span><span class="o">.</span><span class="n">ncall</span><span class="si">}</span><span class="s2"> likelihood evaluations in </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -844,8 +1031,8 @@ Optimization terminated successfully.
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Initialising ensemble of 24 walkers...
-Sampling progress :  27%|██████████████▎                                      | 2700/10000 [04:19&lt;11:41, 10.41it/s]
+Initialising ensemble of 30 walkers...
+Sampling progress :  32%|████████████████▉                                    | 6400/20000 [12:17&lt;26:07,  8.68it/s]
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -853,7 +1040,7 @@ Sampling progress :  27%|██████████████▎          
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-335447 likelihood evaluations in 4.3 minutes.
+963377 likelihood evaluations in 12.3 minutes.
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -864,32 +1051,71 @@ Sampling progress :  27%|██████████████▎          
 
 </pre></div></div>
 </div>
-<p>We discard the first <span class="math notranslate nohighlight">\(5\tilde{\tau}\)</span> steps in the chain and produce trace plots for each of the variables.</p>
+<p>When examining the results we discard the first <span class="math notranslate nohighlight">\(5\tilde{\tau}\)</span> steps in the chain and produce trace plots for the cosmological parameters.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">discard</span> <span class="o">=</span> <span class="n">zeus</span><span class="o">.</span><span class="n">AutoCorrTime</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">())</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">5</span>
+<span></span><span class="c1"># Define discard length</span>
+<span class="n">discard</span> <span class="o">=</span> <span class="n">zeus</span><span class="o">.</span><span class="n">AutoCorrTime</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">())</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">5</span>
+
+<span class="c1"># Extract cut chain for each walker</span>
 <span class="n">chain</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">discard</span><span class="p">))</span>
+
+<span class="c1"># Extract cut chain flattened across walkers</span>
 <span class="n">flat_chain</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">discard</span><span class="p">))</span>
 
-<span class="n">param_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$\omega_c$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$\omega_b$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$h$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$A_s$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$n_s$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$b_1$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_2$&quot;</span><span class="p">,</span>
-                <span class="sa">r</span><span class="s2">&quot;$b_3$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_4$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{ct}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{r1}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{r2}</span><span class="s2">$&quot;</span><span class="p">]</span>
-<span class="n">truths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">fid_cosmo</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fid_bs</span><span class="p">)])</span>
-<span class="n">truths</span><span class="p">[</span><span class="mi">5</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">fid_bs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">fid_bs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-<span class="n">truths</span><span class="p">[</span><span class="mi">5</span><span class="o">+</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">fid_bs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">fid_bs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">param_labels</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="sa">r</span><span class="s2">&quot;$\omega_c$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$\omega_b$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$h$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$A_s$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$n_s$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$b_1$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$c_2$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$b_3$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$c_4$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{ct}</span><span class="s2">$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{r1}</span><span class="s2">$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{r2}</span><span class="s2">$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$c_{\epsilon,1}$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$c_\mathrm{mono.}$&quot;</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s2">&quot;$c_\mathrm{quad.}$&quot;</span>
+<span class="p">]</span>
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;width_ratios&#39;</span><span class="p">:[</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">]},</span> <span class="n">sharex</span><span class="o">=</span><span class="s1">&#39;col&#39;</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="s1">&#39;row&#39;</span><span class="p">)</span>
+<span class="n">truths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">cosmo_true</span><span class="p">,</span> <span class="n">bs_CMASS</span><span class="p">])</span>
 
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">15</span><span class="p">,</span> <span class="c1"># nrow</span>
+    <span class="mi">2</span><span class="p">,</span> <span class="c1"># ncol</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span>
+    <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;width_ratios&#39;</span><span class="p">:[</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="n">sharex</span><span class="o">=</span><span class="s1">&#39;col&#39;</span><span class="p">,</span>
+    <span class="n">sharey</span><span class="o">=</span><span class="s1">&#39;row&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Loop over cosmological parameters.</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">15</span><span class="p">):</span>
+    <span class="c1"># Plot trace for each walker for ith parameter</span>
     <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">chain</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">])</span>
+
     <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">param_labels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Plot marginalised posterior</span>
     <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">chain</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
-    <span class="c1">#ax[i,1].set_frame_on(False)</span>
+
+    <span class="c1"># Make posterior look nice</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_frame_on</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+
+    <span class="c1"># Loop over both plots</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="c1"># plot truth</span>
         <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">truths</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+        <span class="c1"># plot 95% CI</span>
         <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.975</span><span class="p">]:</span>
             <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">chain</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">q</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
 
@@ -903,42 +1129,11 @@ Sampling progress :  27%|██████████████▎          
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/example_notebooks_EFTEMU_example_38_0.png" src="../_images/example_notebooks_EFTEMU_example_38_0.png" />
-</div>
-</div>
-<p>We then produce a corner plot using the <a class="reference external" href="https://corner.readthedocs.io/en/latest/">corner</a> package. Before plotting we apply some rescaling such that the means of each of the marginalised 1D posteriors is <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">param_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$10\omega_c$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$100\omega_b$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$10h$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$A_s$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$10n_s$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$b_1$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$10c_2$&quot;</span><span class="p">,</span>
-                <span class="sa">r</span><span class="s2">&quot;$10b_3$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$10c_4$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$10c_</span><span class="si">{ct}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$c_</span><span class="si">{r1}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$10c_</span><span class="si">{r2}</span><span class="s2">$&quot;</span><span class="p">]</span>
-<span class="n">flat_chain</span><span class="p">[:,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">11</span><span class="p">]]</span> <span class="o">=</span> <span class="n">flat_chain</span><span class="p">[:,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">11</span><span class="p">]]</span><span class="o">*</span><span class="mi">10</span>
-<span class="n">truths</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">11</span><span class="p">]]</span> <span class="o">=</span> <span class="n">truths</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">11</span><span class="p">]]</span><span class="o">*</span><span class="mi">10</span>
-<span class="n">flat_chain</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">flat_chain</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span>
-<span class="n">truths</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">truths</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span>
-<span class="n">corner</span><span class="o">.</span><span class="n">corner</span><span class="p">(</span><span class="n">flat_chain</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">param_labels</span><span class="p">,</span> <span class="n">truths</span><span class="o">=</span><span class="n">truths</span><span class="p">,</span> <span class="n">show_titles</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/example_notebooks_EFTEMU_example_40_0.png" src="../_images/example_notebooks_EFTEMU_example_40_0.png" />
+<img alt="../_images/example_notebooks_EFTEMU_example_34_0.png" src="../_images/example_notebooks_EFTEMU_example_34_0.png" />
 </div>
 </div>
 <p>We can see that there is no significant bias introduced in the constraints on the cosmlogical parameters.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
-</pre></div>
-</div>
-</div>
+</section>
 </section>
 
 
