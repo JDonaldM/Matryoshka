@@ -892,7 +892,7 @@ class Pctl:
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
 
-        if self.multipole==2:
+        if (self.multipole==2) and (self.version=='EFTv4'):
             preds -= 100.
 
         preds_incl_zeros = np.zeros((X.shape[0], 6*len(self.kbins)))
