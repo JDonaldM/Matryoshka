@@ -633,6 +633,8 @@ class P11l:
 
         if version=='EFTv3':
             self.kbins = kbird
+        elif version=='EFTv4':
+            self.kbins = np.load(f"{cache_path}{version}/z{redshift}/kbins.npy")
         elif version=='custom':
             self.kbins = np.load(f"{path_to_model}kbins.npy")
         else:
@@ -660,7 +662,9 @@ class P11l:
             know where to put zeros.'''
 
         xscaler = UniformScaler()
-        if yscaler is None:
+        if (yscaler is None) and (version=='EFTv4'):
+            yscaler = LogScaler()
+        elif (yscaler is None) and (version!='EFTv4'):
             yscaler = UniformScaler()
         else:
             yscaler = yscaler
@@ -676,6 +680,8 @@ class P11l:
         yscaler.diff = ymin_diff[1, :]
 
         self.scalers = (xscaler, yscaler)
+        self.multipole = multipole
+        self.version = version
 
     def emu_predict(self, X):
         '''
@@ -700,9 +706,12 @@ class P11l:
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
 
+        if (self.multipole==2) and (self.version=='EFTv4'):
+            preds -= 100.
+
         preds_incl_zeros = np.zeros((X.shape[0], 3*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
-        return preds_incl_zeros
+        return preds_incl_zeros.reshape(X.shape[0],3,self.kbins.shape[0])
 
 class Ploopl:
     '''
@@ -715,6 +724,8 @@ class Ploopl:
 
         if version=='EFTv3':
             self.kbins = kbird
+        elif version=='EFTv4':
+            self.kbins = np.load(f"{cache_path}{version}/z{redshift}/kbins.npy")
         elif version=='custom':
             self.kbins = np.load(f"{path_to_model}kbins.npy")
         else:
@@ -742,7 +753,9 @@ class Ploopl:
            know where to put zeros.'''
 
         xscaler = UniformScaler()
-        if yscaler is None:
+        if (yscaler is None) and (version=='EFTv4'):
+            yscaler = LogScaler()
+        elif (yscaler is None) and (version!='EFTv4'):
             yscaler = UniformScaler()
         else:
             yscaler = yscaler
@@ -758,6 +771,8 @@ class Ploopl:
         yscaler.diff = ymin_diff[1, :]
 
         self.scalers = (xscaler, yscaler)
+        self.multipole = multipole
+        self.version = version
 
     def emu_predict(self, X):
         '''
@@ -782,9 +797,16 @@ class Ploopl:
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
 
+        if self.version == 'EFTv4':
+            preds -= 10000
+
         preds_incl_zeros = np.zeros((X.shape[0], 12*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
-        return preds_incl_zeros
+        if self.version == 'EFTv4':
+            prefactor = np.array([-1., -1., 1., -1., 1., -1., 1., 1., 1., -1., -1., -1.])
+            return preds_incl_zeros.reshape(X.shape[0],12,self.kbins.shape[0])*prefactor[np.newaxis,:,np.newaxis]
+        else:
+            return preds_incl_zeros.reshape(X.shape[0],12,self.kbins.shape[0])
 
 class Pctl:
     '''
@@ -797,6 +819,8 @@ class Pctl:
 
         if version=='EFTv3':
             self.kbins = kbird
+        elif version=='EFTv4':
+            self.kbins = np.load(f"{cache_path}{version}/z{redshift}/kbins.npy")
         elif version=='custom':
             self.kbins = np.load(f"{path_to_model}kbins.npy")
         else:
@@ -824,7 +848,9 @@ class Pctl:
             know where to put zeros.'''
 
         xscaler = UniformScaler()
-        if yscaler is None:
+        if (yscaler is None) and (version=='EFTv4'):
+            yscaler = LogScaler()
+        elif (yscaler is None) and (version!='EFTv4'):
             yscaler = UniformScaler()
         else:
             yscaler = yscaler
@@ -840,6 +866,8 @@ class Pctl:
         yscaler.diff = ymin_diff[1, :]
 
         self.scalers = (xscaler, yscaler)
+        self.multipole = multipole
+        self.version = version
 
     def emu_predict(self, X):
         '''
@@ -864,9 +892,12 @@ class Pctl:
         preds = self.scalers[1].inverse_transform(
             self.model(X_prime))
 
+        if (self.multipole==2) and (self.version=='EFTv4'):
+            preds -= 100.
+
         preds_incl_zeros = np.zeros((X.shape[0], 6*len(self.kbins)))
         preds_incl_zeros[:,self.nonzero_cols] = preds
-        return preds_incl_zeros
+        return preds_incl_zeros.reshape(X.shape[0],6,self.kbins.shape[0])
 
 class EFT:
     '''
@@ -960,9 +991,7 @@ class EFT:
             bias[:,4:] = bias[:,4:]/km**2
 
         f = halo_model_funcs.fN_vec((X[:,0]+X[:,1])/X[:,2]**2, self.redshift)
-        multipole_array = eft_funcs.multipole_vec([P11_preds.reshape(X.shape[0],3,self.P11.kbins.shape[0]),
-                                                   Ploop_preds.reshape(X.shape[0],12,self.Ploop.kbins.shape[0]),
-                                                   Pct_preds.reshape(X.shape[0],6,self.Pct.kbins.shape[0])],
+        multipole_array = eft_funcs.multipole_vec([P11_preds, Ploop_preds, Pct_preds],
                                                    bias, f.reshape(-1,1))
 
         # Iterpolate prediction with input k/
