@@ -94,6 +94,13 @@ for component in args.to_train.split(" "):
     P2_data = np.vstack(data[1])
     print("Done.")
 
+    if component == 'Ploop':
+        # If loop terms multiply with factor to a majority of samples poitive 
+        # for a majority of scales.
+        factor = np.array([-1., -1., 1., -1., 1., -1., 1., 1., 1., -1., -1., -1.])
+        P0_data *= factor[np.newaxis,:,np.newaxis]
+        P2_data *= factor[np.newaxis,:,np.newaxis]
+
     print("Flattening...")
     # Flatten all terms into one long vector.
     Ncomp = P0_data.shape[1]
@@ -121,8 +128,17 @@ for component in args.to_train.split(" "):
 
 
     print("Rescaling...")
-    P0_scaler = MatTrain.UniformScaler()
-    P2_scaler = MatTrain.UniformScaler()
+    if component == 'P11' or component == 'Pct':
+        P0_scaler = MatTrain.LogScaler()
+        # Some P2 samples will have zero crossing. Add constant to make
+        # exclusivly positive.
+        P2_data += 100.
+        P2_scaler = MatTrain.LogScaler()
+    elif component == 'Ploop':
+        P0_data += 10000
+        P2_data += 10000
+        P0_scaler = MatTrain.LogScaler()
+        P2_scaler = MatTrain.LogScaler()
     P0_scaler.fit(P0_data[train_id])
     P2_scaler.fit(P2_data[train_id])
     P0_trainy = P0_scaler.transform(P0_data[train_id])
