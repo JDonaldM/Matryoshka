@@ -74,7 +74,10 @@ np.save(cache_path+"scalers/xscaler_min_diff",
         np.vstack([xscaler.min_val,xscaler.diff]))
 print("Done.")
 
-kcut = MatEmu.kbird <= float(args.kmax)
+# Load ks associated to the training data
+kbins_train = np.load(f"{inputY_path}kbird.npy")
+kcut = kbins_train <= float(args.kmax)
+np.save(f"{cache_path}kbins.npy", kbins_train[kcut])
 nk = np.sum(kcut)
 
 for component in args.to_train.split(" "):
